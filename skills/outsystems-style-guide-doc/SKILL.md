@@ -1,180 +1,98 @@
 ---
 name: outsystems-style-guide-doc
-description: Generate Live Style Guide documentation pages for OutSystems components — including OutSystems UI customizations, custom Blocks, and Web Components with their Block wrappers. Use this skill whenever the user needs to document a component, update the Live Style Guide, write a component spec page, or create token specimens for the OutSystems Style Guide module.
+description: Keep the project's Live Style Guide (LSG) in step with the design system — the OutSystems app that documents every token and component with live previews. Knows the LSG's modules and routing on ODC and O11, which page a change touches (a new colour → the Colors page, a new custom component → a menu record, a page and a preview), the page spec, and how the page work reaches the module (OutSystems MCP, else a Mentor prompt on ODC or Service Studio steps on O11). Use it whenever a component, pattern or token is added or changed, when the user asks to document a component or update the Live Style Guide, when writing a usage spec's §9, and before a handover or a release.
 ---
 
-# OutSystems Style Guide Documentation Generator
+# The Live Style Guide
 
-Produce structured documentation pages for the Live Style Guide — the single source of truth between design and engineering.
+The Live Style Guide (LSG) is the OutSystems application where the design system is documented
+**live**: every foundation (colour, type, spacing, radius, border, shadow, icons) and every
+component, rendered by the real theme and the real Blocks. It is a deliverable. A component
+without its LSG page is not done, and a token the LSG does not show is a token nobody can find.
+
+This skill owns **what the LSG needs when the design system changes**. It does not restate
+OutSystems UI facts: Blocks, placeholders and arguments come from the vendored pack via
+`outsystems-frontend-router`; driving Mentor comes from `outsystems-mentor-build`.
 
 ## Pre-flight
 
-1. Read `project.config.json` for `classPrefix`, `jsNamespace` and `environment`. If the file is missing or still holds `<<PLACEHOLDER>>` values, stop and run `/lsg:project-setup` — never guess a value. Spacing scale, grid, breakpoints and default sizes are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` — never assumed or guessed; with nothing written, raise no finding about them.
+Read `project.config.json`:
 
-## When to use
+- `environment` — `ODC` or `O11`. The anatomy and the fallback channel differ.
+- `modules` — the module (and on O11 the application) for each role: `theme`, `patterns`,
+  `liveStyleGuide`, `template`, and `patPreview` on O11. Name modules from here; never guess one.
+- `odcTenant` — set on ODC when an OutSystems MCP is available; `null` means none.
 
-- User says "document this", "add to Style Guide", "create a spec page"
-- User just finished building a new component
-- User updated `:root` tokens and needs swatches/specimens refreshed
-- User asks for a component handoff doc
+Missing or `<<PLACEHOLDER>>` values: stop and run `/lsg:project-setup`. Never guess a value.
 
-## Three document types
+## What a change does to the LSG
 
-### A. Token Specimen Page (for new/updated tokens)
+Run this for every item the loop builds, and write the answer into the PR body and the handover.
 
-Generate a page showing:
-
-**Colors:** Swatch grid with hex + token name + WCAG contrast ratios. Usage guidance.
-
-**Typography:** Type scale ladder. Each size rendered with token name, computed px, line-height, weight. Heading + body pairings.
-
-**Spacing:** Visual scale (boxes sized to each `--space-*` value). Base unit annotation.
-
-**Shape & Elevation:** Border-radius samples. Shadow ladder. Border thickness examples.
-
-### B. Component Spec Page (for OS UI customizations or custom Blocks)
-
-Standard structure (use this template):
-
-```markdown
-# [Component Name]
-
-**Pattern Type:** [OS UI Customization / Custom Block / Web Component + Block]
-**Base Pattern:** [e.g., Card, Tabs, or "N/A — Web Component"]
-**BEM Block / Tag:** `.acme-{block}` or `<acme-{tag}>`
-**Location:** [Theme CSS / Block CSS / Patterns Library]
-**Escalation Level:** [L1–L5]
-**Status:** [Draft / Approved / Deprecated]
-
-## Purpose
-[One sentence: what this does and when to use it]
-
-## Visual States
-| State | Modifier Class | Visual |
-|---|---|---|
-| Default | — | (screenshot) |
-| Hover | `:hover` | (screenshot) |
-| Focused | `:focus-visible` | (screenshot) |
-| Active | `--is-active` | (screenshot) |
-| Disabled | `[aria-disabled="true"]` | (screenshot) |
-| Loading | `--is-loading` | (screenshot) |
-| Error | `--has-error` | (screenshot) |
-
-## Variants (Modifiers)
-| Modifier | Class | Use Case |
-|---|---|---|
-| Featured | `.acme-card--featured` | Promotional cards |
-| Compact | `.acme-card--compact` | Dense list contexts |
-
-## Anatomy
-[Annotated diagram showing BEM class for each element]
-
-## ExtendedClass Usage
-\`\`\`
-ExtendedClass = "acme-card acme-card--featured"
-\`\`\`
-
-## Tokens Consumed
-- `--color-neutral-9` (text)
-- `--color-primary` (link/CTA)
-- `--space-m` (padding)
-- `--border-radius-soft` (corners)
-- `--shadow-s` (resting), `--shadow-m` (hover)
-
-## Responsive
-- Mobile (<768px): single column, `--space-m` padding
-- Tablet (≥768px): two-column grid, `--space-l` padding
-- Desktop (≥992px): three-column grid
-
-## Accessibility
-- Keyboard focusable
-- Focus ring uses `:focus-visible` + `--color-primary`
-- WCAG AA contrast (4.5:1)
-- Interactive root uses semantic HTML
-
-## Do / Don't
-✅ Do: ...
-❌ Don't: ...
-
-## Code Example
-[HTML snippet showing OutSystems usage]
-
-## Changelog
-- 2026-05-11 — v1.0 — Initial release
-```
-
-### C. Web Component Spec Page (for L5 components — additional sections)
-
-For Web Components, add these sections beyond the standard spec:
-
-```markdown
-## Web Component API
-
-### Tag Name
-`<acme-{component-name}>`
-
-### Attributes
-| Attribute | Type | Default | Description |
-|---|---|---|---|
-| value | string | "" | Current value |
-| disabled | boolean | false | Disables interaction |
-| size | "sm" \| "md" \| "lg" | "md" | Size variant |
-
-### Properties (JavaScript)
-| Property | Type | Description |
-|---|---|---|
-| items | Array | Complex data; set via JS in OnReady |
-
-### Events
-| Event | Detail Payload | Description |
-|---|---|---|
-| change | `{ value }` | Value changed |
-| submit | `{ values, isValid }` | Form submitted |
-
-### Slots
-| Slot Name | Purpose |
+| Change | LSG work |
 |---|---|
-| (default) | Body content |
-| header | Header content |
-| footer | Footer content |
+| Token added, removed or re-valued | Foundation pages rendered from the theme (the `TokenReference` Block, installed by the project's `handover/lsg-foundations.md`): **none** — they update at the next theme publish. Say so in the PR. Not installed yet: name the Styles page and the rows to update, and recommend installing the Block. |
+| A token kind `TokenReference` does not cover (icons, grid, breakpoints, utility classes) | Update that Styles page by hand; name it in the handover. |
+| A colour family added (a new hue, not a new step) | Also check the Colors page narrative and its Core / Extended split. |
+| OutSystems UI pattern restyled (L1–L3) | Its **stock pattern page** shows the new look automatically once the theme is published. Update the page's text only where this design system's usage differs, and record the ExtendedClass recipe. |
+| New Block or Web Component (L4–L5) | A **new page**: a menu record, the page, a live preview with every variant and state, the class inspector. `references/lsg-anatomy.md` has the routing for each platform. |
+| Variant, state or input added to a component | Its preview gains that variant or state, and its options area the matching control. |
+| Component deprecated | The page stays, marked deprecated, naming its replacement. |
+| Public Block added to the patterns module for internal use | It still needs a menu record and a page, or the inventory check below fails. |
 
-## OutSystems Block Wrapper
+## Writing the page
 
-### Block: `{ComponentName}` (in Patterns Library)
+The project's usage spec carries a `## 9. Live Style Guide` section (the template's
+`specs/README.md`): the page, the definition, "When to use", provenance, preview and class
+inspector. Write it in the same PR as the code. `references/page-spec.md` has the full page
+spec, section by section, and the foundation-page spec.
 
-**Input Parameters:**
-| Name | Type | Mandatory | Default |
-|---|---|---|---|
-| Value | Text | No | "" |
-| Disabled | Boolean | No | False |
+Three rules carry most of the quality:
 
-**Block Events:**
-| Name | Parameters |
-|---|---|
-| OnChange | NewValue (Text) |
+1. **Write the prose for this design system.** One-sentence definition; "Use the <Name> to …";
+   "Add the <Block> to the <Placeholder> placeholder." Never paste the OutSystems UI base
+   pattern's text onto a custom component, and never leave a page without text.
+2. **Show, don't describe.** The preview is the real Block, one instance per variant and state,
+   each widget named so the class inspector can read it. Values are printed live from the theme,
+   never typed.
+3. **State provenance in one line**: "OutSystems UI <Pattern>, restyled", "New component", or
+   "Wraps <library>" with a link. A discouraged component names its replacement.
 
-**Block Placeholders:**
-| Name | Maps to Slot |
-|---|---|
-| HeaderContent | slot="header" |
-| BodyContent | (default) |
-| FooterContent | slot="footer" |
+## Getting the page into the module
 
-## Installation
-1. Add `acme-{component-name}.js` to Theme module Scripts
-2. Reference in base Layout's RequireScript
-3. Create the wrapper Block in Patterns Library
-4. Use the Block from Toolbox in feature apps
-5. Validate in browser (1-Click Publish → F6) — Service Studio Preview won't render Web Components
-```
+In this order — the same rule as every other OutSystems change:
 
-## Output guidance
+1. **The OutSystems MCP, when one is connected** (ODC: the tenant endpoint in `.mcp.json`). Drive
+   it with `outsystems-mentor-build`: read the module's menu entities and an existing pattern page
+   first, then add the record, the page and the preview in the shape those already have.
+2. **No MCP on ODC → a Mentor Studio prompt** in the handover, run in `modules.liveStyleGuide`
+   after the Patterns prompt (the page previews a Block that must already exist).
+3. **No MCP on O11 → Service Studio steps** in the handover: the PatPreview demo Block in
+   `modules.patPreview`, then the menu record and the page in `modules.liveStyleGuide`.
 
-- Generate markdown directly — user pastes into Style Guide screen or converts to OutSystems content
-- For Web Components, always include the Block wrapper docs (the user's standard)
-- If the user is building the Style Guide page as an OutSystems screen, provide a Block structure suggestion
+In the handover map, an item that needs a page gets one prompt per module, in build order:
+`mentor.prompts: [{ title, text }, …]` — Patterns first, then the LSG.
 
-## Reference
+Then **verify in a browser** after publish: the page is reachable from the menu, the preview
+renders every state, the class inspector shows the classes the spec names, and the foundation
+pages list the new tokens. Service Studio preview does not run the page scripts and is never the
+check.
 
-- `references/style-guide-template.md` — Reusable Style Guide module structure
-- `references/component-doc-checklist.md` — Pre-publish checklist
+## Before a handover or a release
+
+- Every public Block in the patterns module has a menu record and a page.
+- No page carries OutSystems UI default prose, Lorem ipsum, a `[ClientName]`-style placeholder or
+  a module name from a starter kit or an old project.
+- Every Styles intro (how many radii, shadow levels, type steps, weights) is re-counted against
+  this theme; the renderers make the table right, not the sentence above it.
+- The foundation pages show the tokens of the theme being released.
+
+## Rules
+
+1. The LSG page ships with the code: never mark a component done without it, and never hand over
+   a component whose handover does not cover its page.
+2. Register every custom component in the menu data. Never an ad-hoc screen, never hidden inside
+   a stock category.
+3. Never hand-maintain a list that can be read live: token values, token names, class lists.
+4. Build the page in the shape the module already uses; read it before adding to it.
+5. A value the design states that the page cannot show faithfully is a finding, not a rounding.

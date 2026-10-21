@@ -95,10 +95,15 @@ faithfully anyway — flag, don't fix):
 
 - `<class>` — refuted because `<usage evidence>` — `findings/findings-register.md`
 
+## Live Style Guide
+
+<The maker's LSG-IMPACT, one line per page: new page / changed page / "none — renders from the
+theme". Say whether the page is applied through the MCP or carried by the handover.>
+
 ## Handover
 
-`handover/<artifact>.md` carries the verbatim CSS/JS to paste into ODC plus the Mentor Studio
-prompt. The handover **Task issue is opened after merge**, not now — nothing reaches an
+`handover/<artifact>.md` carries the verbatim CSS/JS to paste plus the build steps — a Mentor
+Studio prompt on ODC, Service Studio steps on O11 — for the Block and its Live Style Guide page. The handover **Task issue is opened after merge**, not now — nothing reaches an
 OutSystems build off an unmerged branch.
 
 ## What a human still has to check

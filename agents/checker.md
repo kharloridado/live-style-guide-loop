@@ -40,7 +40,8 @@ Before any subjective judgment, run the deterministic checks. These cannot be re
   - **token audit** — every visual literal in `src/` is a token, names its `FND-NNN`, or cites the `ref §` that authorises it. Zero errors.
 - Contrast was computed for every defined text/UI colour pair in the artifact.
 - Every `src/blocks/*.css` touched by this item is listed in `src/blocks/index.css`. The theme and the specimen page both load from that manifest, so a file missing from it is missing from ODC and from the measurement.
-- The item has `specs/<kind>/<item-id>/specimen.html` covering every state the ref draws, and a usage spec `specs/<kind>/<item-id>.md` with the eight sections in the project's `specs/README.md`. `npm run sync` must show no unknown token names for it.
+- The item has `specs/<kind>/<item-id>/specimen.html` covering every state the ref draws, and a usage spec `specs/<kind>/<item-id>.md` with the sections in the project's `specs/README.md`, including §9 Live Style Guide for a component or pattern. `npm run sync` must show no unknown token names for it.
+- The maker's LSG-IMPACT names every Live Style Guide page the item touches (`outsystems-style-guide-doc` → "What a change does to the LSG"). A new component with no page in it, or a §9 that repeats the OutSystems UI base pattern's prose, is a FAIL — the page ships with the code.
 
 If the deterministic gate fails → **VERDICT: FAIL with DET-GATE: fail**, stop here, and say exactly what broke. Do not continue to the subjective review of a tree that doesn't build. A det-gate failure is mechanical — it does not count against the item's round cap.
 

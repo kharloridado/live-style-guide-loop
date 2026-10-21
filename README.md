@@ -42,7 +42,7 @@ the same version. The template already ships that setting. Release notes: [CHANG
 | `outsystems-web-component` | Vanilla-JS Web Components + Block wrapper (L5 only). |
 | `outsystems-mentor-build` | Drive a build into a live ODC module through Mentor, or write the prompt a developer pastes, and verify it landed. |
 | `outsystems-design-findings` | Flag, don't fix: classify, challenge and route design-conformance findings. |
-| `outsystems-style-guide-doc` | Live Style Guide pages. |
+| `outsystems-style-guide-doc` | The Live Style Guide: which page a change touches, the page spec, the ODC and O11 routing, and how the page reaches the module. |
 | `outsystems-git-helpers` | Commit messages, branch names, PR descriptions, changelog entries. |
 
 **Hooks** — active in any project with a `build:theme` script and a `project.config.json`

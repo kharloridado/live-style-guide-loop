@@ -86,8 +86,12 @@ stylesheet. The rules are in the project's `specs/README.md`; the ones that bite
 - Chrome classes are `<classPrefix>specimen__*` (the project's specimen chrome) and ship nothing to ODC.
 
 ## The usage spec — same change, same PR
-Write or update `specs/<kind>/<item-id>.md` with the eight sections in `specs/README.md` (Metadata,
-Overview, Anatomy, Tokens used, Props/API, States, Code example, Cross-references). Every token it
+Write or update `specs/<kind>/<item-id>.md` with the sections in `specs/README.md` (Metadata,
+Overview, Anatomy, Tokens used, Props/API, States, Code example, Cross-references, Live Style
+Guide). §9 says what this item's Live Style Guide page shows — page, definition, "When to use",
+provenance, preview, class inspector — written for this design system, never the OutSystems UI
+base pattern's text (`outsystems-style-guide-doc`). A token-only item has no §9: say in the
+DECISION-LOG which Styles page shows the change, and whether it renders from the theme. Every token it
 names must exist in `specs/tokens/token-reference.md` or be declared in `src/`; a literal the design
 needs is written with its FND id. Keep it lean: how to use what you built, not why you built it.
 
@@ -97,6 +101,9 @@ needs is written with its FND id. Keep it lean: how to use what you built, not w
 - Append findings to `loop/state.json.findings[]`.
 - Declare a **RISK-TIER** — `trivial` | `standard` | `core` — so the checker can calibrate scrutiny. (`trivial` = utility/config/token-alias; `core` = L5 Web Component, interactive composite, or load-bearing path; `standard` = everything else.)
 - Return a concise self-report: files written, tokens consumed, findings raised, your confidence, RISK-TIER, and anything the checker should scrutinize.
+- **LSG-IMPACT:** one line per Live Style Guide page this item adds or changes, from the table in
+  `outsystems-style-guide-doc` (e.g. "Colors — none, renders from the theme"; "new page Text Field:
+  menu record, preview with 4 states, class inspector").
 - **DECISION-LOG:** state WHY you chose these tokens/approach, the alternatives you considered and ruled out (and why), and any assumption you made (e.g. "assumed the xLarge size per the Figma Component-Sizes node"). This is captured on the handover so the human reviewer isn't reconstructing your intent from scratch.
 
 Do NOT commit, open issues, or mark the item done. The orchestrator does that only after the CHECKER passes.

@@ -125,7 +125,10 @@ After block, provide:
 1. **Where to paste:** Theme module (O11) / Theme Library (ODC)
 2. **Token delta summary**
 3. **A11y verification:** All text/bg combinations meet WCAG 2.2 AA contrast (4.5:1 normal, 3:1 large/UI)
-4. **Style Guide TODO:** Update swatches in Foundations/Colors page
+4. **Live Style Guide:** which Styles page shows the change. When the project's Styles pages
+   render from the theme (the `TokenReference` Block), nothing to edit — the new tokens appear at the
+   next theme publish; say so. Otherwise name the page and the rows to add
+   (`outsystems-style-guide-doc`). A new colour family also needs the Colors narrative checked.
 
 ## A11y verification (always do this)
 

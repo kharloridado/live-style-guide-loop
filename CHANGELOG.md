@@ -4,6 +4,31 @@ All notable changes to the `lsg` plugin. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.1.0] — 2026-10-21
+
+Pair with `live-style-guide-harness` 0.3 or later, including its `modules` config and
+`TokenReference` Block.
+
+### Added
+
+- **The loop knows the Live Style Guide.** `outsystems-style-guide-doc` is rebuilt around it: what a
+  change does to the LSG (a new token → nothing when the Styles pages render from the theme; a new
+  component → a menu record, a page, a live preview and the class inspector), the page spec, the
+  modules and routing on ODC and O11 (`references/lsg-anatomy.md`, `references/page-spec.md`), and
+  the sweep before a handover or release.
+- **LSG impact in every build.** The maker returns LSG-IMPACT and writes usage spec §9; the checker
+  fails a new component with no page; per-item-build puts the page in the same handover, one
+  prompt per module in build order; the PR body gains a "Live Style Guide" section.
+
+### Changed
+
+- **`project-setup` asks for the platform first**, then every module and application by role
+  (`project.config.json` → `modules`), sets up the OutSystems MCP whenever the platform has one and
+  verifies it with a read-only call, and records the delivery channel: the MCP, else Mentor prompts
+  (ODC) or Service Studio steps (O11). `--odc-tenant=none` records an ODC project without MCP access.
+- **`outsystems-token-extractor`** names the Styles page a token change shows on, instead of a
+  "update swatches" TODO.
+
 ## [4.0.0] — 2026-10-21
 
 Pair with `live-style-guide-harness` 0.3 or later.
