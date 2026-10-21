@@ -33,6 +33,7 @@ the same version. The template already ships that setting. Release notes: [CHANG
 | --- | --- |
 | `/lsg:project-setup` | **Start here on a fresh clone.** Interview → config → deps + submodule → labels → signed inventory → verify it builds. |
 | `/lsg:design-loop` | Freeze ref → maker → checker → commit → **one PR per deliverable** with its review Artifact. One request, or the signed queue in `loop/goal.md`. |
+| `/lsg:deliver` | After a merge: build the work into OutSystems through the MCP (ODC tenant, or Service Studio's on O11) and check it in a browser; otherwise hand it over. Opens the handover issue either way. |
 | `/lsg:revalidate` | Re-run the checker on an already-built item or PR, without rebuilding it. |
 | `outsystems-frontend-router` | First stop for OutSystems UI questions: routes into the vendored frontend-skills pack and splits work by module (theme first, then each app). |
 | `outsystems-component-audit` | Triage a design: exists as-is / customize (dual track) / build custom (L1–L5). |
@@ -72,8 +73,8 @@ The plugin holds neither platform facts nor project values. It reads both at run
   whose body carries the plan, the measurements, both decision logs and the findings
   (`skills/design-loop/references/pr-body.md`). The artifact says WHAT; the PR says WHY
   (`references/comment-budget.md`).
-- **The loop never merges.** A human merging the PR is the approval. The handover issue is opened
-  after the merge, never at checker PASS.
+- **The loop never merges.** A human merging the PR is the approval. Then `/lsg:deliver` builds it
+  into OutSystems through the MCP when one is connected, or hands it over; never at checker PASS.
 - **Fidelity is measured, not read.** The checker builds the item's specimen page and measures
   computed styles headlessly with the template's `build/gate/measure-fidelity.mjs`; drift or an
   unmeasurable page forbids a PASS. The committed `measurements.json` then becomes a baseline CI

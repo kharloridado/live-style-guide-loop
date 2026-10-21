@@ -60,7 +60,8 @@ Three rules carry most of the quality:
 
 ## Getting the page into the module
 
-In this order — the same rule as every other OutSystems change:
+After the merge, `/lsg:deliver` takes the first channel available — the same rule as every other
+OutSystems change:
 
 1. **The OutSystems MCP, when one is connected** (ODC: the tenant endpoint in `.mcp.json`; O11: Service Studio's own MCP server on the developer's machine). Drive
    it with `outsystems-mentor-build`: read the module's menu entities and an existing pattern page

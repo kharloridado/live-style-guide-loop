@@ -98,13 +98,16 @@ faithfully anyway — flag, don't fix):
 ## Live Style Guide
 
 <The maker's LSG-IMPACT, one line per page: new page / changed page / "none — renders from the
-theme". Say whether the page is applied through the MCP or carried by the handover.>
+theme". Say whether the page will be built through the MCP or carried by the handover.>
 
 ## Handover
 
-`handover/<artifact>.md` carries the verbatim CSS/JS to paste plus the build steps — a Mentor
-Studio prompt on ODC, Service Studio steps on O11 — for the Block and its Live Style Guide page. The handover **Task issue is opened after merge**, not now — nothing reaches an
-OutSystems build off an unmerged branch.
+`handover/<artifact>.md` carries the verbatim CSS/JS plus the build steps — a Mentor Studio prompt
+on ODC, Service Studio steps on O11 — for the Block and its Live Style Guide page. After the merge,
+`/lsg:deliver` runs those steps through the OutSystems MCP when one is connected and checks the
+result in a browser; otherwise a developer runs them. Name the channel: "Delivered through the MCP
+after merge" or "Handed over after merge (no MCP: <reason>)". Nothing reaches OutSystems off an
+unmerged branch.
 
 ## What a human still has to check
 
