@@ -11,7 +11,7 @@ if (!dir) process.exit(0);
 
 const missing = [];
 if (isUnfilledTemplate(dir)) {
-  missing.push("project.config.json still holds <<PLACEHOLDER>> values — run /outsystems-loop:project-setup.");
+  missing.push("project.config.json still holds <<PLACEHOLDER>> values — run /lsg:project-setup.");
 }
 if (!existsSync(join(dir, "node_modules"))) missing.push("dependencies are not installed — run `npm install`.");
 const osui = join(dir, "vendor", "outsystems-ui");

@@ -1,4 +1,4 @@
-# OutSystems Design Loop — Claude Code plugin
+# Live Style Guide Loop — the `lsg` Claude Code plugin
 
 The **behaviour** half of the Figma → OutSystems design-system workflow: 13 skills, the
 `maker` / `checker` agent pair, and two hooks.
@@ -11,7 +11,7 @@ load-bearing, not tidiness.
 
 The **project-shaped** half (`specs/`, tokens, build pipeline, fidelity gate and review pages, findings register, handover
 bodies, GitHub scaffolding) lives in the companion scaffold,
-[`outsystems-project-template`](https://github.com/kharloridado/outsystems-project-template).
+[`live-style-guide-harness`](https://github.com/kharloridado/live-style-guide-harness).
 
 ## Why this is a plugin and not a folder you copy
 
@@ -28,15 +28,22 @@ project at once.
 ## Install
 
 ```bash
-/plugin marketplace add kharloridado/outsystems-loop
-/plugin install outsystems-loop@outsystems-loop --scope project
+/plugin marketplace add kharloridado/live-style-guide-loop
+/plugin install lsg@live-style-guide-loop --scope project
 ```
 
 `--scope project` checks the dependency into the repo so the whole team (and unattended loop runs)
 get the same version.
 
-### 4.0 — no board, interactive first, gates as hooks
+### 4.0 — renamed, no board, interactive first, gates as hooks
 
+- **Renamed.** The repo is `live-style-guide-loop`, the marketplace `live-style-guide-loop`, the
+  plugin `lsg`: commands are `/lsg:design-loop`, `@lsg:maker`, `@lsg:checker`. An existing
+  project changes two keys in `.claude/settings.json` — `enabledPlugins` to
+  `"lsg@live-style-guide-loop": true`, and the `extraKnownMarketplaces` entry to
+  `"live-style-guide-loop": { "source": { "source": "github", "repo": "kharloridado/live-style-guide-loop" } }`
+  — and replaces `outsystems-loop:` with `lsg:` in its CLAUDE.md. The companion template is now
+  `live-style-guide-harness`.
 - **Board mode is gone** (`board-ship`, `board-sync` and their references). No project ran it; a
   human merging the item's PR is the approval. Pair 4.x with template 0.3+.
 - **`design-loop` leads with the common case** — one request in a session → one PR with its review
@@ -53,7 +60,7 @@ get the same version.
 
 3.0 expects the project layout from
 [Expose your design system to LLMs](https://hvpandya.com/llm-design-systems), as shipped in
-`outsystems-project-template`:
+`live-style-guide-harness`:
 
 - Items live under `specs/<kind>/<id>/` (frozen `ref.md`, `variables.json`, `figma.png`,
   `specimen.html`, `probes.json`, `measurements.json`), with an 8-section usage spec at
@@ -74,15 +81,15 @@ template's layout.
 **Agents**
 | Agent | Role |
 | --- | --- |
-| `@outsystems-loop:maker` | Builds ONE work item faithfully against the frozen Figma ref. Raises findings; never fixes them. Declares a risk tier and a decision log. |
-| `@outsystems-loop:checker` | Judges it. Deterministic build gate → **rendered-fidelity gate** → risk-tiered depth → five domains → adversarial finding refutation → structured verdict. Never modifies files. |
+| `@lsg:maker` | Builds ONE work item faithfully against the frozen Figma ref. Raises findings; never fixes them. Declares a risk tier and a decision log. |
+| `@lsg:checker` | Judges it. Deterministic build gate → **rendered-fidelity gate** → risk-tiered depth → five domains → adversarial finding refutation → structured verdict. Never modifies files. |
 
 **Skills**
 | Skill | Role |
 | --- | --- |
-| `/outsystems-loop:project-setup` | **Start here on a fresh clone.** One pass: interview → config → deps + submodule → labels → deliverables into the signed inventory → routines → verify it all builds. |
-| `/outsystems-loop:design-loop` | The orchestrator: freeze ref → maker → checker → commit → **one PR per deliverable** → findings. One request, or the signed queue in `loop/goal.md`. |
-| `/outsystems-loop:revalidate` | Re-run the checker against an **already-built** artifact, item or PR — no maker, no rebuild. For review questions, hand-edits, or a verdict you distrust. |
+| `/lsg:project-setup` | **Start here on a fresh clone.** One pass: interview → config → deps + submodule → labels → deliverables into the signed inventory → routines → verify it all builds. |
+| `/lsg:design-loop` | The orchestrator: freeze ref → maker → checker → commit → **one PR per deliverable** → findings. One request, or the signed queue in `loop/goal.md`. |
+| `/lsg:revalidate` | Re-run the checker against an **already-built** artifact, item or PR — no maker, no rebuild. For review questions, hand-edits, or a verdict you distrust. |
 | `outsystems-frontend-router` | First stop for OutSystems UI questions and builds: routes into the vendored frontend-skills pack by path, checks it against the live app, and splits the work by ODC module (theme first, then each consumer app). |
 | `outsystems-component-audit` | Triage a design: exists as-is / customize (dual track) / build custom (L1–L5). |
 | `outsystems-token-extractor` | Figma variables → `:root` custom properties. |

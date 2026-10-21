@@ -1,6 +1,6 @@
 ---
 name: project-setup
-description: Stand up a freshly cloned OutSystems design-system project in one pass — interview for the project's values, wire up the toolchain (the outsystems-loop and outsystems plugins, the ODC MCP server in .mcp.json, the Figma connector), fill project.config.json, install dependencies and the OutSystems UI submodule, create the GitHub labels, turn a list of deliverables + Figma links into the signed inventory and the loop queue, offer the scheduled routines, and verify the whole thing builds. Use this when a project is newly cloned from the template, when project.config.json still contains <<PLACEHOLDER>> values, when the plugins/skills/MCP servers need configuring for a project, or whenever the user asks to set up / initialise / bootstrap / configure a new project or engagement.
+description: Stand up a freshly cloned OutSystems design-system project in one pass — interview for the project's values, wire up the toolchain (the lsg and outsystems plugins, the ODC MCP server in .mcp.json, the Figma connector), fill project.config.json, install dependencies and the OutSystems UI submodule, create the GitHub labels, turn a list of deliverables + Figma links into the signed inventory and the loop queue, offer the scheduled routines, and verify the whole thing builds. Use this when a project is newly cloned from the template, when project.config.json still contains <<PLACEHOLDER>> values, when the plugins/skills/MCP servers need configuring for a project, or whenever the user asks to set up / initialise / bootstrap / configure a new project or engagement.
 ---
 
 # Project setup — one sitting, one pass
@@ -87,17 +87,17 @@ each one fails in a way that is expensive to discover at 2am instead of now.
 Two plugins, both at **project scope** so a fresh clone and a loop worktree get the same
 versions rather than whatever the operator happens to have installed personally:
 
-- **`outsystems-loop`** — this loop: the skills plus `@maker` and `@checker`.
+- **`lsg`** (from the `live-style-guide-loop` marketplace) — this loop: the skills plus `@maker` and `@checker`.
 - **`outsystems`** — OutSystems' own plugin. **Skills only**; it declares no MCP server. The
   server is the tenant's endpoint in `.mcp.json` (2b). The two halves are useless apart: the
   plugin alone is conventions with no tools, the server alone is tools with no conventions.
 
-Verify both resolve — `/outsystems-loop:design-loop` and `@outsystems-loop:maker` must exist. If
+Verify both resolve — `/lsg:design-loop` and `@lsg:maker` must exist. If
 they do not:
 
 ```
-/plugin marketplace add kharloridado/outsystems-loop
-/plugin install outsystems-loop@outsystems-loop --scope project
+/plugin marketplace add kharloridado/live-style-guide-loop
+/plugin install lsg@live-style-guide-loop --scope project
 ```
 
 Then check `.claude/settings.json` holds **both halves** of each declaration: the enable in
@@ -109,7 +109,7 @@ a plugin whose source it cannot resolve. Move it into the project file by hand i
 `claude plugin` also rewrites that file without preserving key order, so re-read it afterwards
 rather than assuming both halves landed in the same scope.
 
-> **The bootstrap paradox, stated plainly.** This skill ships *in* `outsystems-loop`. If the
+> **The bootstrap paradox, stated plainly.** This skill ships *in* the `lsg` plugin. If the
 > plugin is not installed, nobody can invoke this to install it. That is why the template's
 > `CLAUDE.md` carries the install commands in its "first run" section — and why, if you find
 > yourself here with the plugin missing, the answer is to fix the plugin, never to hand-roll the
@@ -165,7 +165,7 @@ Two things to state while you are here:
 
 | Dependency | Check | If missing |
 |---|---|---|
-| `outsystems-loop` plugin | `/outsystems-loop:design-loop` resolves | install, project scope, both halves |
+| `lsg` plugin | `/lsg:design-loop` resolves | install, project scope, both halves |
 | `outsystems` plugin | its skills resolve | install, project scope |
 | ODC MCP | `.mcp.json` URL matches `odcTenant`; `check:config` passes | re-run init; never hand-edit |
 | Figma MCP | a small read against the library key succeeds | connect it; **blocks the loop entirely** |

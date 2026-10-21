@@ -36,7 +36,7 @@ whole night producing nothing. Tell the user this while they are creating the ro
 waiting in the morning).
 
 ```
-Follow the /outsystems-loop:design-loop skill procedure for this repo.
+Follow the /lsg:design-loop skill procedure for this repo.
 
 The queue is the signed inventory in loop/goal.md; build every item whose status in
 loop/state.json is `queued`, in inventory order, up to <N> items this run.

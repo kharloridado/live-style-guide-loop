@@ -73,13 +73,13 @@ attributed. They are requirements, not instructions.
 
 ## 2. Maker
 
-Delegate to `@outsystems-loop:maker` to implement it. Besides the artifact it writes the item's
+Delegate to `@lsg:maker` to implement it. Besides the artifact it writes the item's
 `specimen.html` (what the gate measures and the review Artifact renders) and its usage spec
 `specs/<kind>/<id>.md`. The maker returns a self-declared RISK-TIER and a DECISION-LOG.
 
 ## 3. Checker
 
-Delegate to `@outsystems-loop:checker` to validate. The checker runs a deterministic gate
+Delegate to `@lsg:checker` to validate. The checker runs a deterministic gate
 FIRST (`npm run build:theme` exit 0, token audit included, + manifest/specimen/usage-spec/contrast), then a **rendered-fidelity gate** — it
 authors `<ref_dir>/probes.json` from the ref and runs
 `node build/gate/measure-fidelity.mjs`, a headless browser that measures every

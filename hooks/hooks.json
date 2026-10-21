@@ -1,5 +1,5 @@
 {
-  "description": "Deterministic gates for outsystems-project-template projects: the theme build before a commit, and a setup check at session start.",
+  "description": "Deterministic gates for live-style-guide-harness projects: the theme build before a commit, and a setup check at session start.",
   "hooks": {
     "PreToolUse": [
       {

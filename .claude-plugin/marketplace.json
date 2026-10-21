@@ -1,12 +1,12 @@
 {
-  "name": "outsystems-loop",
+  "name": "live-style-guide-loop",
   "description": "The OutSystems design-system workflow — skills + maker/checker agents for the Figma → OutSystems loop.",
   "owner": {
     "name": "Kharlo Ridado"
   },
   "plugins": [
     {
-      "name": "outsystems-loop",
+      "name": "lsg",
       "source": "./",
       "description": "Agentic Figma → OutSystems design-system workflow: token extraction, component audit, BEM CSS, Web Components, flag-don't-fix design findings, and an maker/checker build loop with a rendered-fidelity review gate and pre-commit hooks.",
       "version": "4.0.0",

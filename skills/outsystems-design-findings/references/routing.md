@@ -11,7 +11,7 @@ findings.ticketTarget = <owner/repo | Notion DB | Jira key>
 findings.slackChannel = #channel                    # or null
 findings.gate         = high+ | all
 ```
-If unset, the project is not set up yet — run `/outsystems-loop:project-setup`.
+If unset, the project is not set up yet — run `/lsg:project-setup`.
 
 ---
 

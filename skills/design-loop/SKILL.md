@@ -1,5 +1,5 @@
 ---
-description: Build, fix or extend one design-system item end to end — freeze the Figma or written ref, run the maker and checker, and open one PR with its review Artifact — or work through the signed queue in loop/goal.md. Use whenever the user asks to build, restyle, fix or add a state to a component, pattern or token set in an outsystems-project-template project.
+description: Build, fix or extend one design-system item end to end — freeze the Figma or written ref, run the maker and checker, and open one PR with its review Artifact — or work through the signed queue in loop/goal.md. Use whenever the user asks to build, restyle, fix or add a state to a component, pattern or token set in an live-style-guide-harness project.
 ---
 Run the design loop, governed by this project's CLAUDE.md and the outsystems-* skills.
 

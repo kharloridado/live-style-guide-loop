@@ -14,7 +14,7 @@ Three packages, one direction of dependency, and nothing owns anything above or 
 ```
 vendor/outsystems-frontend-skills/     OutSystems, upstream       pinned · never edited
               ▲  read by path at runtime
-outsystems-loop                        this repo                  /plugin install --scope project
+lsg (live-style-guide-loop)            this repo                  /plugin install --scope project
               ▲  read at runtime
 project.config.json                    the consuming project      per-customer values
 ```

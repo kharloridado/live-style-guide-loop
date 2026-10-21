@@ -5,9 +5,9 @@ description: Re-run the checker against an already-built deliverable without reb
 
 # revalidate — judge again, without building again
 
-`/outsystems-loop:revalidate <item-id | PR number | artifact path>`
+`/lsg:revalidate <item-id | PR number | artifact path>`
 
-Runs **`@outsystems-loop:checker`** against an artifact that already exists and reports the
+Runs **`@lsg:checker`** against an artifact that already exists and reports the
 verdict. **It never invokes the maker and never edits source.**
 
 ## Why this exists
