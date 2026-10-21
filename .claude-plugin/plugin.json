@@ -2,7 +2,7 @@
   "name": "lsg",
   "displayName": "Live Style Guide Loop",
   "version": "4.1.0",
-  "description": "Agentic Figma → OutSystems design-system workflow: token extraction, component audit, BEM CSS, Web Components, flag-don't-fix design findings, and an maker/checker build loop with a rendered-fidelity review gate and pre-commit hooks.",
+  "description": "Agentic Figma → OutSystems design-system workflow: token extraction, component audit, BEM CSS, custom Blocks with a required Script, Live Style Guide pages, flag-don't-fix design findings, and a maker/checker build loop with a rendered-fidelity review gate and pre-commit hooks.",
   "author": {
     "name": "Kharlo Ridado"
   },
@@ -16,5 +16,5 @@
     "web-components",
     "accessibility"
   ],
-  "license": "UNLICENSED"
+  "license": "MIT"
 }

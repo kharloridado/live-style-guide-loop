@@ -11,6 +11,7 @@ Pair with `live-style-guide-harness` 0.3 or later, including its `modules` confi
 
 ### Added
 
+- **MIT license.** Other teams may use, copy and adapt the plugin; keep the copyright notice.
 - **The loop knows the Live Style Guide.** `outsystems-style-guide-doc` is rebuilt around it: what a
   change does to the LSG (a new token → nothing when the Styles pages render from the theme; a new
   component → a menu record, a page, a live preview and the class inspector), the page spec, the

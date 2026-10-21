@@ -90,3 +90,8 @@ claude plugin validate . --strict
 
 Bump `version` in both `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` to ship
 an update; commits without a version bump do not reach installed projects.
+
+## License
+
+[MIT](LICENSE). The OutSystems frontend-skills pack a project vendors keeps its own BSD-3-Clause
+licence.
