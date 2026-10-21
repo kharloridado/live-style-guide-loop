@@ -2,13 +2,10 @@
 
 One deliverable, one branch, one PR. This file is the template for its body.
 
-**Why the PR is the handover of reasoning.** The loop's judgment is otherwise invisible: the maker
-picks an approach and rules others out, the checker measures and challenges findings out, and all
-of it used to live in `state.json` and a run report nobody opens next to a diff. A reviewer then
-re-derives intent from the code, which is the expensive half of review. Everything below is
-already produced by the build — this template only moves it to where the review happens.
+**The PR is where the reasoning goes**, so a reviewer does not re-derive intent from the code.
+Everything below is already produced by the build; this template moves it to where review happens.
 
-**Never merge.** The loop opens the PR and stops. Merging is the human signature (hard rule 10).
+**Never merge.** The loop opens the PR and stops. Merging is the human approval.
 
 ## Filling it in
 

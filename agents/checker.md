@@ -17,15 +17,12 @@ Work in this order. **Earlier steps gate later ones.**
 ## 0. Read the project config (before you judge anything)
 `project.config.json` at the repo root defines what "correct" means for THIS project:
 - `classPrefix` — the BEM prefix to enforce.
-- `conventions` — every convention carries a **status**: `confirmed` | `assumed` | `TBD`.
 - `knownFalsePositiveClasses` — finding classes this project has already refuted.
 
 > ### The rule that prevents the most expensive class of mistake
-> **You may NEVER raise a finding whose rule comes from a convention that is not marked `confirmed`.**
+> **Spacing scale, grid, breakpoints and default sizes are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` — never assumed or guessed; with nothing written, raise no finding about them.**
 >
-> If `conventions.spacingBase.status` is `TBD` or `assumed`, then "off the spacing grid" is **not a rule** and must not be flagged. A plausible-but-unverified convention manufactures findings that waste a human triage cycle and get closed as not-planned. If a convention *is* marked `confirmed`, enforce it normally.
->
-> This cuts both ways: do not suppress a check that the config genuinely confirms.
+> "Off the spacing grid" is a finding only when the grid is written down; an assumed default only manufactures findings that get closed as not-planned. When it *is* written, enforce it normally.
 
 > ### The rule that catches what source review structurally cannot
 > **Measure the COMPUTED value, never the authored one.** A correct declaration in our source
@@ -36,7 +33,7 @@ Work in this order. **Earlier steps gate later ones.**
 ## 1. Deterministic gate (hard wall — run FIRST)
 Before any subjective judgment, run the deterministic checks. These cannot be reasoned past:
 - **`npm run build:theme` (Bash) — must exit 0.** It chains these gates, and any one of them failing is a build failure:
-  - `check:config` — no surviving `<<PLACEHOLDER>>`, no leaked example prefix, conventions well-formed.
+  - `check:config` — no surviving `<<PLACEHOLDER>>`, no leaked example prefix.
   - `check:stylesheets` / `check:state` — every hand-edited stylesheet closes its blocks; `loop/state.json` is consistent.
   - `build-theme` — assembles `dist/theme.css` with its TOC + section banners.
   - `validate:theme` — the theme is structurally sound (balanced braces, terminated comments), parses as real CSS, and **every `var(--token)` resolves** (a dangling `var()` with no fallback fails silently at runtime and renders subtly wrong with no error anywhere).
@@ -50,7 +47,7 @@ If the deterministic gate fails → **VERDICT: FAIL with DET-GATE: fail**, stop 
 ## 2. Rendered-fidelity gate (hard wall — the design is not a text file)
 Fidelity is a **measurement**, not an opinion. Do this on every item that renders anything.
 
-The measurement runs through one script, shipped with this plugin:
+The measurement runs through one script, which ships in the project template's `build/gate/`:
 
 ```bash
 node build/gate/measure-fidelity.mjs \
@@ -59,12 +56,9 @@ node build/gate/measure-fidelity.mjs \
   --screenshot review/<item-id>/rendered.png
 ```
 
-It is a **headless** browser driven from Node — not a Chrome extension. That is deliberate and it
-is the whole reason unattended runs can produce a real verdict: the identical command runs at a
-keyboard, in a scheduled routine, and in CI. The old gate drove the browser through an editor-only
-MCP, so every scheduled run reported `unverified`, `unverified` caps at FAIL, and the loop could
-never hand over finished work while nobody was watching. Do not reintroduce an interactive-only
-path. Run it from the **project root**. With no `url` in the probe file it builds
+It is a **headless** browser driven from Node, so the identical command runs at a keyboard, in an
+unattended run and in CI. Do not reintroduce an interactive-only path. Run it from the **project
+root**. With no `url` in the probe file it builds
 `review/<item-id>/specimen.html` from the item's specimen and measures that, serving the repo from a
 virtual origin (no port). It refuses a `dist/theme.css` older than its sources (exit 4) — run
 `npm run build:theme` and re-run.
@@ -150,7 +144,7 @@ State which depth you applied. **When unsure, round UP.**
      `<classPrefix>-` class the maker introduced, check the pattern in
      `vendor/outsystems-frontend-skills/ui-frameworks/outsystems-ui/` and grep `vendor/outsystems-ui/`
      for the widget and its variants, then judge:
-     - A `<classPrefix>-` class **gating** a framework selector — `.uswds-button.btn` — is a
+     - A `<classPrefix>-` class **gating** a framework selector — `.acme-button.btn` — is a
        **FAIL**. That is not an override, it is an opt-in the platform never emits: the widget
        renders unbranded unless a developer types the class into `ExtendedClass`. The correct
        form is the bare `.btn`.
@@ -224,10 +218,9 @@ A finding that turns out not to be real is noise that costs a human a triage cyc
 - **A token that collides by NAME with an OutSystems UI custom property is NEVER a finding.**
   The theme loads after the framework so its `:root` wins — that collision is the entire
   re-branding mechanism, not a rule-1 violation, and "namespace ours to `--<prefix>-*`" is
-  the wrong recommendation. (Filed once as a high-severity bug on a real project; closed as
-  backwards.) What you MAY raise is a mapping question — *which* step of the design's scale
+  the wrong recommendation. What you MAY raise is a mapping question — *which* step of the design's scale
   `--space-m` should be — and that is register-only, addressed to a designer.
-- **Do not raise anything whose rule is an unconfirmed convention** (see §0).
+- **Do not raise anything whose rule is not written in the project's specs** (see §0).
 - **Any value you RECOMMEND must be verified before it ships in a ticket.** Recompute the contrast of your own proposed replacement — a recommendation that also fails is worse than no recommendation, and it will be read by a designer as authoritative.
 - Confirm a finding only if it **survives** refutation. Record refuted ones separately as **challenged-out** (register-only, with the usage evidence) — they are NOT filed as bugs.
 - The challenge must **not** suppress REAL failures: if the failing pair is genuinely rendered (e.g. white text on a mid-tone status fill), confirm it.

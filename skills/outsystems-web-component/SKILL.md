@@ -332,6 +332,7 @@ redesign it.
 
 ## Always read these references before generating
 
+- `references/web-components-vs-blocks.md` — When a native Block (L4) beats a Web Component (L5)
 - `references/web-component-patterns.md` — Reusable patterns (form-associated, list, container, etc.)
 - `references/shadow-dom-gotchas.md` — Common pitfalls in OutSystems context
 - `references/event-design.md` — How to design events that play well with OutSystems Client Actions

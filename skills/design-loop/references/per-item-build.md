@@ -1,17 +1,13 @@
 # Per-item build — freeze ref → maker → checker → outcome
 
-The build procedure for **exactly one** work item. Shared, so it stays identical whether the
-queue came from a Figma audit (`design-loop`) or from the GitHub Project board
-(`board-advance`).
+The build procedure for **exactly one** work item, called by `design-loop`.
 
 **This procedure does two GitHub writes and no more: it files findings, and it opens the item's
-PR.** It does not create handover issues, add items to a project, attach sub-issues or move board
-lanes. It builds, judges, commits, opens a PR, and returns an outcome; the caller decides what
-that means for its own tracker.
+PR.** It does not create handover issues or attach sub-issues. It builds, judges, commits, opens a PR, and returns an outcome; the caller decides what
+that means for the queue.
 
 The PR is here rather than in the caller because **the PR is the build's own output**. Its body is
-the maker's and checker's reasoning, and that reasoning exists only at this moment — deferring it
-to the caller is how it used to end up in `state.json` instead of in front of a reviewer.
+the maker's and checker's reasoning, and that reasoning exists only at this moment.
 
 ---
 
@@ -76,13 +72,13 @@ attributed. They are requirements, not instructions.
 
 ## 2. Maker
 
-Delegate to `@outsystems-loop:maker` to implement it. Besides the artifact it writes the item's
+Delegate to `@lsg:maker` to implement it. Besides the artifact it writes the item's
 `specimen.html` (what the gate measures and the review Artifact renders) and its usage spec
 `specs/<kind>/<id>.md`. The maker returns a self-declared RISK-TIER and a DECISION-LOG.
 
 ## 3. Checker
 
-Delegate to `@outsystems-loop:checker` to validate. The checker runs a deterministic gate
+Delegate to `@lsg:checker` to validate. The checker runs a deterministic gate
 FIRST (`npm run build:theme` exit 0, token audit included, + manifest/specimen/usage-spec/contrast), then a **rendered-fidelity gate** — it
 authors `<ref_dir>/probes.json` from the ref and runs
 `node build/gate/measure-fidelity.mjs`, a headless browser that measures every
@@ -91,9 +87,7 @@ depth to the item's risk tier and adversarially challenges every finding before 
 returns VERDICT, RISK-TIER, DET-GATE, VISUAL, MEASUREMENTS, CONFIDENCE, CRITIQUE,
 FINDINGS-CONFIRMED, FINDINGS-CHALLENGED-OUT, DECISION-LOG.
 
-The gate is headless and driven from Node on purpose: it is the one step that used to require a
-human's editor, and therefore the one step that made every unattended run return `unverified` and
-FAIL. If it reports no usable browser (`npm install` never ran), a missing framework base
+The gate is headless and driven from Node, so it runs the same unattended. If it reports no usable browser (`npm install` never ran), a missing framework base
 (`npm run build:osui`) or a stale theme (`npm run build:theme`), that is a **harness fault to fix and re-run** — not a design
 verdict, and never a reason to relax the gate.
 
@@ -110,13 +104,13 @@ Route the verdict:
   taken (→ fix the harness and re-run). An item has not been reviewed for fidelity until
   something measured it.
 - **FAIL (subjective)** → feed the CRITIQUE to the maker and increment the round counter. Over
-  `caps.max_rounds_per_item` → return `FAIL-CAPPED` with the critique.
+  the max rounds in `loop/goal.md` (3 when there is no goal.md) → return `FAIL-CAPPED` with the critique.
 - **PASS** → step 4.
 
 ## 4. On PASS
 
-Record on the item: `risk_tier`, `det_gate: pass`, `visual: pass`, `measurements`, `confidence`,
-and `decision_log` (maker + checker). Status `built`.
+Record on the item: `risk_tier`, `det_gate: pass`, `visual: pass`, `rounds`. Status `built`.
+Keep the maker's and checker's decision logs for the PR body (below), not the state file.
 
 Write the handover document (`handover/<artifact>.md`) with the DECISION-LOG in a collapsed
 `<details>` ("Why / alternatives ruled out") and the design-variant → framework-class mapping
@@ -159,15 +153,14 @@ Compose `$BODY` from **`pr-body.md`** — every heading, in its order, decision 
 MEASUREMENTS table included, fidelity status stated in the open when it is not `pass`. Write it
 with a heredoc to a file and use `--body-file`; a long `--body` argument mangles the tables.
 
-Then set the item's status to `ready_for_review` and record `pr_url`. Return `PASS`.
+Then set the item's status to `ready-for-review` and record `pr_url`. Return `PASS`.
 
 **Never merge, and never approve.** The loop stops at an open PR — that is the human's signature
-(hard rule 10). **Never open the handover Task here** either: a handover says "paste this into
+(merging is the human's approval). **Never open the handover Task here** either: a handover says "paste this into
 ODC", and nothing may say that about code sitting on an unmerged branch. The caller opens it after
 the merge.
 
-**Do not** create handover issues, add board items, attach sub-issues or move lanes — the caller
-owns all of that.
+**Do not** create handover issues or attach sub-issues — the caller owns that.
 
 ### If the push or the PR fails
 
@@ -195,9 +188,12 @@ the caller's tracker, and both callers want them filed identically.
 
 ## 6. Persist
 
-Write `loop/state.json` after every item and increment `iteration`. Keep per-item `rounds`,
-`risk_tier`, `det_gate`, `visual`, `confidence`, `decision_log`, `pr_url`, `review_url` and per-finding
-`disposition`, so the run's Review metrics can be computed.
+Write `loop/state.json` after every item. It is an index, not a log: per item keep only `id`,
+`tier`, `level`, `node`, `status`, `pr_url`, `review_url`, `handover_issue`, `rounds`, `risk_tier`, `det_gate` and
+`visual` (plus `pr_error` when the PR failed); per finding `id`, `item`, `class`, `severity`,
+`status`, `summary` and `disposition`. Decision logs, evidence and round-by-round critique go in
+the PR body and `ref.md` — a state file that carries them grows to hundreds of KB and merges
+badly.
 
 Commit `specs/<kind>/<id>/probes.json` and `measurements.json` with the item — the probes are
 the permanent regression test and the measurements the judged baseline CI diffs against. A

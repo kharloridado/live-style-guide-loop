@@ -47,5 +47,5 @@ If the URL points to the whole file (no `node-id`), ask the user:
 
 Sometimes the user shares just `42:1029` or `42-1029` without a URL. In that case:
 - Check if they've shared the fileKey earlier in the conversation
-- Check memory for "OutSystems project: figma file = ..." entry (if project context has it)
+- Use `figma.fileKey` from `project.config.json`
 - Otherwise ask for the full URL or fileKey separately

@@ -1,6 +1,6 @@
 ---
 name: outsystems-figma-integration
-description: Read Figma files directly via the connected Figma MCP to extract design tokens, component metadata, and visual references for OutSystems frontend work. Use this skill whenever the user shares a Figma URL, mentions a Figma file/frame/node, or asks to "pull" / "fetch" / "import" / "read" anything from Figma. This skill is the preferred entry point for Phase 1 audits when a Figma URL is available — it bypasses screenshot extraction entirely.
+description: Read Figma files directly via the connected Figma MCP to extract design tokens, component metadata, and visual references for OutSystems frontend work. Use this skill whenever the user shares a Figma URL, mentions a Figma file/frame/node, or asks to "pull" / "fetch" / "import" / "read" anything from Figma. This skill is the preferred entry point for a component audit when a Figma URL is available — it bypasses screenshot extraction entirely.
 ---
 
 # Figma Integration (Direct MCP)
@@ -10,9 +10,7 @@ Pull design context, tokens, screenshots, and component metadata directly from F
 ## Pre-flight
 
 1. Verify Figma MCP is connected (it's a deferred tool — call `tool_search` for "figma" if needed)
-2. Check memory for "OutSystems convention:" entries → if missing, invoke `outsystems-onboarding`
-3. Check memory for "OutSystems project:" entries → if missing, invoke `outsystems-project-context`
-4. Use stored conventions in all output
+2. Read `project.config.json` for `classPrefix`, `jsNamespace` and `environment`. If the file is missing or still holds `<<PLACEHOLDER>>` values, stop and run `/lsg:project-setup` — never guess a value. Spacing scale, grid, breakpoints and default sizes are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` — never assumed or guessed; with nothing written, raise no finding about them.
 
 ## When to use
 
@@ -33,7 +31,7 @@ Use these via `tool_search` then call them. **Always read the tool descriptions 
 | Tool | When to use |
 |---|---|
 | `Figma:get_design_context` | **Primary tool for design-to-code workflow.** Pulls node structure + code-relevant data for a Figma node. Use first. |
-| `Figma:get_variable_defs` | Extract design tokens (colors, typography, spacing) as Figma Variables. Critical for Phase 2. |
+| `Figma:get_variable_defs` | Extract design tokens (colors, typography, spacing) as Figma Variables. Critical for token extraction. |
 | `Figma:get_metadata` | Component properties, variants, descendant structure. Use when `get_design_context` isn't enough. |
 | `Figma:get_screenshot` | Visual reference for a node. Use for Style Guide documentation. |
 | `Figma:search_design_system` | Search for components/variables/styles by name. Use to check what already exists. |
@@ -61,7 +59,7 @@ Steps:
 3. Call `Figma:get_variable_defs` for the same node (gets tokens used)
 4. Call `Figma:get_screenshot` for visual reference
 5. Pass all extracted data to the `outsystems-component-audit` skill to classify components
-6. Output: full Phase 1 audit (component inventory + brand flags + token deltas + plan)
+6. Output: a full component audit (component inventory + brand flags + token deltas + plan)
 
 ### Pattern B: Token extraction only
 
@@ -132,7 +130,7 @@ After pulling Figma data, present a brief summary before proceeding:
   - Variables: 24 colors, 8 typography, 16 spacing
   - Screenshot: [reference for Style Guide]
 
-Proceeding with [Phase 1 audit / token extraction / component analysis]...
+Proceeding with [component audit / token extraction / component analysis]...
 ```
 
 Then route to the appropriate downstream skill.

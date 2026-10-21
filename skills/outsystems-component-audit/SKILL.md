@@ -5,12 +5,11 @@ description: Analyze a Figma design and produce a structured component audit tha
 
 # OutSystems Component Audit
 
-Phase 1 of the workflow: structured triage of a design before any code is written.
+Structured triage of a design before any code is written.
 
 ## Pre-flight
 
-1. Check `memory_user_edits` for "OutSystems convention:" entries. If missing, invoke `outsystems-onboarding` first.
-2. Use the stored prefix and conventions in all output.
+1. Read `project.config.json` for `classPrefix`, `jsNamespace` and `environment`. If the file is missing or still holds `<<PLACEHOLDER>>` values, stop and run `/lsg:project-setup` — never guess a value. Spacing scale, grid, breakpoints and default sizes are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` — never assumed or guessed; with nothing written, raise no finding about them.
 
 ## When to use
 
@@ -36,10 +35,21 @@ An audit that classifies from memory inflates L4 and L5 — every block it fails
 something to build. **If the submodule is absent, say so and stop.** An audit with a guessed catalog
 is worse than no audit: it produces a costed plan for work that did not need doing.
 
+## The three outcomes
+
+| Class | Outcome |
+|---|---|
+| **Exists as-is** | Use the OutSystems UI widget. Verify it matches within tolerance; if not, it is the row below. |
+| **Exists, not exact** | **Dual track.** Alignment: L1–L3 overrides (token / utility class / `ExtendedClass` + BEM) so the stock widget lands near the design for any developer who reaches for it. Canonical: the custom Block or Web Component (L4–L5) the team ships. |
+| **Doesn't exist** | Build it: Web Component (L5) + Block wrapper — only after the L4.5 gate. |
+
+"Customize OutSystems UI" never means editing or forking the module — only layers on top of it.
+Tier (build order) and level (L1–L5, effort) are independent: a pattern can be a pure L1 change.
+
 ## Inputs
 
 1. **Visual** (screenshot, Figma frame export, or detailed description)
-2. **Current Theme tokens** (read from prior conversation or memory; otherwise assume OutSystems UI defaults)
+2. **Current Theme tokens** (`tokens/*.css` and `specs/tokens/token-reference.md`; otherwise OutSystems UI defaults)
 3. **Screen context** (mobile / desktop / both? page purpose?)
 
 ## Output: structured audit (5 sections, in order)
@@ -115,12 +125,12 @@ Recommended sequence with escalation levels and skill routing:
 
 ```
 Recommended order:
-1. Update :root tokens                  → Phase 2 / outsystems-token-extractor
+1. Update :root tokens                  → outsystems-token-extractor
 2. Hero card customization              → L3, outsystems-bem-css
 3. Featured product card (custom Block) → L4, outsystems-bem-css
 4. Pricing tier toggle                  → L5, outsystems-web-component
-5. Document new components              → Phase 4, outsystems-style-guide-doc
-6. Validate in browser                  → Phase 5
+5. Document new components              → outsystems-style-guide-doc
+6. Validate in browser                  → the fidelity gate
 ```
 
 ### 5. Findings Register
@@ -141,7 +151,7 @@ Key principle restated: the audit recommends and tracks; it does **not** rewrite
 Offer next actions explicitly:
 
 > "Next steps available:
-> - Generate the :root update for the token deltas (Phase 2)
+> - Generate the :root update for the token deltas
 > - Generate BEM CSS for the hero card customization (L3)
 > - Generate the pricing tier Web Component + Block wrapper (L5)
 > Which would you like first?"
@@ -151,6 +161,6 @@ If the user just says "all of it" or "do everything," proceed in order without a
 ## Reference
 
 - `references/customization-decision-tree.md` — L1–L5 decision tree with Web Component routing
-- `references/figma-mcp-usage.md` — reading the design source
+- Reading the design source: the `outsystems-figma-integration` skill
 - The OutSystems UI pattern catalog is **not** duplicated here. Read `blocks-index.md` upstream.
 - `outsystems-design-findings` skill — schema for the Findings Register (section 5) and ticket/Slack routing

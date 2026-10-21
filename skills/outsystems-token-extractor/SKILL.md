@@ -6,8 +6,7 @@ description: Translate Figma design tokens into OutSystems UI CSS custom propert
 # OutSystems Token Extractor (Figma-aware)
 
 ## Pre-flight
-1. Check memory for `OutSystems convention:` entries. If missing → invoke `outsystems-onboarding`.
-2. Use stored spacing base, token style, and prefix silently.
+1. Read `project.config.json` for `classPrefix`, `jsNamespace` and `environment`. If the file is missing or still holds `<<PLACEHOLDER>>` values, stop and run `/lsg:project-setup` — never guess a value. Spacing scale, grid, breakpoints and default sizes are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` — never assumed or guessed; with nothing written, raise no finding about them.
 
 ## Which variable system — check this first
 
@@ -54,8 +53,7 @@ is the point: the theme loads after the framework, so its `:root` wins, and ever
 the app — including the ones this project will never open — renders in the customer's brand.
 
 So: **never namespace a token away from a framework name to dodge a collision**
-(`--acme-space-m` beside `--space-m`), and **never file a collision as a finding.** Both have
-been tried on a real project; both are backwards. A theme that shares no names with the
+(`--acme-space-m` beside `--space-m`), and **never file a collision as a finding.** A theme that shares no names with the
 framework themes nothing.
 
 What a collision *does* deserve is a recorded decision, because you are re-pointing a value the

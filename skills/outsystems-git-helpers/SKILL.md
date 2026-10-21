@@ -1,11 +1,11 @@
 ---
 name: outsystems-git-helpers
-description: Generate Git-compatible artifacts for OutSystems frontend work — commit messages, branch names, PR descriptions, .gitignore entries, and CHANGELOG entries — following conventional commits and the user's stored project context. Use this skill whenever the user asks for commit messages, branch names, PR descriptions, or anything related to versioning generated components. Designed for hybrid workflow: generate here in Claude.ai, commit via Claude Code or your IDE.
+description: Generate Git-compatible artifacts for OutSystems frontend work — commit messages, branch names, PR descriptions, .gitignore entries, and CHANGELOG entries — following conventional commits and the project's `project.config.json`. Use this skill whenever the user asks for commit messages, branch names, PR descriptions, or anything related to versioning generated components.
 ---
 
 # Git Workflow Helpers
 
-This skill makes Claude.ai output ready to commit. It doesn't directly interact with Git or GitHub — that's done in Claude Code or your IDE. It generates the metadata around your commits.
+This skill writes the metadata around a commit — message, branch name, PR description, changelog entry. The design loop's own PR body is `design-loop/references/pr-body.md`; this covers everything else.
 
 ## When to use
 
@@ -17,12 +17,8 @@ This skill makes Claude.ai output ready to commit. It doesn't directly interact 
 
 ## Pre-flight
 
-Check memory for:
-- `OutSystems convention: prefix = "..."` (for naming consistency)
-- `OutSystems project: customer = "..."` (for commit scope)
-- `OutSystems project: name = "..."` (for commit scope)
-
-If missing, project context isn't critical for this skill — proceed with sensible defaults.
+Read `classPrefix`, `customer` and `project` from `project.config.json` for naming and commit
+scope. If it is not filled in yet, proceed without them.
 
 ## Conventional Commits format
 
@@ -256,11 +252,3 @@ After generating any artifact (component, tokens, doc), proactively suggest the 
 > ```
 >
 > Branch suggestion: `feat/tokens-v2-1-redesign`"
-
-The user can copy this directly into Claude Code or their terminal.
-
-## For users with GitHub MCP later
-
-If GitHub MCP becomes available, the same patterns work — Claude can call `Github:create_branch`, `Github:commit_files`, `Github:create_pull_request` using the generated commit messages and PR descriptions.
-
-For now (Claude.ai), generate the text; commit via Claude Code or terminal.

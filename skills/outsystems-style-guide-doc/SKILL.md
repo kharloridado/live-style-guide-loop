@@ -9,13 +9,12 @@ Produce structured documentation pages for the Live Style Guide — the single s
 
 ## Pre-flight
 
-1. Check memory for "OutSystems convention:" entries. If missing → invoke `outsystems-onboarding` first.
-2. Use stored prefix and environment.
+1. Read `project.config.json` for `classPrefix`, `jsNamespace` and `environment`. If the file is missing or still holds `<<PLACEHOLDER>>` values, stop and run `/lsg:project-setup` — never guess a value. Spacing scale, grid, breakpoints and default sizes are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` — never assumed or guessed; with nothing written, raise no finding about them.
 
 ## When to use
 
 - User says "document this", "add to Style Guide", "create a spec page"
-- User just finished building a new component (Phase 4 of the workflow)
+- User just finished building a new component
 - User updated `:root` tokens and needs swatches/specimens refreshed
 - User asks for a component handoff doc
 
