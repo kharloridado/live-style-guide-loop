@@ -6,6 +6,10 @@ All notable changes to the `lsg` plugin. The format follows
 
 ## [Unreleased]
 
+## [4.2.0] — 2026-10-21
+
+Pair with `live-style-guide-harness` 0.3 or later (`npm run docs:odc`).
+
 ### Added
 
 - **Approved work gets built into OutSystems.** New skill `/lsg:deliver`: after a deliverable PR
@@ -15,6 +19,11 @@ All notable changes to the `lsg` plugin. The format follows
   same steps to a developer — a Mentor Studio prompt on ODC, Service Studio steps on O11. The
   handover issue opens either way, saying which happened. The design loop's pre-flight runs it for
   anything merged since the last run.
+- **Every delivery carries its documentation.** `/lsg:deliver` packages the Markdown the merge
+  added or changed (the item's usage spec, and any foundation, token reference or decision) with
+  `npm run docs:odc` and adds it to the theme module's Resources, and the Live Style Guide's where
+  it renders them, so Mentor and other agents building in those apps read the same rules people
+  do. Without an MCP, the handover names the files to import.
 
 ### Changed
 

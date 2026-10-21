@@ -1,6 +1,6 @@
 ---
 name: deliver
-description: Get merged design-system work built into OutSystems — through the OutSystems MCP when one is connected (the ODC tenant endpoint, or Service Studio's own MCP server on O11), verified in a real browser, and otherwise as a handover a developer runs in Mentor Studio (ODC) or Service Studio (O11). Use it right after a deliverable PR merges, when the user asks to deliver, apply, ship to OutSystems or "get it built in ODC/O11", and from the design loop's pre-flight for anything merged since the last run. Never on unmerged work.
+description: Get merged design-system work built into OutSystems, with its Markdown documentation — through the OutSystems MCP when one is connected (the ODC tenant endpoint, or Service Studio's own MCP server on O11), verified in a real browser, and otherwise as a handover a developer runs in Mentor Studio (ODC) or Service Studio (O11). Use it right after a deliverable PR merges, when the user asks to deliver, apply, ship to OutSystems or "get it built in ODC/O11", and from the design loop's pre-flight for anything merged since the last run. Never on unmerged work.
 ---
 
 # deliver — merged work, built into OutSystems
@@ -20,7 +20,9 @@ gh pr list --state merged --label deliverable --limit 30 --json number,title,hea
 Take the deliverable PRs with no handover issue yet (search open and closed issues for the item
 id). Work from a fresh checkout of `origin/main`, never the PR branch: what was merged is what
 ships. `npm run build:theme` must exit 0 there, then `npm run embed:handover` so the handover
-carries the merged code.
+carries the merged code, and `npm run docs:odc` so `dist/odc-docs-<version>-changed.zip` holds the
+Markdown the merge added or changed — the item's usage spec, and any foundation, token reference
+or decision it touched.
 
 ## 2. Pick the channel — once per run, and say which
 
@@ -45,6 +47,10 @@ change and build in the shape it already has:
 3. **Its Live Style Guide page** in `modules.liveStyleGuide` — menu record, page, preview, class
    inspector — and on O11 the demo Block in `modules.patPreview` first
    (`outsystems-style-guide-doc`).
+4. **Its documentation**: the Markdown in the changed set, as Resources in `modules.theme` (and in
+   `modules.liveStyleGuide` where it renders them). That is what keeps the design system readable
+   by Mentor and any other agent building in those apps, not only by people. Where the MCP has no
+   way to add a Resource, the handover names the files to import (§4).
 
 Publish to the **development** environment only. Deploying or promoting to any other stage is a
 person's call, never this step's; the server's mutating tools ask for confirmation, and the merge
@@ -71,6 +77,10 @@ Start the body with one **Delivery** line:
   as the record and the way to rebuild it.
 - MCP path, partly landed: what landed, what did not and why; the developer runs the rest.
 - Handover path: "No OutSystems MCP in this run (<reason>). Run the steps below."
+
+Then a **Documentation** line naming the Markdown files from the changed set, and whether they were
+imported or are the developer's to import from `npm run docs:odc` on `main`. The ledger
+(`handover/odc-docs-imported.json`) is recorded at release, so a re-import then is harmless.
 
 Set the item's status to `merged` when its PR is found merged, and to `handover` once the issue is
 open, in that order, so a run that crashes in between leaves the issue to be opened next time.
