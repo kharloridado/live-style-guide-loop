@@ -60,8 +60,8 @@ Read these; never restate them.
 ## What this plugin owns
 
 Figma ingestion · token translation · BEM naming · Web Components and their internals · the
-flag-don't-fix findings pipeline · Style Guide pages · git artifacts · onboarding and project
-context · the maker/checker loop, the rendered-fidelity gate, risk tiers, adversarial refutation ·
+flag-don't-fix findings pipeline · Style Guide pages · git artifacts · project setup · the
+maker/checker loop, the rendered-fidelity gate, risk tiers, adversarial refutation ·
 one PR per deliverable · the WCAG 2.2 delta · **driving Mentor over the MCP and verifying what
 it actually did**.
 

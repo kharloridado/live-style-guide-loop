@@ -10,9 +10,7 @@ Pull design context, tokens, screenshots, and component metadata directly from F
 ## Pre-flight
 
 1. Verify Figma MCP is connected (it's a deferred tool — call `tool_search` for "figma" if needed)
-2. Check memory for "OutSystems convention:" entries → if missing, invoke `outsystems-onboarding`
-3. Check memory for "OutSystems project:" entries → if missing, invoke `outsystems-project-context`
-4. Use stored conventions in all output
+2. Read `project.config.json` for `classPrefix`, `jsNamespace`, `environment` and `conventions`; use a convention only when its `status` is `confirmed`. If the file is missing or still holds `<<PLACEHOLDER>>` values, stop and run `/outsystems-loop:project-setup` — never guess a value.
 
 ## When to use
 

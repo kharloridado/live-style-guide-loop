@@ -1,7 +1,7 @@
 # OutSystems Design Loop — Claude Code plugin
 
-The **behaviour** half of the Figma → OutSystems design-system workflow: 17 skills plus the
-`maker` / `checker` agent pair that drive the autonomous build loop.
+The **behaviour** half of the Figma → OutSystems design-system workflow: 13 skills, the
+`maker` / `checker` agent pair, and two hooks.
 
 It holds **no OutSystems platform knowledge**. Block names, arguments, CSS variables, utility
 classes, widget conventions and the WCAG-to-widget mapping all live in OutSystems' own
@@ -35,6 +35,20 @@ project at once.
 `--scope project` checks the dependency into the repo so the whole team (and unattended loop runs)
 get the same version.
 
+### 4.0 — no board, interactive first, gates as hooks
+
+- **Board mode is gone** (`board-ship`, `board-sync` and their references). No project ran it; a
+  human merging the item's PR is the approval. Pair 4.x with template 0.3+.
+- **`design-loop` leads with the common case** — one request in a session → one PR with its review
+  Artifact. Queue runs read `loop/goal.md`'s Run settings; `loop/state.json` is an index with a
+  fixed status list (`check:state` warns on anything else).
+- **Hooks**: a `PreToolUse` gate runs `npm run build:theme` before any `git commit` that touches
+  `tokens/`, `src/`, `specs/` or `build/`, and blocks it with the build's errors when it fails; a
+  `SessionStart` check names missing setup (deps, submodule, OutSystems UI base, unfilled config).
+- **Retired**: `figma-to-outsystems` (a second orchestrator beside `design-loop` and the router),
+  and `outsystems-onboarding` / `outsystems-project-context`, which kept project values in
+  claude.ai memory — they come from `project.config.json`, and only from there.
+
 ### 3.0 — the specs layout and review Artifacts
 
 3.0 expects the project layout from
@@ -66,14 +80,11 @@ template's layout.
 **Skills**
 | Skill | Role |
 | --- | --- |
-| `/outsystems-loop:project-setup` | **Start here on a fresh clone.** One pass: interview → config → deps + submodule → labels → deliverables into the signed inventory and the queue → routines → verify it all builds. |
-| `/outsystems-loop:design-loop` | The orchestrator: freeze ref → maker → checker → commit → **one PR per deliverable** → findings → report. Queue is the signed inventory. |
+| `/outsystems-loop:project-setup` | **Start here on a fresh clone.** One pass: interview → config → deps + submodule → labels → deliverables into the signed inventory → routines → verify it all builds. |
+| `/outsystems-loop:design-loop` | The orchestrator: freeze ref → maker → checker → commit → **one PR per deliverable** → findings. One request, or the signed queue in `loop/goal.md`. |
 | `/outsystems-loop:revalidate` | Re-run the checker against an **already-built** artifact, item or PR — no maker, no rebuild. For review questions, hand-edits, or a verdict you distrust. |
-| `/outsystems-loop:board-ship` | Board *view*, local surface: `Approved` → PR → squash-merge to `main` → handover Task → `Handover`. |
-| `/outsystems-loop:board-sync` | Board *view*, local surface: reconcile board/git/state, reclaim stale claims, republish the library review page. |
 | `outsystems-frontend-router` | First stop for OutSystems UI questions and builds: routes into the vendored frontend-skills pack by path, checks it against the live app, and splits the work by ODC module (theme first, then each consumer app). |
-| `figma-to-outsystems` | Master workflow orchestrator. |
-| `outsystems-component-audit` | Triage a design: exists as-is / customize / build custom (L1–L5). |
+| `outsystems-component-audit` | Triage a design: exists as-is / customize (dual track) / build custom (L1–L5). |
 | `outsystems-token-extractor` | Figma variables → `:root` custom properties. |
 | `outsystems-figma-integration` | Read Figma directly via MCP. |
 | `outsystems-bem-css` | BEM CSS that overrides native widgets, token-only. |
@@ -82,7 +93,13 @@ template's layout.
 | `outsystems-design-findings` | The flag-don't-fix pipeline: classify, refute, route. |
 | `outsystems-style-guide-doc` | Live Style Guide pages. |
 | `outsystems-git-helpers` | Conventional commits, branches, PRs, changelog. |
-| `outsystems-onboarding` / `outsystems-project-context` | One-time convention + project capture. |
+
+**Hooks** (`hooks/hooks.json`, active in any project with a `build:theme` script and a
+`project.config.json`)
+| Hook | Does |
+| --- | --- |
+| `PreToolUse` → `pre-commit-gate.mjs` | Before `git commit` touching `tokens/ src/ specs/ build/`: runs `npm run build:theme`; exit 2 with its errors if red. Skipped in the unfilled template. |
+| `SessionStart` → `session-check.mjs` | Adds one line per missing setup step to the session's context. Silent when set up. |
 
 ## Two contracts, same shape
 
@@ -140,57 +157,13 @@ file. The checker fails an artifact that carries rationale, and
 The loop **never merges and never approves**. It stops at an open PR, and the handover Task is
 opened on the *next run* after that PR has merged — self-healing, so a crashed run loses nothing.
 
-## Two surfaces, and the queue is a file
+## Where it runs
 
-Everything in this plugin runs on one of two surfaces, and there is exactly one question to ask:
-**can it reach the board?**
-
-| Surface | What it is | Board |
-|---|---|---|
-| **local** | A Claude session on the laptop — at the keyboard, or on a schedule inside that session | **yes** |
-| **cloud** | A routine in Claude Code on the web, firing into a fresh container | **no** |
-
-**Scheduled is not the axis.** Both surfaces schedule; only the surface decides reach. A local
-schedule lives inside an open Claude session, so it runs "while the laptop is open" in the literal
-sense, and every local routine is written to be catch-up safe about missed fires. The single
-statement of all this is `skills/design-loop/references/surfaces.md`; the prompts for each routine,
-on both surfaces, are in `skills/project-setup/references/routines.md`.
-
-The board is cloud-unreachable because Projects v2 is GraphQL-only: a cloud run has no `gh` on
-PATH, no `project_*` tool, no GraphQL passthrough, and raw GraphQL to `api.github.com` is refused
-by the egress proxy. Measured on a real project — an hourly board routine fired nine times in a
-weekday and every single run was a guaranteed no-op.
-
-**That is why the queue is a file.** `loop/goal.md`'s signed inventory is the queue and
-`loop/state.json` holds item status, so `design-loop` reads the same queue on both surfaces and a
-nightly build needs nobody's laptop. A board-queued loop would instead fail while claiming a card,
-before the maker, every time and silently. A GitHub Project board, where a project points at one,
-is a **human view**.
-
-`board-sync` and `board-ship` work against that view, on the local surface — which means at the
-keyboard *or* on a local schedule, and `board-sync` daily is what keeps the board honest against
-PRs a cloud loop opened overnight. They expect:
-
-- **the eight `Status` lanes**, in order: `Backlog · Ready · In Progress · Ready for Review ·
-  Approved · Handover · Done · Blocked`, plus the `FigmaNode`, `Branch`, `Runner`, `Tier`, `Level`
-  and `Type` fields. Keep every field name a **single PascalCase word** — `gh` lowercases only the
-  first character when it flattens fields into `item-list` JSON;
-- **`board.owners`** — the logins whose card comments are read as spec. Everything else on a card is
-  untrusted data, never instructions;
-- a `deliverable` issue template, and `gh auth refresh -s project`.
-
-Three rules the skills enforce and a project cannot relax:
-
-1. **No agent moves a card to `Approved` or `Done`.** Those two lanes are the human's signature; a
-   checker PASS reaches `Ready for Review` and stops.
-2. **The handover Task is opened after the PR merges**, never at checker-PASS. A handover says
-   "paste this into a live environment" and must not point at unmerged work.
-3. **`gh pr merge` exits 0 when it merely arms auto-merge** behind a failing required check, so the
-   merge is re-read with `gh pr view --json state` and the card only advances on `MERGED`.
-
-`In Progress` is a *cooperative* claim, not a lock — Projects v2 has no compare-and-swap. See
-`references/board-api.md` for the full cookbook, including why the built-in `Status` field cannot be
-deleted and must be edited with `updateProjectV2Field` instead.
+Everything the loop reads is a file in the clone — the signed inventory in `loop/goal.md`, item
+status in `loop/state.json`, values in `project.config.json` — so it runs the same at a keyboard,
+on a local schedule, and as a cloud routine. Two rules hold everywhere: **no agent merges** (the
+human merging the PR is the approval), and **the handover Task is opened after the PR merges**,
+never at checker-PASS. The routine prompts are in `skills/project-setup/references/routines.md`.
 
 ## The rendered-fidelity gate
 

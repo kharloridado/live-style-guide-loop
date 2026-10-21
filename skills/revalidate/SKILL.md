@@ -82,8 +82,8 @@ the output is comparable with the verdict already in the PR.
 ### 4. Report, and route findings the same way the loop does
 
 - **PASS** — say so, and note anything that changed since the PR's recorded verdict. If the item
-  was `needs-human`, it may now move to `ready_for_review`; record `visual`, `det_gate`,
-  `confidence` and the new `decision_log` on the item in `loop/state.json`.
+  was `needs-human`, it may now move to `ready-for-review`; record `visual` and `det_gate`
+  on the item in `loop/state.json`, and post the new decision log as a PR comment.
 - **FAIL (drift)** — the build no longer matches the ref. **Drift is never a finding**: it goes
   back to the maker. Report the MEASUREMENTS table and say the item needs a rebuild.
 - **FAIL (subjective)** — report the CRITIQUE. Do not fix it here.

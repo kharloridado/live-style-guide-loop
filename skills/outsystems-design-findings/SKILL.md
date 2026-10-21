@@ -106,17 +106,17 @@ Every finding is recorded in the project's `findings/findings-register.md` as a 
 
 ## Routing (GitHub-first, connector-agnostic)
 
-The destination is **set per project**, not hard-coded. Read it from the project's `project.config.json` (fields `findings.ticketing` and `findings.slack_channel`) or from memory (`OutSystems project: findings routing = ...`). Supported destinations:
+The destination is **set per project**, not hard-coded. Read it from the project's `project.config.json` (`findings.ticketing`, `findings.ticketTarget`, `findings.slackChannel`, `findings.gate`). Supported destinations:
 
-- **GitHub Issues + Projects (default).** Findings become issues in the project repo, **filed as the Bug type** (plus a `bug` label as the reliable fallback) and labeled by type/severity, optionally added to a Findings Project board. Created via the `gh` CLI in the Claude Code half of the hybrid workflow — this works on the private repo with no MCP dependency. This is the default because the code already lives on GitHub and findings stay next to it.
+- **GitHub Issues + Projects (default).** Findings become issues in the project repo labelled `finding` + `bug` + type + severity — labels are the whole mechanism; pass no `--type` unless the repo has issue types configured. Created with the `gh` CLI, no MCP dependency. This is the default because the code already lives on GitHub and findings stay next to it.
 - **Notion** (`Notion` connector) — if a project tracks design work in Notion.
 - **Jira** via the Atlassian Rovo connector — if a project already runs on Jira.
 
 **Notifications:**
 - For GitHub, the zero-connector path is GitHub's own **Slack app** subscribed to the repo/label (e.g. `/github subscribe owner/repo issues +label:finding`) — no Claude-side Slack connector required. GitHub notifications also cover it.
-- If a project uses the `Slack` connector directly, post per `findings.slack_channel`.
+- If a project uses the `Slack` connector directly, post per `findings.slackChannel`.
 
-**Connector availability:** GitHub via `gh` needs no MCP — Claude.ai generates the issue payloads, Claude Code runs `gh`. For Notion/Jira/Slack as Claude-side connectors, resolve the tool with `tool_search` first and confirm it's connected; if not, still write payloads to `findings/tickets/` and tell the user what to enable. Currently connected: Atlassian Rovo, Figma, Google Drive.
+**Connector availability:** GitHub via `gh` needs no MCP. For Notion/Jira/Slack as Claude-side connectors, resolve the tool with `tool_search` first and confirm it's connected; if not, still write payloads to `findings/tickets/` and tell the user what to enable.
 
 See `references/routing.md` for the exact `gh` commands, label taxonomy, the Notion/Jira payload shapes, and connector-availability handling.
 

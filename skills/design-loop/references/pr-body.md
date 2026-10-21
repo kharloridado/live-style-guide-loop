@@ -8,7 +8,7 @@ of it used to live in `state.json` and a run report nobody opens next to a diff.
 re-derives intent from the code, which is the expensive half of review. Everything below is
 already produced by the build — this template only moves it to where the review happens.
 
-**Never merge.** The loop opens the PR and stops. Merging is the human signature (hard rule 10).
+**Never merge.** The loop opens the PR and stops. Merging is the human approval.
 
 ## Filling it in
 

@@ -6,18 +6,18 @@ How to turn a finding that meets the routing gate into a tracked item and a noti
 
 Read from the project's `project.config.json` → `findings` (explained in `CLAUDE.md`):
 ```
-findings.ticketing     = github | notion | jira     # default: github
-findings.ticket_target = <owner/repo + optional Project name | Notion DB | Jira key>
-findings.slack_channel = #channel                    # or "none"
-findings.gate          = high+ | all
+findings.ticketing    = github | notion | jira     # default: github
+findings.ticketTarget = <owner/repo | Notion DB | Jira key>
+findings.slackChannel = #channel                    # or null
+findings.gate         = high+ | all
 ```
-If unset, ask once and store (memory: `OutSystems project: findings routing = ...`).
+If unset, the project is not set up yet — run `/outsystems-loop:project-setup`.
 
 ---
 
 ## GitHub Issues (default)
 
-Why default: the code already lives on GitHub, findings stay next to it, and it works on the **private repo** through the `gh` CLI in the Claude Code half of the hybrid workflow — no MCP needed. Requires GitHub CLI **v2.94.0+** (issue types, sub-issues, and dependencies are exposed to `gh` as of that release, June 2026).
+Why default: the code already lives on GitHub, findings stay next to it, and it works on the **private repo** through the `gh` CLI — no MCP needed. Requires GitHub CLI **v2.94.0+** (issue types, sub-issues, and dependencies are exposed to `gh` as of that release, June 2026).
 
 ### Label taxonomy (create once per repo)
 ```
@@ -28,8 +28,8 @@ status:acknowledged  status:accepted-as-designed  status:fixed-in-design  status
 ```
 `gh label create finding -c "#B60205" -d "Design-conformance finding"` (repeat per label).
 
-### Create a finding issue (always filed as a Bug)
-Findings are filed as the **Bug** issue type. Issue types are an org-level feature, so always also apply the `bug` **label** as the reliable fallback (works on any repo, personal or org). Claude.ai writes the payload to `findings/tickets/FND-NNN.md`; Claude Code runs:
+### Create a finding issue
+Findings are filed with the `bug` **label** — it works on any repo, personal or org; issue types are an org-level feature most repos lack. Write the payload to `findings/tickets/FND-NNN.md`, then:
 ```bash
 gh issue create \
   --title "FND-001 [a11y/contrast] Primary CTA fails text contrast" \

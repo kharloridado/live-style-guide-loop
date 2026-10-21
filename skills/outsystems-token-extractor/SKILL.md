@@ -6,8 +6,7 @@ description: Translate Figma design tokens into OutSystems UI CSS custom propert
 # OutSystems Token Extractor (Figma-aware)
 
 ## Pre-flight
-1. Check memory for `OutSystems convention:` entries. If missing → invoke `outsystems-onboarding`.
-2. Use stored spacing base, token style, and prefix silently.
+1. Read `project.config.json` for `classPrefix`, `jsNamespace`, `environment` and `conventions`; use a convention only when its `status` is `confirmed`. If the file is missing or still holds `<<PLACEHOLDER>>` values, stop and run `/outsystems-loop:project-setup` — never guess a value.
 
 ## Which variable system — check this first
 

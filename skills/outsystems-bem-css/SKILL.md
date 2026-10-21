@@ -9,8 +9,8 @@ Generate production-grade BEM CSS for OutSystems Reactive Web and ODC.
 
 ## Pre-flight
 
-1. Check `memory_user_edits` for "OutSystems convention:" entries. If missing → invoke `outsystems-onboarding` first.
-2. Use the stored prefix (e.g., `acme-`) throughout. Never ask "what prefix?" — it's in memory.
+1. Read `project.config.json` for `classPrefix`, `jsNamespace`, `environment` and `conventions`; use a convention only when its `status` is `confirmed`. If the file is missing or still holds `<<PLACEHOLDER>>` values, stop and run `/outsystems-loop:project-setup` — never guess a value.
+2. Use `classPrefix` throughout. Never ask for the prefix.
 3. **Read upstream before writing a selector.** This skill owns BEM naming and nothing else. Where
    the CSS belongs, which variables exist, and which utility classes already cover the property are
    all platform knowledge, read from the pinned upstream pack:

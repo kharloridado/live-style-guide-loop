@@ -9,8 +9,7 @@ Produce structured documentation pages for the Live Style Guide — the single s
 
 ## Pre-flight
 
-1. Check memory for "OutSystems convention:" entries. If missing → invoke `outsystems-onboarding` first.
-2. Use stored prefix and environment.
+1. Read `project.config.json` for `classPrefix`, `jsNamespace`, `environment` and `conventions`; use a convention only when its `status` is `confirmed`. If the file is missing or still holds `<<PLACEHOLDER>>` values, stop and run `/outsystems-loop:project-setup` — never guess a value.
 
 ## When to use
 

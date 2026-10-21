@@ -1,6 +1,6 @@
 ---
 name: project-setup
-description: Stand up a freshly cloned OutSystems design-system project in one pass — interview for the project's values, wire up the toolchain (the outsystems-loop and outsystems plugins, the ODC MCP server in .mcp.json, the Figma connector), fill project.config.json, install dependencies and the OutSystems UI submodule, create the GitHub labels, turn a list of deliverables + Figma links into the signed inventory and the loop queue, set up the scheduled routines, and verify the whole thing builds. Use this when a project is newly cloned from the template, when project.config.json still contains <<PLACEHOLDER>> values, when the plugins/skills/MCP servers need configuring for a project, or whenever the user asks to set up / initialise / bootstrap / configure a new project or engagement.
+description: Stand up a freshly cloned OutSystems design-system project in one pass — interview for the project's values, wire up the toolchain (the outsystems-loop and outsystems plugins, the ODC MCP server in .mcp.json, the Figma connector), fill project.config.json, install dependencies and the OutSystems UI submodule, create the GitHub labels, turn a list of deliverables + Figma links into the signed inventory and the loop queue, offer the scheduled routines, and verify the whole thing builds. Use this when a project is newly cloned from the template, when project.config.json still contains <<PLACEHOLDER>> values, when the plugins/skills/MCP servers need configuring for a project, or whenever the user asks to set up / initialise / bootstrap / configure a new project or engagement.
 ---
 
 # Project setup — one sitting, one pass
@@ -67,7 +67,6 @@ the free-text ones; do not ask nine questions in nine turns.
 | **ODC tenant hostname** | `--odc-tenant` | e.g. `acme.outsystems.dev`, no scheme. Becomes `https://<tenant>/mcp` in `.mcp.json` — see §2 |
 | GitHub repo | `--repo` | `owner/repo` |
 | Figma library URL | `--figma-url` | the file key is parsed out of it automatically |
-| Project board URL | `--board-url` | **optional, and a human view only** — leave blank unless they want a kanban to look at |
 
 Two you must also raise, because they cost the most when missed:
 
@@ -77,16 +76,6 @@ Two you must also raise, because they cost the most when missed:
   breakpoints or default component size. If the answer is anything short of "yes, they told us",
   it stays `TBD`. Say plainly that `TBD` means the checker will not enforce it, and that this is
   the safe direction.
-
-**On the board.** If they ask for one, set it up as a *view*: `board.drivesLoop` stays `false`.
-The board is never the loop's queue — Projects v2 is GraphQL-only and unreachable from a **cloud**
-run, so a board-queued loop dies while claiming a card, before the maker, every time. The queue is
-the signed inventory in `loop/goal.md`, which is a file and readable from either surface.
-
-That constrains the board's *reach*, not its automation: `board-sync` and `board-ship` are
-schedulable on the **local** surface, and §7 offers both. See
-`../design-loop/references/surfaces.md` — one file, the whole model, and the only place to state
-it.
 
 ## 2. The toolchain — plugins, agents, MCP servers
 
@@ -228,8 +217,7 @@ node build/init-project.mjs \
   --prefix="nimbus-" --js-namespace="Nimbus" --theme-module="NimbusTheme" \
   --odc-tenant="acme.outsystems.dev" \
   --repo="acme/design-system" \
-  --figma-url="https://www.figma.com/design/KEY/Library" \
-  --board-url=""
+  --figma-url="https://www.figma.com/design/KEY/Library"
 ```
 
 It writes `project.config.json`, rewrites the ODC URL in `.mcp.json` from `--odc-tenant`, **and**
@@ -336,8 +324,8 @@ A row with no node id and no written spec is not buildable: the ref cannot be fr
 a ref the checker would be grading the maker against the maker's own output. Flag those rows and
 ask for either a link or a written spec.
 
-**(a) `loop/goal.md` — the signed inventory of record.** Fill the goal, the Figma library URL +
-**file key**, the mode (`library` for a full design system, `single` for a handful), and the
+**(a) `loop/goal.md` — the signed inventory of record.** Fill the goal (the Figma URL and file key
+come from `project.config.json` — do not copy them in), the mode (`library` for a full design system, `single` for a handful), and the
 inventory table:
 
 | # | Component | Tier | Figma node | Notes |
@@ -349,11 +337,11 @@ composites (card) before patterns. The loop builds in this order and gates at ti
 Record **who signed it off and when**. This table is a scope contract, and `git log loop/goal.md`
 is what later answers "who agreed to this". State plainly to the user that they are signing it.
 
-**(b) `loop/state.json` — the queue.** Seed `items[]` from the same table, one entry per row, with
-`id`, `tier`, `node`, and `status: "queued"`. Set `figma_url`, `figma_file_key`, `repo`, `mode`,
-and leave `level` unset — level is the outcome of the maker's audit, not a backlog-time guess.
-Set the tier checkpoints; `after_tokens` and `after_primitives` default to `pause` so a run stops
-for review instead of rolling the whole library in one night.
+**(b) `loop/state.json` — the index.** Seed `items[]` from the same table, one entry per row, with
+`id`, `tier`, `node` and `status: "queued"`; leave `level` unset — it is the outcome of the
+maker's audit, not a backlog-time guess. Fill `goal.md`'s Run settings: the pauses
+after foundations and primitives default to yes, so a run stops for review instead of rolling the
+whole library in one night.
 
 **Never seed an item that has no row in the table.** Scope creep here is invisible until review.
 
@@ -373,7 +361,7 @@ gh label create finding     -R "$R" -c "#B60205" -d "Design-conformance finding"
 gh label create bug         -R "$R" -c "#D73A4A" -d "Finding filed as a bug"     --force
 gh label create handover    -R "$R" -c "#0E8A16" -d "Code handover for OutSystems" --force
 gh label create task        -R "$R" -c "#0052CC" --force
-gh label create deliverable -R "$R" -c "#C5DEF5" -d "A queued deliverable"       --force
+gh label create deliverable -R "$R" -c "#C5DEF5" -d "A deliverable PR"           --force
 for t in a11y brand token consistency; do gh label create "$t" -R "$R" -c "#1D76DB" --force; done
 gh label create sev:blocker -R "$R" -c "#B60205" --force
 gh label create sev:high    -R "$R" -c "#D93F0B" --force
@@ -393,39 +381,28 @@ Repo not created yet? Offer `gh repo create <owner>/<repo> --private --source=. 
 
 ## 7. Routines — set them up rather than describing them
 
-The user should not copy prompts into a routines UI. Create the schedule for them, using the
-scheduling capability that matches the routine's **surface**
-(`../design-loop/references/surfaces.md`):
-
-- **cloud** — a routine in Claude Code on the web. Fires whether or not the laptop is on; cannot
-  touch the board.
-- **local** — a schedule inside a Claude session on this machine, via the session's cron tooling
-  or `/loop`. Reaches the board; lives only while that session is open.
+The user should not copy prompts into a routines UI. Create the schedule for them — a cloud
+routine (Claude Code on the web) fires whether or not the laptop is on; a local schedule lives
+only while a Claude session is open on this machine. Everything the loop reads is a file in the
+clone, so both work; the cloud needs the Figma connector attached to the routine.
 
 **Ask before creating any of them.** A scheduled run is persistent configuration that runs
 unattended and spends the user's budget; it is theirs to authorise. Present the set, let them pick.
 
 See **`references/routines.md`** for the exact prompts. The default set:
 
-| Routine | Surface | Cadence | Why |
-|---|---|---|---|
-| **Loop advance** | cloud | nightly | Builds `queued` items → one PR each. The main event. |
-| **Board sync** | **local** | daily | Reconciles the board against the PRs the nightly run opened, reclaims stale claims, republishes the library review page. Skip it and the board quietly stops describing reality. |
-| **Board ship** | **local** | on demand / hourly on a review day | Merges what the human already approved and opens the handover Task. |
-| **Token drift reconcile** | cloud | weekly | Re-pulls the Figma library and PRs any token drift. Recurring forever — a design system's tokens move. |
-| **Findings digest** | either | daily, optional | Read-only summary of open findings by severity. |
+| Routine | Cadence | Why |
+|---|---|---|
+| **Loop advance** | nightly | Builds `queued` items → one PR each. The main event. |
+| **Token drift reconcile** | weekly | Re-pulls the Figma library and PRs any token drift. A design system's tokens move. |
+| **Findings digest** | daily, optional | Read-only summary of open findings by severity. |
 
-Four constraints to state honestly rather than discover later:
+Two constraints to state honestly rather than discover later:
 
 - **A routine needs the Figma connector attached** (loop advance, token drift), or it cannot freeze
-  a ref and every item goes `needs-human`. Tell them to attach it when they create the routine.
-- **A routine stops at every checkpoint** in `loop/goal.md`, and never approves, merges outside
-  `board-ship`, or opens a handover for unmerged work. It advances work and opens PRs; the human
-  signs.
-- **The two board routines only fire while a Claude session is open on this machine**, and a
-  recurring session job expires after 7 days. Say so as you create them — a routine the user thinks
-  is running unattended, and isn't, is worse than one they know to re-arm.
-- **Run `board-sync --dry-run` in front of them once** before scheduling it. Reclaim moves cards.
+  a ref and every item goes `needs-human`.
+- **A routine stops at every checkpoint** in `loop/goal.md`, never merges, and never opens a
+  handover for unmerged work. It opens PRs; the human merging one is the approval.
 
 ## 8. Verify — do not report success you have not seen
 
@@ -440,10 +417,7 @@ Then prove the **fidelity gate can actually run**, because it is the thing that 
 to `unverified` and fails every item:
 
 ```bash
-cat > /tmp/smoke.json <<'JSON'
-{ "probes": [ { "name": "body", "selector": "body", "props": ["font-family", "color"] } ] }
-JSON
-node build/gate/measure-fidelity.mjs --probes /tmp/smoke.json
+npm run gate:selftest
 ```
 
 Exit `0` means a browser was found, the page was served, and the cascade was complete. Exit `4`
@@ -459,13 +433,11 @@ git add -A && git commit -m "chore: initialise <project> from the template"
 
 Report in this shape — short, and honest about what is not done:
 
-- **Configured** — prefix, namespace, repo, Figma file key, ODC tenant, board (or "none — the
-  inventory drives the loop").
+- **Configured** — prefix, namespace, repo, Figma file key, ODC tenant.
 - **Toolchain** — both plugins and their scope, the ODC MCP endpoint, the Figma connector, `gh`,
   the browser. One line each, each either working or named as outstanding.
 - **Queued** — N deliverables, in build order, with the tier gates that will pause the run.
-- **Routines** — what was created, on which surface, and when it first fires. Name the local
-  ones explicitly as "only while a Claude session is open here".
+- **Routines** — what was created, where it runs, and when it first fires.
 - **Verified** — the gates, with their actual results.
 - **Outstanding** — every `TBD` convention and why it is blank, an unpinned submodule, a missing
   connector or auth, any deliverable with no Figma node. **Name the consequence, not just the
@@ -486,14 +458,13 @@ the loop by hand, or nothing at all — the routine does it tonight.
    `init-project.mjs`. The ODC tenant in `.mcp.json` is *generated* from it, never hand-edited.
 3. **Never guess the ODC tenant** — not from the customer name, not from another project. A wrong
    tenant points every ODC call at somebody else's environment. Leave it unfilled and say so.
-4. **Never set `board.drivesLoop: true`.** A board is a view; the inventory is the queue.
-5. **Never report a gate as passing without running it**, and never report the toolchain as ready
+4. **Never report a gate as passing without running it**, and never report the toolchain as ready
    without checking each piece.
-6. **Never hand-roll the setup because the plugin is missing.** Install the plugin. A hand-rolled
+5. **Never hand-roll the setup because the plugin is missing.** Install the plugin. A hand-rolled
    project looks configured and is missing the parts nothing checks.
-7. **Never widen the Figma grants to write tools.** This loop reads designs; it does not edit the
+6. **Never grant Figma write tools.** This loop reads designs; it does not edit the
    customer's library.
-8. **Ask before anything outward-facing** — creating a repository, creating a scheduled routine,
+7. **Ask before anything outward-facing** — creating a repository, creating a scheduled routine,
    pushing to a remote.
 9. **Do not skip the submodules.** `vendor/outsystems-ui/` is the most-skipped step and it
    invalidates the fidelity gate. `vendor/outsystems-frontend-skills/` is the newer one, and

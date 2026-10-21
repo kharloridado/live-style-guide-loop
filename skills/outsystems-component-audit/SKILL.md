@@ -9,8 +9,7 @@ Phase 1 of the workflow: structured triage of a design before any code is writte
 
 ## Pre-flight
 
-1. Check `memory_user_edits` for "OutSystems convention:" entries. If missing, invoke `outsystems-onboarding` first.
-2. Use the stored prefix and conventions in all output.
+1. Read `project.config.json` for `classPrefix`, `jsNamespace`, `environment` and `conventions`; use a convention only when its `status` is `confirmed`. If the file is missing or still holds `<<PLACEHOLDER>>` values, stop and run `/outsystems-loop:project-setup` — never guess a value.
 
 ## When to use
 
@@ -36,10 +35,21 @@ An audit that classifies from memory inflates L4 and L5 — every block it fails
 something to build. **If the submodule is absent, say so and stop.** An audit with a guessed catalog
 is worse than no audit: it produces a costed plan for work that did not need doing.
 
+## The three outcomes
+
+| Class | Outcome |
+|---|---|
+| **Exists as-is** | Use the OutSystems UI widget. Verify it matches within tolerance; if not, it is the row below. |
+| **Exists, not exact** | **Dual track.** Alignment: L1–L3 overrides (token / utility class / `ExtendedClass` + BEM) so the stock widget lands near the design for any developer who reaches for it. Canonical: the custom Block or Web Component (L4–L5) the team ships. |
+| **Doesn't exist** | Build it: Web Component (L5) + Block wrapper — only after the L4.5 gate. |
+
+"Customize OutSystems UI" never means editing or forking the module — only layers on top of it.
+Tier (build order) and level (L1–L5, effort) are independent: a pattern can be a pure L1 change.
+
 ## Inputs
 
 1. **Visual** (screenshot, Figma frame export, or detailed description)
-2. **Current Theme tokens** (read from prior conversation or memory; otherwise assume OutSystems UI defaults)
+2. **Current Theme tokens** (`tokens/*.css` and `specs/tokens/token-reference.md`; otherwise OutSystems UI defaults)
 3. **Screen context** (mobile / desktop / both? page purpose?)
 
 ## Output: structured audit (5 sections, in order)
