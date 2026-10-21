@@ -33,7 +33,7 @@ the same version. The template already ships that setting. Release notes: [CHANG
 | --- | --- |
 | `/lsg:project-setup` | **Start here on a fresh clone.** Interview → config → deps + submodule → labels → signed inventory → verify it builds. |
 | `/lsg:design-loop` | Freeze ref → maker → checker → commit → **one PR per deliverable** with its review Artifact. One request, or the signed queue in `loop/goal.md`. |
-| `/lsg:deliver` | After a merge: build the work into OutSystems through the MCP (ODC tenant, or Service Studio's on O11) and check it in a browser; otherwise hand it over. Opens the handover issue either way. |
+| `/lsg:deliver` | After a merge: build the work into OutSystems through the MCP (OutSystems' `outsystems` plugin on ODC, Service Studio's on O11) and check it in a browser; otherwise hand it over. Opens the handover issue either way. |
 | `/lsg:revalidate` | Re-run the checker on an already-built item or PR, without rebuilding it. |
 | `outsystems-frontend-router` | First stop for OutSystems UI questions: routes into the vendored frontend-skills pack and splits work by module (theme first, then each app). |
 | `outsystems-component-audit` | Triage a design: exists as-is / customize (dual track) / build custom (L1–L5). |
@@ -54,9 +54,9 @@ the same version. The template already ships that setting. Release notes: [CHANG
 | `PreToolUse` → `pre-commit-gate.mjs` | Before a `git commit` touching `tokens/ src/ specs/ build/`, runs `npm run build:theme` and blocks the commit with its errors when it fails. Skipped in the unfilled template. |
 | `SessionStart` → `session-check.mjs` | Lists missing setup steps (deps, submodule, OutSystems UI base, unfilled config). Silent when set up. |
 
-## Two contracts
+## Three contracts
 
-The plugin holds neither platform facts nor project values. It reads both at runtime.
+The plugin holds neither platform facts, project values nor the OutSystems MCP. It uses all three.
 
 - **Platform knowledge** comes from OutSystems' own frontend-skills pack, pinned at
   `vendor/outsystems-frontend-skills/` in the project. Skills read block names, arguments, CSS
@@ -66,6 +66,12 @@ The plugin holds neither platform facts nor project values. It reads both at run
   `findings` and `knownFalsePositiveClasses`. Spacing scale, grid, breakpoints and default sizes
   are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` —
   never assumed or guessed; with nothing written, no finding is raised about them.
+- **The OutSystems MCP** is OutSystems' own `outsystems` plugin
+  ([OutSystems/outsystems-mcp](https://github.com/OutSystems/outsystems-mcp)): it declares the ODC
+  server from each developer's `tenant_hostname` option, and its `outsystems` skill owns how the
+  tenant is driven, confirmations included. `/lsg:deliver` and `outsystems-mentor-build` load that
+  skill and add the design-system layer on top; nothing here registers the server itself. Its Beta
+  skills that build whole apps from a design or a spec are for greenfield apps, not for this loop.
 
 ## How it works
 

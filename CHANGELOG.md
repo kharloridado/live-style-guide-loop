@@ -6,6 +6,26 @@ All notable changes to the `lsg` plugin. The format follows
 
 ## [Unreleased]
 
+## [4.3.0] — 2026-10-21
+
+Pair with `live-style-guide-harness` from this date: its `npm run init` no longer writes
+`.mcp.json`, and `check:config` fails while an `outsystems` entry remains there.
+
+### Changed
+
+- **The ODC MCP is OutSystems' own plugin.** `project-setup` installs `outsystems@outsystems` from
+  `OutSystems/outsystems-mcp` with `--config tenant_hostname=<odcTenant>` on each developer's
+  machine, and verifies `plugin:outsystems:outsystems` in `claude mcp list`. It no longer writes the
+  server into `.mcp.json`, where a second `outsystems` entry duplicated or hid the plugin's.
+- **OutSystems' `outsystems` skill drives the tenant.** `/lsg:deliver` and `outsystems-mentor-build`
+  load it before the first tool call and follow it for sessions, publishing, polling, errors and
+  confirming every tenant write; they add only the design-system layer. Where the two differ on
+  the mechanics, OutSystems' skill wins.
+
+### Fixed
+
+- `project-setup` said OutSystems' plugin declares no MCP server. It has since 0.20.0.
+
 ## [4.2.1] — 2026-10-21
 
 ### Fixed
