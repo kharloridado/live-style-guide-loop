@@ -4,6 +4,12 @@ All notable changes to the `lsg` plugin. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **MIT license.** Other teams may use, copy and adapt the plugin; keep the copyright notice.
+
 ## [4.0.0] — 2026-10-21
 
 Pair with `live-style-guide-harness` 0.3 or later.
