@@ -118,8 +118,9 @@ rather than assuming both halves landed in the same scope.
 
 ### 2b. The OutSystems MCP server — `.mcp.json`
 
-**Set it up whenever the platform has one.** It is how the loop applies a Block or a Live Style
-Guide page to a real module and reads back what the module already has. When there is none, every
+**Set it up whenever the platform has one.** It is how `/lsg:deliver` builds merged work — the
+Block, its Script and its Live Style Guide page — into the real modules, and how the loop reads back
+what a module already has. When there is none, every
 handover still carries the fallback, so nothing blocks — but say which channel the project is on:
 
 | Platform | MCP | Fallback, always in the handover |
@@ -450,8 +451,8 @@ Report in this shape — short, and honest about what is not done:
   connector or auth, any deliverable with no Figma node. **Name the consequence, not just the
   fact** — "Figma not connected, so the first run will build nothing" is actionable; "Figma not
   connected" gets skimmed past. Name who has to resolve each.
-- **What happens next** — the first run builds item 1 and opens a PR; they review and merge; the
-  handover Task follows the merge.
+- **What happens next** — the first run builds item 1 and opens a PR; they review and merge;
+  `/lsg:deliver` then builds it into OutSystems through the MCP, or hands it over.
 
 Then tell them the two things they can say from here: *"build the next deliverable"* to advance
 the loop by hand, or a plain request such as *"add the error state to the input"*.

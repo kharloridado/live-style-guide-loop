@@ -18,8 +18,8 @@ approval.
 | `queued` | In the signed inventory, ready to build | setup, or a scope owner's row in `goal.md` |
 | `built` | Checker PASS and committed, but the PR did not open (`pr_error` says why) | per-item build |
 | `ready-for-review` | PR open, review Artifact linked | per-item build |
-| `merged` | PR merged — the human's approval | this skill's pre-flight, from `gh pr list --state merged` |
-| `handover` | Handover issue opened for the merged work | this skill's pre-flight |
+| `merged` | PR merged — the human's approval | `/lsg:deliver`, from `gh pr list --state merged` |
+| `handover` | Delivered: built through the MCP or handed over, and its handover issue open | `/lsg:deliver` |
 | `needs-human` | Blocked: FAIL-CAPPED, DET-GATE-FAIL, no ref, or out of inventory | per-item build |
 | `needs-re-ref` | Its frozen ref came from an old Figma file key | pre-flight |
 | `deferred` | Deliberately out of this run's scope | a human |
@@ -49,22 +49,7 @@ when written in `specs/foundations/` or `specs/decisions.md` — never assumed o
 1. **Reconcile state against git.** `state.json` can go stale while commits have already shipped later tiers. Compare the queue's `status` values against what is actually committed on the loop branch before advancing; fix state first, and say so in the run's summary.
 2. **Confirm the inventory of record** (queue runs). No item enters the queue without a row in the signed inventory table in `loop/goal.md`. A component that is in Figma but not in that table is `needs-human`, not `queued`; to add scope, a scope owner adds a row (and `git log loop/goal.md` records who and when). Building speculatively is how fully-finished components get thrown away.
 3. **Check the library file key.** If `figma.fileKey` in `project.config.json` differs from the key recorded in an item's frozen ref, that ref is stale → mark the item `needs-re-ref` and re-snapshot before building on it. Design libraries get forked ("Main Library (2)") and silently re-version values.
-4. **Open the handover Task for anything that merged since the last run.** A deliverable's handover is created *after* its PR merges, never before — a handover says "paste this into ODC", and that must never be said about an unmerged branch. Nothing watches the merge, so the loop collects them at the start of every run:
-
-   ```bash
-   gh pr list --state merged --label deliverable --limit 30 \
-     --json number,title,headRefName,mergedAt,body
-   ```
-
-   For each merged deliverable PR with no handover Task yet (dedup by searching open+closed issues for the item id), run `node build/embed-handover-code.mjs` and open it:
-
-   ```bash
-   gh issue create --title "[handover] <component> — add in OutSystems" \
-     --body-file handover/<artifact>.md --label "handover,task" \
-     --assignee <developer> --repo <owner/repo>
-   ```
-
-   Set the item's status to `merged` when its PR is found merged, and to `handover` once the Task is open. This is self-healing: a run that crashes before the bookkeeping leaves the Task to be picked up next time, rather than losing it. Say which handovers were opened this way.
+4. **Deliver anything that merged since the last run.** Nothing watches the merge, so the loop collects it here: run **`/lsg:deliver`**. It builds each merged deliverable into OutSystems through the MCP when one is connected and verifies it in a browser, otherwise hands it over for a developer, and opens the handover issue either way. Never deliver an unmerged branch. Say what was delivered, and through which channel.
 
 ## Token pass (library mode, runs once)
 If `state.json.items` is empty and `goal.md` sets mode `library`:
@@ -81,7 +66,7 @@ For single mode: seed the queue from a component audit; skip tiers and pauses.
 2. **Cut its branch fresh from `origin/main`** — `git fetch origin && git switch -c loop/item/<slug> origin/main`. One item, one branch: a shared loop branch makes every PR contain every earlier item's diff, so the reviewer approves all or none, and a single rejected item blocks the rest.
 3. Build it by following **`references/per-item-build.md`** — freeze the ref, @maker, @checker, verdict routing, findings, commit, **open the PR**, persist. Pass the item as the `ITEM` contract with `branch` set to the branch you just cut and `base` to `main`.
 4. Route the outcome it returns:
-   - `PASS` -> the PR is open and the item is `ready-for-review`. **Stop there.** Do not merge, do not approve, and do not open the handover Task — a handover says "paste this into ODC" and must never say it about an unmerged branch.
+   - `PASS` -> the PR is open and the item is `ready-for-review`. **Stop there.** Do not merge, do not approve, and do not deliver — nothing reaches OutSystems off an unmerged branch.
    - `FAIL-CAPPED` -> status `needs-human` with the critique attached; move on.
    - `BLOCKED-NO-REF` / `BLOCKED-STALE-REF` -> status "needs-human" / "needs-re-ref" with the reason. Do NOT count a round — the checker never got to judge.
    - `DET-GATE-FAIL` -> status "needs-human"; a build that will not go green is a stop, not a round.
@@ -103,7 +88,7 @@ End a queue run by writing loop/REPORT.md: tier progress, items built, **the PR 
 
 Then run `npm run review` and republish the library page with the Artifact tool to `library_review_url` in `loop/state.json` (publish it once and record the URL if there is none). Skip it in a run with no Artifact tool, and say so in the report.
 
-Do NOT touch OutSystems — integration is manual, and it starts from the handover Task the human
-opens after merging the PR.
+Never touch OutSystems before the merge. After it, `/lsg:deliver` builds the work in through the
+MCP, or hands it over.
 
 $ARGUMENTS

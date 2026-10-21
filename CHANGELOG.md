@@ -6,6 +6,21 @@ All notable changes to the `lsg` plugin. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- **Approved work gets built into OutSystems.** New skill `/lsg:deliver`: after a deliverable PR
+  merges, it builds the Block, its Script, its CSS and its Live Style Guide page into the project's
+  modules through the OutSystems MCP (the ODC tenant endpoint, or Service Studio's on O11),
+  publishes to development and checks the result in a real browser. Without an MCP it hands the
+  same steps to a developer — a Mentor Studio prompt on ODC, Service Studio steps on O11. The
+  handover issue opens either way, saying which happened. The design loop's pre-flight runs it for
+  anything merged since the last run.
+
+### Changed
+
+- The loop no longer says integration is manual: nothing touches OutSystems before the merge, and
+  `/lsg:deliver` takes it from there.
+
 ### Fixed
 
 - **O11 has an MCP after all.** `project-setup` and `outsystems-style-guide-doc` name Service

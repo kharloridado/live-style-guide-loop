@@ -130,9 +130,9 @@ Take the maker's LSG-IMPACT and settle it with `outsystems-style-guide-doc`:
 - **A restyle** names its stock pattern page and anything on it that differs for this design
   system.
 
-When an OutSystems MCP is connected and the user asked for the change to be applied, apply the page
-through it with `outsystems-mentor-build` after the Block, and verify the published page in a
-browser. Otherwise the handover carries it. Either way, the PR body says which.
+Nothing reaches a module before the merge. After it, `/lsg:deliver` builds the Block and then
+its page through the OutSystems MCP when one is connected, or the handover carries both. The PR
+body says which channel the project is on.
 
 ### Build and publish the review Artifact
 
@@ -173,9 +173,8 @@ with a heredoc to a file and use `--body-file`; a long `--body` argument mangles
 Then set the item's status to `ready-for-review` and record `pr_url`. Return `PASS`.
 
 **Never merge, and never approve.** The loop stops at an open PR — that is the human's signature
-(merging is the human's approval). **Never open the handover Task here** either: a handover says "paste this into
-ODC", and nothing may say that about code sitting on an unmerged branch. The caller opens it after
-the merge.
+(merging is the human's approval). **Never deliver here** either: nothing reaches OutSystems off an unmerged
+branch. `/lsg:deliver` runs after the merge.
 
 **Do not** create handover issues or attach sub-issues — the caller owns that.
 
