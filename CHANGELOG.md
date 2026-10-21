@@ -6,6 +6,13 @@ All notable changes to the `lsg` plugin. The format follows
 
 ## [Unreleased]
 
+## [4.2.1] — 2026-10-21
+
+### Fixed
+
+- **`/lsg:deliver <PR number | item id>` takes that PR even without the `deliverable` label**, so
+  work merged in projects older than the label can still be delivered.
+
 ## [4.2.0] — 2026-10-21
 
 Pair with `live-style-guide-harness` 0.3 or later (`npm run docs:odc`).

@@ -18,7 +18,8 @@ gh pr list --state merged --label deliverable --limit 30 --json number,title,hea
 ```
 
 Take the deliverable PRs with no handover issue yet (search open and closed issues for the item
-id). Work from a fresh checkout of `origin/main`, never the PR branch: what was merged is what
+id). With an argument, take that PR, or the merged PR of that item, whether or not it carries the
+`deliverable` label — projects older than the label have merged PRs without it. Work from a fresh checkout of `origin/main`, never the PR branch: what was merged is what
 ships. `npm run build:theme` must exit 0 there, then `npm run embed:handover` so the handover
 carries the merged code, and `npm run docs:odc` so `dist/odc-docs-<version>-changed.zip` holds the
 Markdown the merge added or changed — the item's usage spec, and any foundation, token reference
