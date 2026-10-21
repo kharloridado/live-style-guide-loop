@@ -36,7 +36,7 @@ Generate production-grade BEM CSS for OutSystems Reactive Web and ODC.
 
 ## When NOT to use
 
-- Component doesn't exist in OutSystems UI → use `outsystems-web-component` skill instead (L5)
+- Component doesn't exist in OutSystems UI → use `outsystems-custom-block` instead (L5); its CSS is still written here
 - User wants just a token update → use `outsystems-token-extractor` skill
 
 ## Rule minus-one: a utility class beats a rule you wrote
@@ -69,7 +69,7 @@ and grep the framework's own SCSS (`vendor/outsystems-ui/src/scss/`) for the wid
 | Framework has the variant class | `.btn-primary`, `.btn-large`, `.btn-success` | `.acme-button--primary`, `--big` |
 | Framework has the token | redefine `--color-primary`, `--space-m` in the theme | mint `--acme-color-primary` beside it |
 | Framework has **no** equivalent | `.acme-<block>--<variant>` + `ExtendedClass` | — |
-| Widget doesn't exist at all | → `outsystems-web-component` (L5) | — |
+| Widget doesn't exist at all | → `outsystems-custom-block` (L5) | — |
 
 **Why the second column is not "safer".** `.acme-button.btn` reads like careful, scoped hygiene.
 It isn't: the platform never emits `.acme-button`, so the rule only fires when a developer types

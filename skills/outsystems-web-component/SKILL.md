@@ -1,6 +1,6 @@
 ---
 name: outsystems-web-component
-description: Generate vanilla JS Web Components for use inside OutSystems Reactive Web and ODC, packaged with an OutSystems Block wrapper for easy integration. Use this skill whenever the user needs a custom UI component that doesn't exist in OutSystems UI, or asks to "build a component from scratch", "create a custom component", "make a Web Component", or when the component-audit skill classifies a design element as "🆕 Build" (Level 5 escalation). Default to Web Components for any L5 custom build — this is the user's chosen architecture.
+description: Generate vanilla JS Web Components for use inside OutSystems Reactive Web and ODC, packaged with an OutSystems Block wrapper for easy integration. Use it only when the user asks for a Web Component, or the project already ships Web Components and the new component belongs with them. Every other L5 build is a custom Block with a required Script — use outsystems-custom-block. Its keyboard and ARIA references apply to both.
 ---
 
 # OutSystems Web Component Generator

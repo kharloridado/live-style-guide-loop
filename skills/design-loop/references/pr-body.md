@@ -29,7 +29,7 @@ gh pr create --base main --head "$BRANCH" \
 ```markdown
 ## What this is
 
-<One sentence: the component, the artifact kind (theme tokens / block CSS / Web Component),
+<One sentence: the component, the artifact kind (theme tokens / block CSS / custom Block + Script),
 and where it goes in ODC.>
 
 | | |
@@ -45,7 +45,7 @@ and where it goes in ODC.>
 ## Plan
 
 <What the maker set out to build, in 3–6 bullets: which OutSystems UI widget is being restyled
-or why a Web Component was necessary, which tokens it consumes, which files it touches.>
+or why a custom Block was necessary, which tokens it consumes, which files it touches.>
 
 ## Gates
 

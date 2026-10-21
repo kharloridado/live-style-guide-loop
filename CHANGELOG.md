@@ -16,6 +16,12 @@ Pair with `live-style-guide-harness` 0.3 or later, including its `modules` confi
   component → a menu record, a page, a live preview and the class inspector), the page spec, the
   modules and routing on ODC and O11 (`references/lsg-anatomy.md`, `references/page-spec.md`), and
   the sweep before a handover or release.
+- **L5 is a custom Block with a required Script.** New skill `outsystems-custom-block`: an
+  OutSystems Block of widgets, placeholders and typed inputs, plus one vanilla-JS Script exposing
+  `window.<Ns>.<Block>.init / update / destroy`, called from the Block's OnReady,
+  OnParametersChanged and OnDestroy, one instance per widget Id. The audit, maker, checker, router
+  and BEM skill route L5 there; `outsystems-web-component` is kept for projects that already ship
+  Web Components, or on request.
 - **LSG impact in every build.** The maker returns LSG-IMPACT and writes usage spec §9; the checker
   fails a new component with no page; per-item-build puts the page in the same handover, one
   prompt per module in build order; the PR body gains a "Live Style Guide" section.

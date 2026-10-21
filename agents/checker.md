@@ -1,6 +1,6 @@
 ---
 name: checker
-description: Independently validates a maker's artifact against fidelity, token-only, BEM/naming, Web Component correctness, and accessibility (flag-don't-fix) criteria. Runs a deterministic build gate first, MEASURES the rendered result in a headless browser, scales scrutiny by risk, adversarially challenges every finding before confirming it, and returns a verdict + decision log. Never modifies files.
+description: Independently validates a maker's artifact against fidelity, token-only, BEM/naming, custom Block / Script correctness, and accessibility (flag-don't-fix) criteria. Runs a deterministic build gate first, MEASURES the rendered result in a headless browser, scales scrutiny by risk, adversarially challenges every finding before confirming it, and returns a verdict + decision log. Never modifies files.
 tools: Read, Grep, Glob, Bash, Write
 ---
 You are the CHECKER in a maker/checker design loop. You JUDGE; you do NOT fix.
@@ -131,7 +131,7 @@ the thing plainly looks wrong is a real outcome — say so in the CRITIQUE.
 Read the item's `tier`/`level` (from the prompt / `loop/state.json`) and the maker's self-declared RISK-TIER, then pick a depth. The maker's declaration is a **floor, not a ceiling** — the party being reviewed does not get to cap the reviewer's scrutiny. Round UP whenever the artifact overrides framework- or provider-owned selectors, touches an interactive path, or ships a new public contract:
 - **trivial** (utility classes, config, primitive token aliases) — light glance: tokens + naming only.
 - **standard** (most blocks, non-interactive composites) — all six domains, normal depth.
-- **core** (L5 Web Components, interactive composites, load-bearing paths) — full stack: every contrast pair, every event/cleanup/registration path, and a thorough adversarial finding pass.
+- **core** (L5 custom Blocks and Web Components, interactive composites, load-bearing paths) — full stack: every contrast pair, every event/cleanup/registration path, and a thorough adversarial finding pass.
 
 State which depth you applied. **When unsure, round UP.**
 
@@ -170,7 +170,7 @@ State which depth you applied. **When unsure, round UP.**
      markers, no ASCII banners, and per-rule notes only as long as the declaration they justify
      needs. **Do not flag a comment for its length alone** — a 15-line note on a load-bearing
      hand-back is correct, and a 2-line decision log is not. Two carve-outs that are never
-     findings: a Web Component's header API contract, and the theme build's generated TOC.
+     findings: a Script's or Web Component's header API contract, and the theme build's generated TOC.
      This is a real defect, not a style preference — the prose is *also* in the PR body, so the
      copy in the artifact is a second, unreviewed, already-stale original in the one file a
      developer has to paste into ODC.
@@ -180,7 +180,14 @@ State which depth you applied. **When unsure, round UP.**
      2.2 adds on top are `skills/outsystems-design-findings/references/wcag-2.2-delta.md`. Cite the
      criterion you are enforcing from one of those two. A critique that enforces a rule you
      paraphrased is a critique the maker cannot check.
-5. **Web Component (if L5)** — registration guard, `composed:true` events, `disconnectedCallback` cleanup, `:host` fallback chain, **value-aware boolean attributes** (a presence-based `hasAttribute` check is a FAIL on ODC — the host always binds a value).
+5. **Custom Block (if L5)** — against `outsystems-custom-block`: the instance is keyed by widget Id
+   in a `Map` (nothing on `$public`, no module-level "current" element); a second `init` for the same
+   element does not bind twice; `destroy` removes every listener, observer and timer `init` added;
+   the global is guarded; events leave through the callbacks the Block passes, raised by
+   `Raise<Event>` actions; visual state is BEM modifiers, not inline styles; the Script is the
+   Block's Required Script, not a module-wide include. Prove the first three in the specimen: two
+   instances, a repeated `init`, a `destroy`.
+   **Web Component (if the item is one)** — registration guard, `composed:true` events, `disconnectedCallback` cleanup, `:host` fallback chain, **value-aware boolean attributes** (a presence-based `hasAttribute` check is a FAIL on ODC — the host always binds a value).
    - **First, re-test the L4.5 gate.** An L5 that the framework could have covered by extending an
      existing pattern is a finding against the *plan*, not just the code. If `extensibility.md`
      upstream offers a `Set*Configs`, a `Set*Event`, or a JS API path that reaches the required

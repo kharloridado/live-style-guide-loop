@@ -45,7 +45,7 @@ Walk top to bottom. Stop at the first level that satisfies the design.
                        │ NO
                        ▼
 ┌─────────────────────────────────────────────────────┐
-│  L5: Build vanilla JS Web Component + Block wrapper │
+│  L5: Build a custom Block + its required Script     │
 │  No OS UI pattern fits.                             │
 └─────────────────────────────────────────────────────┘
 ```
@@ -117,15 +117,16 @@ Wrap it in a Block when the extension needs to persist state across re-renders.
 surface rather than out-specifying its CSS or rebuilding it.
 
 Full API surface: `vendor/outsystems-frontend-skills/ui-frameworks/outsystems-ui/extensibility.md`.
-**This rung is mandatory before any L5 on a pattern that already exists.** Reaching for a Web
-Component because a pattern "can't do X" — when X is one `Set*Configs` call — trades a supported
+**This rung is mandatory before any L5 on a pattern that already exists.** Reaching for a custom
+Block because a pattern "can't do X" — when X is one `Set*Configs` call — trades a supported
 extension point for a component you now maintain forever.
 
-### L5 — Web Component + Block wrapper
+### L5 — custom Block + required Script
 ```
-1. acme-pricing-toggle.js  (vanilla JS Web Component)
-2. PricingToggle Block (wraps the Web Component)
-3. Test HTML page for browser QA
+1. PricingToggle Block (widgets, placeholders, typed inputs, events)
+2. acme-pricing-toggle.css  (BEM, tokens only — ships in the theme)
+3. acme-pricing-toggle.js   (init / update / destroy, the Block's Required Script)
+4. Specimen page for browser QA
 ```
 **1–4 hours. Best for components OutSystems UI doesn't have.**
 
@@ -145,15 +146,17 @@ extension point for a component you now maintain forever.
 
 If your codebase has too many L4–L5, the design system is fighting OutSystems UI. Talk to design.
 
-## Why L5 = Web Component (not raw Block)
+## Why L5 = a custom Block with a required Script
 
-Previously, L5 meant "build a Block from scratch with HTML widgets." The user has chosen a better approach: **vanilla JS Web Components wrapped in Blocks.**
+An L5 is an OutSystems Block a developer drags from the toolbox: widgets, placeholders and typed
+input parameters they can see and edit in Studio, styled by the theme through `ExtendedClass`.
+Behaviour the widgets cannot express lives in one vanilla-JS Script the Block requires, driven by
+its OnReady / OnParametersChanged / OnDestroy (`init` / `update` / `destroy`, keyed by widget Id).
 
-Benefits:
-- Shadow DOM encapsulation (no CSS leaks)
-- Framework-agnostic (works in O11 and ODC)
-- Easy to import (single .js file as Script resource)
-- Other devs use the Block, not the Web Component directly
-- Future-proof (web standard, not platform feature)
+- The developer works in the platform's own model; Mentor and Service Studio can build and change
+  every part of it.
+- Styling is ordinary theme CSS, held to the same token audit as every restyle.
+- The Script owns behaviour only, and a Block with no behaviour needs no Script at all.
 
-Always route L5 to the `outsystems-web-component` skill.
+Route L5 to `outsystems-custom-block`. Use `outsystems-web-component` only where the project already
+ships Web Components and the new component belongs with them, or the user asks for one.
