@@ -1,6 +1,6 @@
 ---
 name: project-setup
-description: Stand up a freshly cloned OutSystems design-system project in one pass — interview for the project's values, wire up the toolchain (the lsg and outsystems plugins, the ODC MCP server in .mcp.json, the Figma connector), fill project.config.json, install dependencies and the OutSystems UI submodule, create the GitHub labels, turn a list of deliverables + Figma links into the signed inventory and the loop queue, offer the scheduled routines, and verify the whole thing builds. Use this when a project is newly cloned from the template, when project.config.json still contains <<PLACEHOLDER>> values, when the plugins/skills/MCP servers need configuring for a project, or whenever the user asks to set up / initialise / bootstrap / configure a new project or engagement.
+description: Stand up a freshly cloned OutSystems design-system project in one pass — interview for the project's values, wire up the toolchain (the lsg and outsystems plugins, the ODC MCP server in .mcp.json, the Figma connector), fill project.config.json, install dependencies and the OutSystems UI submodule, create the GitHub labels, turn a list of deliverables + Figma links into the signed inventory and the loop queue, offer an optional nightly run, and verify the whole thing builds. Use this when a project is newly cloned from the template, when project.config.json still contains <<PLACEHOLDER>> values, when the plugins/skills/MCP servers need configuring for a project, or whenever the user asks to set up / initialise / bootstrap / configure a new project or engagement.
 ---
 
 # Project setup — one sitting, one pass
@@ -8,19 +8,9 @@ description: Stand up a freshly cloned OutSystems design-system project in one p
 The user has just cloned the template. Everything between that clone and a loop that produces
 reviewable PRs happens here, in one conversation, without them running a runbook.
 
-**What this replaces.** Standing up a project used to be roughly fifteen manual steps spread
-across two documents: `npm install`, an interactive `npm run init`, a submodule init and pin, a
-`gh auth refresh`, two or three shell scripts, hand-editing three design docs, hand-writing the
-inventory table in `loop/goal.md`, hand-seeding `loop/state.json`, and hand-copying routine
-prompts into the routines UI. Every one of them was a step someone could skip, and the ones people
-actually skipped — the submodule, the inventory — are the ones that make the loop silently produce
-garbage. Ask once, do all of it, verify it.
-
-> **Do not guess a value to keep the flow moving.** The two things this skill must never invent are
-> **conventions** (spacing base, grid, breakpoints, default size) and **scope** (what is being
-> built). Both have burned a real project: an unverified `4pt` spacing base manufactured a queue of
-> false-positive bugs, and an unsigned scope meant a fully finished component set was thrown away.
-> A blank is cheap. A credible-looking wrong default is not.
+> **Do not guess a value to keep the flow moving.** Above all, never invent **scope** (what is
+> being built): an unsigned scope once meant a finished component set was thrown away. A blank is
+> cheap; a credible-looking wrong default is not.
 
 ---
 
@@ -45,8 +35,8 @@ Then decide what this is:
 
 - **`<<PLACEHOLDER>>` values present** → a fresh clone. Full pass, below.
 - **Values already real** → an existing project. Do **not** re-interview. Say what is already
-  configured, offer the specific things that look unfinished (a `TBD` convention with a known
-  answer, an empty inventory, missing routines), and act only on what they pick.
+  configured, offer the specific things that look unfinished (an empty inventory, an
+  unpinned submodule, a missing connector), and act only on what they pick.
 - **Values real but the user says it is a new engagement** → they cloned a *project*, not the
   template. Confirm before overwriting anything: `npm run init` is re-runnable and will rewrite
   their config.
@@ -68,14 +58,12 @@ the free-text ones; do not ask nine questions in nine turns.
 | GitHub repo | `--repo` | `owner/repo` |
 | Figma library URL | `--figma-url` | the file key is parsed out of it automatically |
 
-Two you must also raise, because they cost the most when missed:
+Also raise **the deliverables** (§5) in this same batch: *"list the components you want built,
+each with its Figma link"*.
 
-- **The deliverables** — see §5. Ask for them in this same batch: *"list the components you want
-  built, each with its Figma link"*.
-- **Conventions** — ask whether the designer has actually confirmed a spacing base, grid,
-  breakpoints or default component size. If the answer is anything short of "yes, they told us",
-  it stays `TBD`. Say plainly that `TBD` means the checker will not enforce it, and that this is
-  the safe direction.
+Spacing scale, grid, breakpoints and default sizes are not config values. They are enforced only
+when written in `specs/foundations/` or `specs/decisions.md`; if the designer has stated them, note
+them there, and if not, leave them out — nothing is assumed or guessed.
 
 ## 2. The toolchain — plugins, agents, MCP servers
 
@@ -109,11 +97,9 @@ a plugin whose source it cannot resolve. Move it into the project file by hand i
 `claude plugin` also rewrites that file without preserving key order, so re-read it afterwards
 rather than assuming both halves landed in the same scope.
 
-> **The bootstrap paradox, stated plainly.** This skill ships *in* the `lsg` plugin. If the
-> plugin is not installed, nobody can invoke this to install it. That is why the template's
-> `CLAUDE.md` carries the install commands in its "first run" section — and why, if you find
-> yourself here with the plugin missing, the answer is to fix the plugin, never to hand-roll the
-> setup. A hand-rolled project looks configured and is missing the parts nothing checks.
+> **If the plugin is missing**, this skill cannot run to install it: the install commands are in
+> the template's README and in `.claude/settings.json`. Fix the plugin; never hand-roll the setup —
+> a hand-rolled project looks configured and is missing the parts nothing checks.
 
 ### 2b. The ODC MCP server — `.mcp.json`
 
@@ -379,37 +365,20 @@ confusing error. Report it as outstanding and carry on with the rest of setup.
 Repo not created yet? Offer `gh repo create <owner>/<repo> --private --source=. --push`, and
 **ask before running it** — creating a repository is not something to do on an assumption.
 
-## 7. Routines — set them up rather than describing them
+## 7. An unattended run — optional
 
-The user should not copy prompts into a routines UI. Create the schedule for them — a cloud
-routine (Claude Code on the web) fires whether or not the laptop is on; a local schedule lives
-only while a Claude session is open on this machine. Everything the loop reads is a file in the
-clone, so both work; the cloud needs the Figma connector attached to the routine.
-
-**Ask before creating any of them.** A scheduled run is persistent configuration that runs
-unattended and spends the user's budget; it is theirs to authorise. Present the set, let them pick.
-
-See **`references/routines.md`** for the exact prompts. The default set:
-
-| Routine | Cadence | Why |
-|---|---|---|
-| **Loop advance** | nightly | Builds `queued` items → one PR each. The main event. |
-| **Token drift reconcile** | weekly | Re-pulls the Figma library and PRs any token drift. A design system's tokens move. |
-| **Findings digest** | daily, optional | Read-only summary of open findings by severity. |
-
-Two constraints to state honestly rather than discover later:
-
-- **A routine needs the Figma connector attached** (loop advance, token drift), or it cannot freeze
-  a ref and every item goes `needs-human`.
-- **A routine stops at every checkpoint** in `loop/goal.md`, never merges, and never opens a
-  handover for unmerged work. It opens PRs; the human merging one is the approval.
+Only if the user wants builds to happen while nobody is at the keyboard, offer **one** nightly
+routine that runs `/lsg:design-loop` on the queue in `loop/goal.md`, up to its items per run.
+**Ask first** — a schedule is persistent and spends their budget. It needs the Figma connector
+attached to the routine (no ref, no build), stops at every pause in `goal.md`, and never merges:
+it opens PRs and the human merging one is the approval.
 
 ## 8. Verify — do not report success you have not seen
 
 Run the whole gate, in order, and show the real output:
 
 ```bash
-npm run check:config     # no placeholders, no leaked example prefix, conventions well-formed
+npm run check:config     # no placeholders, no leaked example prefix
 npm run build:theme      # check:config → assemble dist/theme.css → validate
 ```
 
@@ -423,7 +392,7 @@ npm run gate:selftest
 Exit `0` means a browser was found, the page was served, and the cascade was complete. Exit `4`
 means no browser (`npm install` did not take). Exit `3` with a failed-request line usually means
 the submodule step in §4 did not happen. **Fix it now** — this is exactly the failure that makes
-an unattended run produce nothing at 2am.
+every build report `unverified`.
 
 ## 9. Commit, then hand back
 
@@ -437,9 +406,9 @@ Report in this shape — short, and honest about what is not done:
 - **Toolchain** — both plugins and their scope, the ODC MCP endpoint, the Figma connector, `gh`,
   the browser. One line each, each either working or named as outstanding.
 - **Queued** — N deliverables, in build order, with the tier gates that will pause the run.
-- **Routines** — what was created, where it runs, and when it first fires.
+- **Routine** — the nightly run, if they asked for one, and when it first fires.
 - **Verified** — the gates, with their actual results.
-- **Outstanding** — every `TBD` convention and why it is blank, an unpinned submodule, a missing
+- **Outstanding** — an unpinned submodule, a missing
   connector or auth, any deliverable with no Figma node. **Name the consequence, not just the
   fact** — "Figma not connected, so the first run will build nothing" is actionable; "Figma not
   connected" gets skimmed past. Name who has to resolve each.
@@ -447,13 +416,13 @@ Report in this shape — short, and honest about what is not done:
   handover Task follows the merge.
 
 Then tell them the two things they can say from here: *"build the next deliverable"* to advance
-the loop by hand, or nothing at all — the routine does it tonight.
+the loop by hand, or a plain request such as *"add the error state to the input"*.
 
 ---
 
 ## Rules
 
-1. **Never invent a convention or a scope row.** `TBD` and "ask" are correct answers.
+1. **Never invent a scope row**, a spacing scale or a breakpoint. "Ask" is a correct answer.
 2. **Never write a project value anywhere but `project.config.json`**, and always through
    `init-project.mjs`. The ODC tenant in `.mcp.json` is *generated* from it, never hand-edited.
 3. **Never guess the ODC tenant** — not from the customer name, not from another project. A wrong
@@ -466,7 +435,7 @@ the loop by hand, or nothing at all — the routine does it tonight.
    customer's library.
 7. **Ask before anything outward-facing** — creating a repository, creating a scheduled routine,
    pushing to a remote.
-9. **Do not skip the submodules.** `vendor/outsystems-ui/` is the most-skipped step and it
+8. **Do not skip the submodules.** `vendor/outsystems-ui/` is the most-skipped step and it
    invalidates the fidelity gate. `vendor/outsystems-frontend-skills/` is the newer one, and
    skipping it degrades quietly rather than loudly — the skills keep answering, just from memory
    instead of from the catalog. Verify both.

@@ -6,11 +6,8 @@ Replace `acme-` with the project's stored prefix.
 ## Read this before copying anything below
 
 **These examples restyle the framework's OWN class names. That is deliberate and it is the
-point** (SKILL.md → *Rule zero: restyle, don't shadow*). An earlier version of this file taught
-the opposite — `.acme-btn--primary`, `.acme-card`, `.acme-tabs__tab--is-active` — a parallel
-vocabulary sitting beside a framework that already had every one of those names. Following it
-produced a real project's Button where nothing was branded until a developer hand-typed
-`ExtendedClass` on each widget.
+point** (SKILL.md → *Rule zero: restyle, don't shadow*). A parallel vocabulary such as
+`.acme-btn--primary` brands nothing until a developer hand-types `ExtendedClass` on each widget.
 
 Every selector below was verified against `vendor/outsystems-ui/src/scss/` and the pattern
 enums under `src/scripts/OSFramework/OSUI/Pattern/`. **Verify them against the version your

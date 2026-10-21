@@ -6,22 +6,9 @@ Applies to every file the loop writes: `tokens/*.css`, `src/blocks/*.css`,
 
 **The rule: the code says WHAT. The PR says WHY.**
 
-## Why this exists
-
-The loop's reasoning used to be written into the artifact. One block CSS reached `main` at 941
-lines, of which the first 120 were a numbered argument about which framework dropdown pattern the
-design meant — a decision log, a deferral rationale, a ref-vs-drawing discrepancy list and an
-unfiled contrast observation, in a file whose entire job is to be pasted into an ODC Block.
-
-Every reader was the wrong one. The **reviewer** reads the PR, where the same decision log already
-sits verbatim under §Decision log. The **developer** pastes the file into ODC and scrolls past it.
-The **customer** gets `build:theme:ship`, which strips ordinary comments — so prose that only ever
-appears in the dev copy was never documentation; it was a PR body written into the wrong file.
-And a comment 400 lines into a stylesheet is unfindable and unreviewable: nobody diffs it, nobody
-is notified by it, and it goes stale the first time the file is edited.
-
-The reasoning is not being thrown away. Every row below has a destination that a person can
-actually find.
+Prose in an artifact reaches the wrong reader: the reviewer already has it in the PR, the
+developer scrolls past it while pasting into ODC, and `build:theme:ship` strips it from the
+customer's copy. Each kind of prose below has a destination a person can actually find.
 
 ## Where each kind of prose goes
 

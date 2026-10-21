@@ -11,7 +11,7 @@ Take ONE work item (named in the prompt, referenced in `loop/state.json`) and pr
 `project.config.json` at the repo root is the source of truth for this project's values. Never assume them, never carry them over from another project:
 - `classPrefix` — the BEM prefix for every class you write.
 - `jsNamespace` — the `window.<Ns>*` namespace for Web Component helpers.
-- `conventions` — each has a **status**: `confirmed` | `assumed` | `TBD`. A convention that is not `confirmed` is **not a rule**. Do not build to it and do not raise findings against it.
+- Spacing scale, grid, breakpoints and default sizes are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` — never assumed or guessed; with nothing written, raise no finding about them.
 - `knownFalsePositiveClasses` — finding classes this project has already refuted. Do not re-raise them.
 
 ## 1. Read the specs before you write anything
@@ -67,13 +67,8 @@ An item lives at `specs/<kind>/<item-id>/`, where the id prefix picks the kind: 
   artifact a developer has to paste into ODC, where nobody reads it and `build:theme:ship` strips
   it anyway.
 
-## Host-platform rules (ODC) — each of these has already cost a project real rework
-- **Boolean attributes must be value-aware.** The host binds attributes with a forced value (`If(Flag,"true","false")`), so `hasAttribute('x')` is permanently true and the off-state never fires. Parse the *value*.
-- **Never hand-type an element id** — ids are platform-generated. Pass the widget's runtime `.Id` into the helper.
-- **Enumerable inputs are Static Entities**, not free Text.
-- **A border must never change a component's size.** A 1px border adds 2px of height. Use `inset box-shadow` / `outline` (zero layout cost) plus a pinned height.
-- **Never select on a framework runtime utility class** (e.g. `.placeholder-empty`). It is behavioural, not a styling hook.
-- **Prefer the host's own responsive classes** (`.tablet` / `.phone`) over raw `@media` breakpoints — the host's breakpoints are not yours.
+## Host-platform rules
+- Read and follow the project's `specs/foundations/platform.md` (value-aware boolean attributes, no hand-typed ids, borders that never change size, the host's responsive classes, and the rest).
 - **Every `src/blocks/*.css` you add goes in `src/blocks/index.css`**, in its load order. That manifest feeds `dist/theme.css` and the specimen page alike — a file missing from it is missing from ODC and from the measurement.
 
 ## The specimen — what the checker measures and the owner reviews
@@ -88,7 +83,7 @@ stylesheet. The rules are in the project's `specs/README.md`; the ones that bite
 - Put `data-review="evidence"` on the `<h3>`/`<h4>` of every sibling, collateral or host-mode check.
   The review Artifact opens on a clean demo of the component and hides those sections; the gate
   still measures them.
-- Chrome classes are `wf-specimen__*` (the project's specimen chrome) and ship nothing to ODC.
+- Chrome classes are `<classPrefix>specimen__*` (the project's specimen chrome) and ship nothing to ODC.
 
 ## The usage spec — same change, same PR
 Write or update `specs/<kind>/<item-id>.md` with the eight sections in `specs/README.md` (Metadata,

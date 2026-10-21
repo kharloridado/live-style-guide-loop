@@ -37,15 +37,16 @@ as `queued` if it is new, run pre-flight steps 1, 3 and 4, then build it once wi
 `references/per-item-build.md` and stop at the PR. A ref can be a Figma node or, on a project
 restyling a live app, a written spec plus before screenshots of the live screen.
 
-**A queue run** — a library, a batch, or a scheduled routine. The queue is the signed inventory in
+**A queue run** — a library, a batch, or an optional nightly routine. The queue is the signed inventory in
 `loop/goal.md`; its Run settings (mode, tiers, pauses, max rounds, items per run) govern the run.
-All pre-flight steps apply, then Phase 0 and the per-item loop below.
+All pre-flight steps apply, then the token pass and the per-item loop below.
 
 Either way, read `project.config.json` first (`classPrefix`, `jsNamespace`, `figma.fileKey`,
-`conventions` with their `confirmed|assumed|TBD` status, `knownFalsePositiveClasses`).
+`knownFalsePositiveClasses`). Spacing scale, grid, breakpoints and default sizes are enforced only
+when written in `specs/foundations/` or `specs/decisions.md` — never assumed or guessed.
 
 ## Pre-flight (every run — cheap, and it has caught real drift)
-1. **Reconcile state against git.** `state.json` can go stale while commits have already shipped later tiers. Compare the queue's `status` values against what is actually committed on the loop branch before advancing; fix state first, and say so in the REPORT.
+1. **Reconcile state against git.** `state.json` can go stale while commits have already shipped later tiers. Compare the queue's `status` values against what is actually committed on the loop branch before advancing; fix state first, and say so in the run's summary.
 2. **Confirm the inventory of record** (queue runs). No item enters the queue without a row in the signed inventory table in `loop/goal.md`. A component that is in Figma but not in that table is `needs-human`, not `queued`; to add scope, a scope owner adds a row (and `git log loop/goal.md` records who and when). Building speculatively is how fully-finished components get thrown away.
 3. **Check the library file key.** If `figma.fileKey` in `project.config.json` differs from the key recorded in an item's frozen ref, that ref is stale → mark the item `needs-re-ref` and re-snapshot before building on it. Design libraries get forked ("Main Library (2)") and silently re-version values.
 4. **Open the handover Task for anything that merged since the last run.** A deliverable's handover is created *after* its PR merges, never before — a handover says "paste this into ODC", and that must never be said about an unmerged branch. Nothing watches the merge, so the loop collects them at the start of every run:
@@ -63,9 +64,9 @@ Either way, read `project.config.json` first (`classPrefix`, `jsNamespace`, `fig
      --assignee <developer> --repo <owner/repo>
    ```
 
-   Set the item's status to `merged` when its PR is found merged, and to `handover` once the Task is open. This is self-healing: a run that crashes before the bookkeeping leaves the Task to be picked up next time, rather than losing it. Say in the REPORT which handovers were opened this way.
+   Set the item's status to `merged` when its PR is found merged, and to `handover` once the Task is open. This is self-healing: a run that crashes before the bookkeeping leaves the Task to be picked up next time, rather than losing it. Say which handovers were opened this way.
 
-## Phase 0 — Tokens (library mode, runs once)
+## Token pass (library mode, runs once)
 If `state.json.items` is empty and `goal.md` sets mode `library`:
 1. Pull the full Figma library via Figma MCP. Extract the ENTIRE token set (color, spacing, type, radius, shadow, motion).
 2. Reconcile against tokens/*.css: classify each as new / changed / off-scale / removed. File token-drift findings (design-token bugs) for anything off-scale or ambiguous.
@@ -73,7 +74,7 @@ If `state.json.items` is empty and `goal.md` sets mode `library`:
 4. Seed `state.json.items[]` from the audit, each tagged with its `tier` (foundations|primitives|composites|patterns), `level` (L1-L5), `node` (Figma node id), no status yet.
 5. Set each seeded item's status to `queued` in inventory order. Then honor the pause after foundations in `goal.md`: if it is set, write loop/REPORT.md (token summary + findings) and STOP for sign-off. Branches are cut per item, not here.
 
-For single mode: seed the queue from a normal Phase 1 audit; skip tiers/checkpoints.
+For single mode: seed the queue from a component audit; skip tiers and pauses.
 
 ## Per-item loop (repeat until done-criteria or a cap/checkpoint)
 1. Pick the next `queued` item in dependency order: never start a tier until every item in the previous tier has a PR or is `needs-human`; within a tier, build primitives a composite depends on first.
@@ -91,11 +92,8 @@ When a tier completes: run a CONSISTENCY PASS (do all components in the tier use
 ## Stop
 Stop when no item is `queued`, or the run reached `goal.md`'s items per run, or a pause applies, or a blocking finding needs a human.
 
-## Headless one-step mode
-When asked to advance one step, do exactly ONE item (or ONE phase-0/tier-boundary action), persist state, and exit.
-
-## Report
-Always end a run by writing loop/REPORT.md: tier progress, items built, **the PR URL and the review Artifact URL for each**, bugs filed (links), needs-human items, consistency-pass results. Also write a `## Review metrics` section so review coverage is visible run-over-run:
+## Report (queue runs)
+End a queue run by writing loop/REPORT.md: tier progress, items built, **the PR URL and the review Artifact URL for each**, bugs filed (links), needs-human items, consistency-pass results. Also write a `## Review metrics` section so review coverage is visible run-over-run:
 - items auto-passed vs needs-human (review coverage)
 - findings filed vs challenged-out (false-positive rate)
 - checker rounds distribution (round-1-pass rate)

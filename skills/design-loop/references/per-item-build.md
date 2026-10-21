@@ -7,8 +7,7 @@ PR.** It does not create handover issues or attach sub-issues. It builds, judges
 that means for the queue.
 
 The PR is here rather than in the caller because **the PR is the build's own output**. Its body is
-the maker's and checker's reasoning, and that reasoning exists only at this moment — deferring it
-to the caller is how it used to end up in `state.json` instead of in front of a reviewer.
+the maker's and checker's reasoning, and that reasoning exists only at this moment.
 
 ---
 
@@ -88,9 +87,7 @@ depth to the item's risk tier and adversarially challenges every finding before 
 returns VERDICT, RISK-TIER, DET-GATE, VISUAL, MEASUREMENTS, CONFIDENCE, CRITIQUE,
 FINDINGS-CONFIRMED, FINDINGS-CHALLENGED-OUT, DECISION-LOG.
 
-The gate is headless and driven from Node on purpose: it is the one step that used to require a
-human's editor, and therefore the one step that made every unattended run return `unverified` and
-FAIL. If it reports no usable browser (`npm install` never ran), a missing framework base
+The gate is headless and driven from Node, so it runs the same unattended. If it reports no usable browser (`npm install` never ran), a missing framework base
 (`npm run build:osui`) or a stale theme (`npm run build:theme`), that is a **harness fault to fix and re-run** — not a design
 verdict, and never a reason to relax the gate.
 

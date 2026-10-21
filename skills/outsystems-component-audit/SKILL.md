@@ -5,11 +5,11 @@ description: Analyze a Figma design and produce a structured component audit tha
 
 # OutSystems Component Audit
 
-Phase 1 of the workflow: structured triage of a design before any code is written.
+Structured triage of a design before any code is written.
 
 ## Pre-flight
 
-1. Read `project.config.json` for `classPrefix`, `jsNamespace`, `environment` and `conventions`; use a convention only when its `status` is `confirmed`. If the file is missing or still holds `<<PLACEHOLDER>>` values, stop and run `/lsg:project-setup` — never guess a value.
+1. Read `project.config.json` for `classPrefix`, `jsNamespace` and `environment`. If the file is missing or still holds `<<PLACEHOLDER>>` values, stop and run `/lsg:project-setup` — never guess a value. Spacing scale, grid, breakpoints and default sizes are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` — never assumed or guessed; with nothing written, raise no finding about them.
 
 ## When to use
 
@@ -125,12 +125,12 @@ Recommended sequence with escalation levels and skill routing:
 
 ```
 Recommended order:
-1. Update :root tokens                  → Phase 2 / outsystems-token-extractor
+1. Update :root tokens                  → outsystems-token-extractor
 2. Hero card customization              → L3, outsystems-bem-css
 3. Featured product card (custom Block) → L4, outsystems-bem-css
 4. Pricing tier toggle                  → L5, outsystems-web-component
-5. Document new components              → Phase 4, outsystems-style-guide-doc
-6. Validate in browser                  → Phase 5
+5. Document new components              → outsystems-style-guide-doc
+6. Validate in browser                  → the fidelity gate
 ```
 
 ### 5. Findings Register
@@ -151,7 +151,7 @@ Key principle restated: the audit recommends and tracks; it does **not** rewrite
 Offer next actions explicitly:
 
 > "Next steps available:
-> - Generate the :root update for the token deltas (Phase 2)
+> - Generate the :root update for the token deltas
 > - Generate BEM CSS for the hero card customization (L3)
 > - Generate the pricing tier Web Component + Block wrapper (L5)
 > Which would you like first?"
@@ -161,6 +161,6 @@ If the user just says "all of it" or "do everything," proceed in order without a
 ## Reference
 
 - `references/customization-decision-tree.md` — L1–L5 decision tree with Web Component routing
-- `references/figma-mcp-usage.md` — reading the design source
+- Reading the design source: the `outsystems-figma-integration` skill
 - The OutSystems UI pattern catalog is **not** duplicated here. Read `blocks-index.md` upstream.
 - `outsystems-design-findings` skill — schema for the Findings Register (section 5) and ticket/Slack routing

@@ -1,6 +1,6 @@
 ---
 name: outsystems-design-findings
-description: Capture, classify, and route design-conformance findings discovered during OutSystems frontend work — accessibility (WCAG 2.2 AA) issues baked into the design, brand-color deviations, and hard-coded values that bypass design tokens. Use this skill whenever a design is implemented faithfully but contains conflicts that must be raised back to the designer or brand owner instead of being silently fixed in code — failing color contrast on brand colors, off-palette colors, non-tokenized values, missing-token gaps, or any situation where the design does not follow accessibility, brand, or token rules. Also use whenever the user wants to open tickets (Notion or Jira/Atlassian) or post to Slack about design issues. This is the flag-don't-fix companion to the outsystems-component-audit skill, and it runs at the end of Phase 1 audits and after any component build.
+description: Capture, classify, and route design-conformance findings discovered during OutSystems frontend work — accessibility (WCAG 2.2 AA) issues baked into the design, brand-color deviations, and hard-coded values that bypass design tokens. Use this skill whenever a design is implemented faithfully but contains conflicts that must be raised back to the designer or brand owner instead of being silently fixed in code — failing color contrast on brand colors, off-palette colors, non-tokenized values, missing-token gaps, or any situation where the design does not follow accessibility, brand, or token rules. Also use whenever the user wants to open tickets (Notion or Jira/Atlassian) or post to Slack about design issues. This is the flag-don't-fix companion to the outsystems-component-audit skill, and it runs at the end of a component audit and after any component build.
 ---
 
 # Design Findings — Flag, Don't Fix
@@ -29,7 +29,7 @@ paraphrased is a finding nobody can check against the source.
 
 ## When this skill runs
 
-- **End of Phase 1 audit** — design-level findings (brand-color contrast, off-palette colors, values with no matching token). This is the main entry point.
+- **End of a component audit** — design-level findings (brand-color contrast, off-palette colors, values with no matching token). This is the main entry point.
 - **After a component build** — implementation-level findings that couldn't be auto-resolved without altering the design.
 - **On demand** — user says "log this", "open a ticket for that", "flag these", "send to Slack".
 

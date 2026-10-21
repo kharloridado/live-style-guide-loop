@@ -65,7 +65,7 @@ the design specifies is a `accessibility/target-size` finding — see the fix-vs
 Help mechanisms (contact link, chat launcher, FAQ, help icon) appear in the same relative location
 on every screen that offers them.
 
-Screen-flow scope, not component scope. Surfaces during a Phase 1 audit across a set of frames, not
+Screen-flow scope, not component scope. Surfaces during a component audit across a set of frames, not
 while building one component. Finding type `consistency`.
 
 ## 3.3.7 Redundant Entry — A
@@ -99,6 +99,6 @@ territory — check there first.
 | 2.4.13 Focus Appearance | Component | CSS generation (auto-applied) |
 | 2.5.7 Dragging Movements | Component | Web Component build (L5) |
 | 2.5.8 Target Size | Component | CSS generation → fix or flag |
-| 3.2.6 Consistent Help | Flow | Phase 1 audit |
-| 3.3.7 Redundant Entry | Flow | Phase 1 audit |
-| 3.3.8 Accessible Auth | Flow | Phase 1 audit, custom auth only |
+| 3.2.6 Consistent Help | Flow | Component audit |
+| 3.3.7 Redundant Entry | Flow | Component audit |
+| 3.3.8 Accessible Auth | Flow | Component audit, custom auth only |

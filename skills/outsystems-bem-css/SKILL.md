@@ -1,6 +1,6 @@
 ---
 name: outsystems-bem-css
-description: Write BEM-compliant CSS for OutSystems Reactive Web and ODC components that consumes design tokens from :root, follows the user's stored prefixing conventions, and is upgrade-safe against OutSystems UI updates. Use this skill whenever the user needs to write CSS for an OutSystems component, customize an OutSystems UI pattern, add a CSS class to a Block or Theme, override styles via ExtendedClass, or asks for BEM in any OutSystems context.
+description: Write BEM-compliant CSS for OutSystems Reactive Web and ODC components that consumes design tokens from :root, uses the project's class prefix, and is upgrade-safe against OutSystems UI updates. Use this skill whenever the user needs to write CSS for an OutSystems component, customize an OutSystems UI pattern, add a CSS class to a Block or Theme, override styles via ExtendedClass, or asks for BEM in any OutSystems context.
 ---
 
 # OutSystems BEM CSS Generator
@@ -9,7 +9,7 @@ Generate production-grade BEM CSS for OutSystems Reactive Web and ODC.
 
 ## Pre-flight
 
-1. Read `project.config.json` for `classPrefix`, `jsNamespace`, `environment` and `conventions`; use a convention only when its `status` is `confirmed`. If the file is missing or still holds `<<PLACEHOLDER>>` values, stop and run `/lsg:project-setup` — never guess a value.
+1. Read `project.config.json` for `classPrefix`, `jsNamespace` and `environment`. If the file is missing or still holds `<<PLACEHOLDER>>` values, stop and run `/lsg:project-setup` — never guess a value. Spacing scale, grid, breakpoints and default sizes are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` — never assumed or guessed; with nothing written, raise no finding about them.
 2. Use `classPrefix` throughout. Never ask for the prefix.
 3. **Read upstream before writing a selector.** This skill owns BEM naming and nothing else. Where
    the CSS belongs, which variables exist, and which utility classes already cover the property are

@@ -102,9 +102,8 @@ Why the literal is wrong:
   stored; the property has no effect on that widget.
 
 Build the tree instead: name each widget, its Style Class, and its literal text. A widget
-tree in a prompt is longer to write than a blob of HTML and dramatically more reliable to
-apply — measured on one real screen, a 52-item grid took `internal_retry_count` **1** and
-**0** as two Container-tree turns, against **9** for the single HTML literal.
+tree in a prompt is longer to write than a blob of HTML and far more reliable to apply (an
+order of magnitude fewer Mentor retries).
 
 ### Target HTML as a *spec* is different — and needs saying so
 
@@ -122,9 +121,8 @@ things:
 3. **Diff markers** on each line — `<- ADD`, `<- MOVE here`, `<- REMOVE …`, `(unchanged)` — so it is
    an edit to the existing tree, not a rebuild.
 
-Measured on a side-menu build: target HTML with a legend landed Layout, Menu, ApplicationTitle and
-UserInfo restructures in one pass each, where prose widget trees had needed repeated corrections.
-Verification is unchanged: the outline check, class check and boxes below still decide.
+Target HTML with a legend usually lands a Layout restructure in one pass where prose widget trees
+need repeated corrections. Verification is unchanged: the outline check, class check and boxes below still decide.
 
 ## Prompts a human pastes into Mentor Studio
 
@@ -186,8 +184,8 @@ then any variant:
 
     btn                         <- correct: a bare Button is already the low-emphasis variant
     btn btn-primary             <- correct: framework variant
-    btn uswds-btn--secondary    <- correct: design-system variant, base still present
-    uswds-btn--secondary        <- WRONG: no base
+    btn acme-btn--secondary     <- correct: design-system variant, base still present
+    acme-btn--secondary         <- WRONG: no base
 
 The platform does **not** prepend `btn` for you — whatever the class string says is what
 ships. Put the base and the modifier in one field together, and do not split them across
@@ -198,12 +196,9 @@ Property `class`, `btn` must appear in that value too; nothing adds it back.
 puts every visual property (background, border, padding, radius, type) on the `.btn` base
 and lets the variant classes assign nothing but custom properties. That collapses dozens of
 states into a flat, readable cascade — at the cost of zero graceful degradation. A button
-carrying only `uswds-btn--secondary` sets nine custom properties that **nothing reads**, and
+carrying only `acme-btn--secondary` sets nine custom properties that **nothing reads**, and
 falls back to the browser's own `2px outset` / `padding: 1px 6px` chrome. Not degraded:
-unstyled.
-
-This shipped. On one `ButtonSpecimen` screen, 14 of 25 buttons rendered as raw browser
-buttons behind a green build gate and a clean Mentor validation.
+unstyled — behind a green build gate and a clean Mentor validation.
 
 **Telling the two mechanisms apart from the DOM — a weak signal, so do not lean on it.** The
 platform adds classes of its own (e.g. `ThemeGrid_MarginGutter`), and their absence alongside
@@ -214,7 +209,7 @@ correlate, not the thing:
   `ThemeGrid_MarginGutter` at all. Absence is not evidence of a clobber.
 - **It misses the failure you are more likely to have.** A page can pass this check on every
   button while many carry the *wrong variant* — a well-formed class list with the wrong
-  contents. Measured on one real screen: 25/25 passed the gutter check, 11 were wrong.
+  contents.
 
 Measure `btn` presence directly — it is one line and it is the property you care about — and
 assert the expected *variant* per row on top of it. Ask the model to read its own tree when
@@ -435,9 +430,8 @@ After publishing, check in this order:
    - A useful companion signal: count `div`s inside your content root. A specimen or detail
      screen in the low hundreds of `div`s with no headings is the signature of this defect.
 
-   Measured on a real build: two reference screens shipped with **0** headings and 108 and
-   246 `div`s. Both had passed a Mentor turn reporting `change_applied: true`, zero
-   validation errors, and a visual screenshot review.
+   Screens with zero headings routinely pass a Mentor turn reporting `change_applied: true`,
+   zero validation errors and a visual screenshot review.
 6. **The content itself** — counts, values, order, against the spec of record.
 7. **The rendered class strings**, for anything you styled. A widget that lost its
    platform base class still renders, so only the DOM shows it — see "Classing a widget"
@@ -453,11 +447,9 @@ usually index lag, and the browser settles it.
 Ask Mentor to paste a stylesheet section back and it will do so faithfully — that is reading.
 Ask it how long the file is and you get a language model counting characters, which is not.
 
-On one verification pass Mentor printed section 5.7 correctly, confirmed there was exactly one
-of it, and then reported the stylesheet as **18,657 characters** when the server's own byte
-count was **30,281**. Nothing was wrong; the count was. Treated as evidence it would have read
-as an 11KB truncation and triggered a pointless re-paste — or worse, a "repair" that really did
-damage the file.
+A model-reported length can be off by a third while the content is intact. Treated as evidence,
+it reads as a truncation and triggers a pointless re-paste — or a "repair" that really damages
+the file.
 
 So split the two kinds of question:
 
@@ -477,10 +469,9 @@ Bulk work (replacing a theme stylesheet, a screen stylesheet) applies reliably. 
 property edits are a different story**, and the failure is not an error — it is a confident,
 itemised, entirely fabricated report.
 
-Observed across eight attempts on one screen: three applications that moved values onto the
-wrong widgets, one that damaged widgets which had been correct, and one complete no-op whose
-terminal result carried a verbatim per-widget "read-back" table and six passing self-checks
-for changes that were never written.
+Typical failures: values moved onto the wrong widgets, correct widgets damaged, and a complete
+no-op whose result carries a per-widget "read-back" table and passing self-checks for changes
+that were never written.
 
 **The mechanism: positional addressing is unsound, because traversal order is not render
 order — and is not stable between sessions.**

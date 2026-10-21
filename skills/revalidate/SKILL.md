@@ -10,15 +10,8 @@ description: Re-run the checker against an already-built deliverable without reb
 Runs **`@lsg:checker`** against an artifact that already exists and reports the
 verdict. **It never invokes the maker and never edits source.**
 
-## Why this exists
-
-The checker used to have exactly one caller: `per-item-build.md`, inside the loop, at build time.
-So the only way to re-answer a question about existing code was to rebuild it — paying for a full
-maker pass to re-judge something nobody wanted changed. Worse, a rebuild *can* change the artifact,
-which means you no longer know whether the verdict moved because the judgment differed or because
-the code did.
-
-Re-judging and re-building are different questions. This answers the first one only.
+Re-judging and re-building are different questions: a rebuild can change the artifact, so its
+verdict cannot tell you whether the judgment or the code moved. This answers the first only.
 
 ## When to reach for it
 
@@ -38,7 +31,7 @@ item back to `queued`, and let the loop rebuild.
 ### 1. Resolve the target to an item and a ref
 
 Accept any of: an item id (`cmp-button`), a PR number (`33`), or an artifact path
-(`src/blocks/uswds-button.css`). Resolve to the item in `loop/state.json` and its frozen ref at
+(`src/blocks/acme-button.css`). Resolve to the item in `loop/state.json` and its frozen ref at
 `specs/<kind>/<id>/` (the id prefix picks the kind: `cmp-` components, `pat-` patterns, `tok-` tokens).
 
 For a PR number: `gh pr view <n> --json headRefName,files,body` — the item id is in the title/body
@@ -92,8 +85,8 @@ the output is comparable with the verdict already in the PR.
 **Findings** follow the loop's rules exactly: confirmed ones are deduped by `[node:<id>]` and filed
 as Bugs; challenged-out ones go to `findings/findings-register.md` as `not-reproduced` with the
 usage evidence, and never become bugs. Never re-file anything in
-`knownFalsePositiveClasses`, and never raise a finding against a convention whose status is not
-`confirmed`.
+`knownFalsePositiveClasses`, and never raise a finding about spacing, grid, breakpoints or default
+sizes unless the project's specs write them down.
 
 ### 5. Optionally post it to the PR
 

@@ -73,29 +73,6 @@ Expression-escaping trap sits there too, by the absence test: upstream documents
 hierarchy, but nothing upstream covers what happens when an agent instructs a Traditional Web
 property on an ODC reactive widget and is told it worked.
 
-## What 2.0 removed, and where it went
-
-| Removed | Reason | Replacement |
-| --- | --- | --- |
-| `skills/outsystems-accessibility/` | Duplicated `common/accessibility.md`, at an older WCAG level than it claimed to enforce | Upstream, plus the three splits below |
-| its `wcag-2-2-checklist.md` | 2.1 content restated around seven 2.2 additions | `outsystems-design-findings/references/wcag-2.2-delta.md` — the seven only |
-| its `contrast-calculator.md` | Not overlap; it produces findings | moved to `outsystems-design-findings/references/` |
-| its `keyboard-patterns.md`, `aria-recipes.md` | Not overlap; upstream never builds custom elements | moved to `outsystems-web-component/references/` |
-| its Tier 1 / Tier 2 policy | Already stated, better, elsewhere | the fix-vs-flag table in `outsystems-design-findings` |
-| `outsystems-bem-css/references/css-locations.md` | Duplicated — and **contradicted** — `common/css-customization.md` | upstream, which argues Theme-first on maintainability grounds |
-| `outsystems-bem-css/references/responsive-patterns.md` | Duplicated `common/responsive-design.md` | upstream |
-| `outsystems-component-audit/references/pattern-catalog.md` | A partial, hand-maintained block list | `blocks-index.md` upstream |
-| `outsystems-token-extractor/references/full-token-list.md` | A partial, hand-maintained variable list | `styles-and-utilities.md` upstream |
-
-Two things were **added** rather than removed, both consequences of reading upstream properly:
-
-- **L4.5** in the escalation ladder — extend a pattern via `Set*Configs` / `Set*Event` / the OSUI JS
-  API before building a Web Component. Upstream documents an extension surface the ladder used to
-  jump straight over, which inflated L5.
-- **Domain 6, framework grain**, in the checker — scored with upstream's implementation rubric. The
-  other five domains all pass on a screen that is pixel-accurate, tokenised, cleanly named, and
-  built from Containers where the framework already shipped the block.
-
 ## The one accepted cost
 
 **Upstream is written to WCAG 2.1 AA. This loop commits to 2.2 AA.** The gap is not overlap, so it
