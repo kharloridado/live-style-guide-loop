@@ -62,7 +62,7 @@ Three rules carry most of the quality:
 
 In this order — the same rule as every other OutSystems change:
 
-1. **The OutSystems MCP, when one is connected** (ODC: the tenant endpoint in `.mcp.json`). Drive
+1. **The OutSystems MCP, when one is connected** (ODC: the tenant endpoint in `.mcp.json`; O11: Service Studio's own MCP server on the developer's machine). Drive
    it with `outsystems-mentor-build`: read the module's menu entities and an existing pattern page
    first, then add the record, the page and the preview in the shape those already have.
 2. **No MCP on ODC → a Mentor Studio prompt** in the handover, run in `modules.liveStyleGuide`
