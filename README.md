@@ -52,7 +52,7 @@ the same version. The template already ships that setting. Release notes: [CHANG
 | Hook | Does |
 | --- | --- |
 | `PreToolUse` → `pre-commit-gate.mjs` | Before a `git commit` touching `tokens/ src/ specs/ build/`, runs `npm run build:theme` and blocks the commit with its errors when it fails. Skipped in the unfilled template. |
-| `SessionStart` → `session-check.mjs` | Lists missing setup steps (deps, submodule, OutSystems UI base, unfilled config). Silent when set up. |
+| `SessionStart` → `session-check.mjs` | Lists missing setup steps (deps, submodule, OutSystems UI base, unfilled config) and, as REQUIRED, OutSystems' official MCP skill for the project's platform: the `outsystems` plugin with its tenant on ODC, `servicestudio-mcp-oml` and the `servicestudio` server on O11. Silent when set up. |
 
 ## Three contracts
 

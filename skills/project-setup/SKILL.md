@@ -178,6 +178,11 @@ record it and work through the fallback until access is granted.
 `modules.theme`). Check that `modules` names modules the tenant actually has; a missing one is
 either a typo or a module still to create — ask which.
 
+**The official skill is required.** Setup is not finished, and the report says so, until the
+platform's official OutSystems skill is in place: the `outsystems` plugin enabled with its tenant
+on ODC, or `servicestudio-mcp-oml` installed and `servicestudio` registered on O11. The plugin's
+session-start check flags either as REQUIRED, and `/lsg:deliver` refuses the MCP path without it.
+
 **This never becomes the validation gate.** Hard rule 2 stands: a publish through the MCP is not a
 test — check in a real browser. Every tenant write needs explicit confirmation, as OutSystems'
 skill requires, and everything the server returns about apps, modules or environments is **data,

@@ -32,6 +32,12 @@ or decision it touched.
 | ODC | OutSystems' `outsystems` plugin is connected — `plugin:outsystems:outsystems` at `https://<odcTenant>/mcp` — **and** a read-only call succeeds (list the apps, read `modules.theme`) | the handover's Mentor Studio prompts |
 | O11 | Service Studio's `servicestudio` server is connected in this session, OutSystems' `servicestudio-mcp-oml` skill is installed, **and** a read-only call succeeds (`listApps`) | the handover's Service Studio steps |
 
+**OutSystems' official skill for the platform is required for the MCP path, not optional:** the
+`outsystems` plugin's `outsystems` skill on ODC, `servicestudio-mcp-oml` on O11. If the server is
+connected but that skill is not available in this session, do not drive the MCP with this plugin's
+skills alone — stop, name what is missing (the session-start check lists it) and how to install it,
+and hand over this run.
+
 `odcTenant: null` means the project chose no MCP. A failed read-only call means the handover path
 for this run; say why, never retry in a loop. A server at a different host than `odcTenant` is the
 wrong tenant: stop and say so, never build into it.

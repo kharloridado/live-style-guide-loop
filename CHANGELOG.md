@@ -24,6 +24,10 @@ Pair with `live-style-guide-harness` from this date: its `npm run init` no longe
 - **On O11, OutSystems' `servicestudio-mcp-oml` skill drives Service Studio's MCP.** Setup installs
   it from `OutSystems/outsystems11-mcp` and registers the `servicestudio` server; `/lsg:deliver`
   loads it and lets each write go through Service Studio's Compare-and-Merge before `omlPublish`.
+- **The official skill is required, by platform.** The session-start check flags as REQUIRED a
+  missing `outsystems` plugin or tenant on ODC (and a tenant that differs from `odcTenant`), or a
+  missing `servicestudio-mcp-oml` skill or `servicestudio` server on O11. `/lsg:deliver` refuses the
+  MCP path without the official skill, and setup does not report ready until it is in place.
 
 ### Fixed
 
