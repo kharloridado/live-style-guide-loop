@@ -114,8 +114,25 @@ Keep the maker's and checker's decision logs for the PR body (below), not the st
 
 Write the handover document (`handover/<artifact>.md`) with the DECISION-LOG in a collapsed
 `<details>` ("Why / alternatives ruled out") and the design-variant → framework-class mapping
-table, and run `node build/embed-handover-code.mjs` so it carries the verbatim code to paste into
-ODC.
+table, and run `node build/embed-handover-code.mjs` so it carries the verbatim code to paste and
+the build steps (a Mentor prompt on ODC, Service Studio steps on O11).
+
+### Live Style Guide impact — the page ships with the code
+
+Take the maker's LSG-IMPACT and settle it with `outsystems-style-guide-doc`:
+
+- **A new component or pattern** gets its page in the same handover. In
+  `handover/handover-map.json`, give the entry `mentor.prompts` in build order — the Block in
+  `modules.patterns`, then the menu record, preview and page in `modules.liveStyleGuide` (and the
+  demo Block in `modules.patPreview` on O11) — built from usage spec §9.
+- **A token change** needs nothing when the project's Styles pages render from the theme
+  (`TokenReference`); otherwise the handover names the Styles page and the rows to update.
+- **A restyle** names its stock pattern page and anything on it that differs for this design
+  system.
+
+When an OutSystems MCP is connected and the user asked for the change to be applied, apply the page
+through it with `outsystems-mentor-build` after the Block, and verify the published page in a
+browser. Otherwise the handover carries it. Either way, the PR body says which.
 
 ### Build and publish the review Artifact
 

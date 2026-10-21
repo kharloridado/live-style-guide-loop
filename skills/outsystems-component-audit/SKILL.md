@@ -1,6 +1,6 @@
 ---
 name: outsystems-component-audit
-description: Analyze a Figma design and produce a structured component audit that classifies every UI element as (1) exists in OutSystems UI as-is, (2) exists but needs customization, or (3) needs to be built as a Web Component. Also flags brand inconsistencies and identifies design token deltas. Use this skill whenever the user shares a Figma frame/screenshot/handoff, asks "what's in this design", asks "do we have this in OutSystems UI", or wants a triage of a design before coding.
+description: Analyze a Figma design and produce a structured component audit that classifies every UI element as (1) exists in OutSystems UI as-is, (2) exists but needs customization, or (3) needs to be built as a custom Block with a required Script (L5). Also flags brand inconsistencies and identifies design token deltas. Use this skill whenever the user shares a Figma frame/screenshot/handoff, asks "what's in this design", asks "do we have this in OutSystems UI", or wants a triage of a design before coding.
 ---
 
 # OutSystems Component Audit
@@ -41,7 +41,7 @@ is worse than no audit: it produces a costed plan for work that did not need doi
 |---|---|
 | **Exists as-is** | Use the OutSystems UI widget. Verify it matches within tolerance; if not, it is the row below. |
 | **Exists, not exact** | **Dual track.** Alignment: L1–L3 overrides (token / utility class / `ExtendedClass` + BEM) so the stock widget lands near the design for any developer who reaches for it. Canonical: the custom Block or Web Component (L4–L5) the team ships. |
-| **Doesn't exist** | Build it: Web Component (L5) + Block wrapper — only after the L4.5 gate. |
+| **Doesn't exist** | Build it: a custom Block with a required Script (L5) — only after the L4.5 gate. |
 
 "Customize OutSystems UI" never means editing or forking the module — only layers on top of it.
 Tier (build order) and level (L1–L5, effort) are independent: a pattern can be a pure L1 change.
@@ -62,7 +62,7 @@ Table of every distinct UI element identified. Three buckets:
 |---|---|---|---|---|
 | Top navigation | ✅ As-is | `Layout Top` + `Menu` | L1-L2 | Standard usage |
 | Hero card | 🎨 Customize | `Card Background` + ExtendedClass | L3 | Custom gradient overlay |
-| Pricing tier toggle | 🆕 Web Component | Build `acme-pricing-toggle` | L5 | No OS UI match |
+| Pricing tier toggle | 🆕 Custom Block | Build Block `PricingToggle` + `acme-pricing-toggle.js` | L5 | No OS UI match |
 | Featured product card | 🎨 Customize | `Card` + wrap in custom Block | L4 | Reused 12+ places |
 
 **Buckets:**
@@ -70,7 +70,7 @@ Table of every distinct UI element identified. Three buckets:
 - **🎨 Customize** — Existing pattern with customization (**L3a = restyle the framework's own
   class**, the default; L3b = ExtendedClass + BEM, only where the framework ships no class;
   L4 = wrap in custom Block)
-- **🆕 Web Component** — No matching pattern → vanilla JS Web Component wrapped in OutSystems Block (L5)
+- **🆕 Custom Block** — No matching pattern → an OutSystems Block of widgets, placeholders and typed inputs, with one required vanilla-JS Script for behaviour (L5)
 
 **L3a before L3b, always.** If OutSystems UI already names the thing — `.btn`, `.btn-primary`,
 `.card`, `.tag`, `.osui-tabs__header-item` — the audit routes it to restyling **that bare
@@ -86,7 +86,7 @@ state around any of them — all documented upstream in `extensibility.md`. That
 sits between wrapping a pattern and building one. An L5 is only honest once you can name what you
 checked there and why it doesn't reach.
 
-**Important:** L5 always means Web Component now. Don't suggest "build a custom Block with HTML widgets from scratch" — that's the old approach. Web Components are the user's chosen architecture.
+**Important:** L5 means a custom Block with a required Script (`outsystems-custom-block`): real widgets the developer can select and edit, behaviour in a Script the Block's OnReady / OnParametersChanged / OnDestroy drive. A Web Component only where the project already ships them or the user asks for one.
 
 Name patterns using the upstream `blocks-index.md` spelling exactly. If unsure between two, propose both with trade-offs and cite the arguments that differ.
 
@@ -128,7 +128,7 @@ Recommended order:
 1. Update :root tokens                  → outsystems-token-extractor
 2. Hero card customization              → L3, outsystems-bem-css
 3. Featured product card (custom Block) → L4, outsystems-bem-css
-4. Pricing tier toggle                  → L5, outsystems-web-component
+4. Pricing tier toggle                  → L5, outsystems-custom-block
 5. Document new components              → outsystems-style-guide-doc
 6. Validate in browser                  → the fidelity gate
 ```
@@ -143,7 +143,7 @@ Key principle restated: the audit recommends and tracks; it does **not** rewrite
 
 - Be specific. "Looks like a card" is not useful. "Card Background pattern with custom gradient overlay, padding adjusted to `--space-l`, ExtendedClass = `acme-hero acme-hero--feature`" is useful.
 - Use OutSystems UI pattern names exactly: `Carousel`, `Date Picker`, `Bottom Sheet`, `Sidebar`, `Stacked Cards`, `Tabs`, `Wizard`, etc.
-- For L5 components, immediately propose the Web Component tag name (e.g., `acme-pricing-toggle`, `acme-step-indicator`).
+- For L5 components, immediately propose the Block name and its Script (e.g., `PricingToggle` + `acme-pricing-toggle.js`, `StepIndicator` + `acme-step-indicator.js`).
 - Don't waste lines on obvious classifications. Most components are quick wins.
 
 ## After audit completes
@@ -153,14 +153,14 @@ Offer next actions explicitly:
 > "Next steps available:
 > - Generate the :root update for the token deltas
 > - Generate BEM CSS for the hero card customization (L3)
-> - Generate the pricing tier Web Component + Block wrapper (L5)
+> - Generate the pricing tier custom Block + its Script (L5)
 > Which would you like first?"
 
 If the user just says "all of it" or "do everything," proceed in order without asking again.
 
 ## Reference
 
-- `references/customization-decision-tree.md` — L1–L5 decision tree with Web Component routing
+- `references/customization-decision-tree.md` — L1–L5 decision tree with L5 routing
 - Reading the design source: the `outsystems-figma-integration` skill
 - The OutSystems UI pattern catalog is **not** duplicated here. Read `blocks-index.md` upstream.
 - `outsystems-design-findings` skill — schema for the Findings Register (section 5) and ticket/Slack routing

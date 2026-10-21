@@ -1,6 +1,6 @@
 ---
 name: project-setup
-description: Stand up a freshly cloned OutSystems design-system project in one pass — interview for the project's values, wire up the toolchain (the lsg and outsystems plugins, the ODC MCP server in .mcp.json, the Figma connector), fill project.config.json, install dependencies and the OutSystems UI submodule, create the GitHub labels, turn a list of deliverables + Figma links into the signed inventory and the loop queue, offer an optional nightly run, and verify the whole thing builds. Use this when a project is newly cloned from the template, when project.config.json still contains <<PLACEHOLDER>> values, when the plugins/skills/MCP servers need configuring for a project, or whenever the user asks to set up / initialise / bootstrap / configure a new project or engagement.
+description: Stand up a freshly cloned OutSystems design-system project in one pass — interview for the project's values, identify the platform (ODC or O11) and the modules and applications the work lands in, wire up the toolchain (the lsg and outsystems plugins, the OutSystems MCP server in .mcp.json when the platform has one, the Figma connector), fill project.config.json, install dependencies and the OutSystems UI submodule, create the GitHub labels, turn a list of deliverables + Figma links into the signed inventory and the loop queue, offer an optional nightly run, and verify the whole thing builds. Use this when a project is newly cloned from the template, when project.config.json still contains <<PLACEHOLDER>> values, when the plugins/skills/MCP servers need configuring for a project, or whenever the user asks to set up / initialise / bootstrap / configure a new project or engagement.
 ---
 
 # Project setup — one sitting, one pass
@@ -46,17 +46,32 @@ Then decide what this is:
 Ask for everything at once. Use `AskUserQuestion` for the constrained choices and plain prose for
 the free-text ones; do not ask nine questions in nine turns.
 
+**The platform comes first** — ODC or O11 — because it decides the module kinds, whether there is
+a tenant MCP endpoint, and what a handover carries. If the user does not say, look for evidence
+(an ODC tenant URL, an `.oap`/`.oml`, a Service Studio screenshot) and confirm it; never assume.
+
 | Value | Flag | Notes |
 |---|---|---|
+| **Platform** | `--environment` | `ODC` or `O11` |
 | Customer | `--customer` | e.g. "Acme Corp" — appears in comments and issue titles |
 | Project short name | `--project` | e.g. "ACME" |
 | Design system name | `--design-system` | defaults to the project name |
 | CSS class prefix | `--prefix` | lowercase, trailing hyphen. **`acme-` is rejected** — it is the template's own example |
 | JS namespace | `--js-namespace` | `window.<Ns>Toast` for Web Component helpers |
-| ODC theme module | `--theme-module` | used in self-hosted font paths |
-| **ODC tenant hostname** | `--odc-tenant` | e.g. `acme.outsystems.dev`, no scheme. Becomes `https://<tenant>/mcp` in `.mcp.json` — see §2 |
+| Theme module | `--theme-module` | ODC library `<DS>Theme` / O11 `<DS>_Theme`; also the root of self-hosted font paths |
+| Patterns module | `--patterns-module` | ODC library `<DS>Patterns` / O11 ReactiveLibrary `<DS>_Patterns` |
+| Live Style Guide module | `--lsg-module` | ODC app `<DS>LiveStyleGuide` / O11 `<DS>_LSG` |
+| Patterns Preview module (O11) | `--patpreview-module` | `<DS>_PatPreview`; ODC folds previews into the LSG |
+| Template module | `--template-module` | `Template_<DS>` |
+| O11 applications | `--theme-app`, `--lsg-app` | "<Customer> Theme", "<Customer> Live Style Guide" |
+| **ODC tenant hostname** | `--odc-tenant` | e.g. `acme.outsystems.dev`, no scheme. Becomes `https://<tenant>/mcp` in `.mcp.json` — see §2b. `none` when the project has no MCP access |
 | GitHub repo | `--repo` | `owner/repo` |
 | Figma library URL | `--figma-url` | the file key is parsed out of it automatically |
+
+The module and application names default to the playbook's (`init` proposes them from the design
+system name). Ask whether the environment **already has** these modules — an existing Live Style
+Guide or theme keeps its real names; a guessed name sends every handover prompt to a module that
+does not exist. `project.config.json` → `modules` records them; every skill reads them from there.
 
 Also raise **the deliverables** (§5) in this same batch: *"list the components you want built,
 each with its Figma link"*.
@@ -101,7 +116,17 @@ rather than assuming both halves landed in the same scope.
 > the template's README and in `.claude/settings.json`. Fix the plugin; never hand-roll the setup —
 > a hand-rolled project looks configured and is missing the parts nothing checks.
 
-### 2b. The ODC MCP server — `.mcp.json`
+### 2b. The OutSystems MCP server — `.mcp.json`
+
+**Set it up whenever the platform has one.** It is how the loop applies a Block or a Live Style
+Guide page to a real module and reads back what the module already has. When there is none, every
+handover still carries the fallback, so nothing blocks — but say which channel the project is on:
+
+| Platform | MCP | Fallback, always in the handover |
+|---|---|---|
+| ODC | the tenant endpoint below | a Mentor Studio prompt per module |
+| O11 | none per project (no tenant endpoint) | Service Studio steps per module |
+
 
 The OutSystems MCP is a **remote HTTP endpoint served by the tenant itself** at
 `https://<tenant>/mcp`. Nothing installs locally and no token is stored: auth is OAuth with
@@ -120,7 +145,14 @@ sync by hand" is a promise nobody keeps.
 **A wrong tenant is not cosmetic.** Every ODC call would authenticate against, and could publish
 into, another customer's environment. If the user does not know the tenant, leave it
 `<<ODC_TENANT>>` and say so in the report — `check:config` will keep failing until it is filled,
-which is the correct outcome. Do not guess it from the customer name.
+which is the correct outcome. Do not guess it from the customer name. If the project will have no
+MCP access at all (no tenant rights, a locked-down customer), pass `--odc-tenant=none`: the config
+records `null`, `check:config` passes with a note, and handovers carry Mentor prompts.
+
+**Verify it connects**, after `init` writes `.mcp.json` and the session reloads MCP servers: call a
+read-only tool (list the apps, or read the theme module named in `modules.theme`). The first call
+runs the OAuth flow in the browser. Check that `modules` names modules the tenant actually has; a
+missing one is either a typo or a module still to create — ask which.
 
 **This never becomes the validation gate.** The server is early alpha, and hard rule 2 stands: an
 ODC publish through the MCP is not a test — publish and check in a real browser. Its mutating
@@ -153,7 +185,8 @@ Two things to state while you are here:
 |---|---|---|
 | `lsg` plugin | `/lsg:design-loop` resolves | install, project scope, both halves |
 | `outsystems` plugin | its skills resolve | install, project scope |
-| ODC MCP | `.mcp.json` URL matches `odcTenant`; `check:config` passes | re-run init; never hand-edit |
+| OutSystems MCP (ODC) | `.mcp.json` URL matches `odcTenant`; `check:config` passes; a read-only call succeeds | re-run init; never hand-edit. None available: `--odc-tenant=none`, handovers carry Mentor prompts |
+| Modules | `modules` in `project.config.json` names what the environment has (checked through the MCP when connected) | re-run init with the real names |
 | Figma MCP | a small read against the library key succeeds | connect it; **blocks the loop entirely** |
 | `gh` | `gh auth status` | `gh auth login`; blocks findings + handovers + PRs |
 | Browser | §8's harness smoke test | `npm install`; blocks the fidelity gate |
@@ -200,7 +233,9 @@ It already accepts every value as a flag, so drive it non-interactively:
 ```bash
 node build/init-project.mjs \
   --customer="Acme Corp" --project="ACME" --design-system="Nimbus" \
-  --prefix="nimbus-" --js-namespace="Nimbus" --theme-module="NimbusTheme" \
+  --prefix="nimbus-" --js-namespace="Nimbus" --environment=ODC \
+  --theme-module="NimbusTheme" --patterns-module="NimbusPatterns" \
+  --lsg-module="NimbusLiveStyleGuide" --template-module="Template_Nimbus" \
   --odc-tenant="acme.outsystems.dev" \
   --repo="acme/design-system" \
   --figma-url="https://www.figma.com/design/KEY/Library"
@@ -402,7 +437,10 @@ git add -A && git commit -m "chore: initialise <project> from the template"
 
 Report in this shape — short, and honest about what is not done:
 
-- **Configured** — prefix, namespace, repo, Figma file key, ODC tenant.
+- **Configured** — platform, prefix, namespace, repo, Figma file key, ODC tenant, and every module
+  (and O11 application) by role.
+- **Delivery channel** — the OutSystems MCP (connected and verified), or the fallback the handovers
+  carry: Mentor prompts (ODC) or Service Studio steps (O11).
 - **Toolchain** — both plugins and their scope, the ODC MCP endpoint, the Figma connector, `gh`,
   the browser. One line each, each either working or named as outstanding.
 - **Queued** — N deliverables, in build order, with the tier gates that will pause the run.

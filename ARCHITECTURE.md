@@ -32,7 +32,7 @@ For any sentence you are about to write in this repo:
 hand-rolled arrow button instead is a FAIL" is ours. The first is a fact with an owner; the second
 is a judgement, and judgements are what this plugin is for.
 
-When something is genuinely absent upstream — BEM naming, Web Component internals, the criteria
+When something is genuinely absent upstream — BEM naming, custom Block and Script internals, the criteria
 WCAG 2.2 adds over 2.1 — that is **not overlap**, and it stays here. Absence is the test, not
 topic. Accessibility is not "upstream's topic"; WCAG 2.1 mapped onto OutSystems widgets is
 upstream's *content*, and 2.2's additions are ours because nobody else carries them.
@@ -59,7 +59,7 @@ Read these; never restate them.
 
 ## What this plugin owns
 
-Figma ingestion · token translation · BEM naming · Web Components and their internals · the
+Figma ingestion · token translation · BEM naming · custom Blocks, their Scripts and Web Components · the
 flag-don't-fix findings pipeline · Style Guide pages · git artifacts · project setup · the
 maker/checker loop, the rendered-fidelity gate, risk tiers, adversarial refutation ·
 one PR per deliverable · the WCAG 2.2 delta · **driving Mentor over the MCP and verifying what

@@ -39,10 +39,11 @@ the same version. The template already ships that setting. Release notes: [CHANG
 | `outsystems-token-extractor` | Figma variables → `:root` custom properties. |
 | `outsystems-figma-integration` | Read Figma through the MCP. |
 | `outsystems-bem-css` | BEM CSS that restyles native widgets, token-only. |
-| `outsystems-web-component` | Vanilla-JS Web Components + Block wrapper (L5 only). |
+| `outsystems-custom-block` | L5 by default: a custom Block (widgets, placeholders, typed inputs) with one required Script driven by OnReady / OnParametersChanged / OnDestroy. |
+| `outsystems-web-component` | Vanilla-JS Web Components + Block wrapper — only where a project already ships them, or on request. |
 | `outsystems-mentor-build` | Drive a build into a live ODC module through Mentor, or write the prompt a developer pastes, and verify it landed. |
 | `outsystems-design-findings` | Flag, don't fix: classify, challenge and route design-conformance findings. |
-| `outsystems-style-guide-doc` | Live Style Guide pages. |
+| `outsystems-style-guide-doc` | The Live Style Guide: which page a change touches, the page spec, the ODC and O11 routing, and how the page reaches the module. |
 | `outsystems-git-helpers` | Commit messages, branch names, PR descriptions, changelog entries. |
 
 **Hooks** — active in any project with a `build:theme` script and a `project.config.json`

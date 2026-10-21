@@ -72,7 +72,7 @@ Then assign each part:
 | Theme CSS, tokens, fonts | the theme module |
 | A reusable **layout** Block, public, with the design-system class baked into the OutSystems UI layout wrapper's `ExtendedClass` | the theme module |
 | Generic template Blocks a theme layout needs (e.g. the menu-toggle icon) | the theme module, copied in unchanged |
-| Design-system Blocks and Web Component wrappers shared by every app | the theme module, or a design-system library if the project has one |
+| Design-system Blocks (custom Blocks and their Scripts) shared by every app | the theme module, or a design-system library if the project has one |
 | App-specific chrome that **fills** a layout's placeholders — the app's `Menu`, `ApplicationTitle`, `UserInfo` | each consumer app's `Common` flow |
 | Screens, data, logic | each consumer app — a Live Style Guide is a consumer too |
 
@@ -92,7 +92,7 @@ Four rules follow:
 | --- | --- |
 | Restyle a native widget or write theme CSS | `outsystems-bem-css` |
 | Prompt Mentor — over the MCP, or a prompt a human pastes | `outsystems-mentor-build` |
-| Build a component the framework does not ship | `outsystems-web-component` |
+| Build a component the framework does not ship | `outsystems-custom-block` (`outsystems-web-component` only where the project already ships Web Components) |
 | Triage a design against what OutSystems UI ships | `outsystems-component-audit` |
 
 **Mentor sees what is in the module, not the repo.** It cannot read the vendored pack, the repo or

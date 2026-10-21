@@ -81,7 +81,7 @@ Steps:
 3. Call `Figma:get_metadata` to understand variants/properties
 4. Call `Figma:get_screenshot` for documentation
 5. Determine escalation level (L1–L5) based on whether OS UI has a match
-6. Route to `outsystems-bem-css` (L3-L4) or `outsystems-web-component` (L5)
+6. Route to `outsystems-bem-css` (L3-L4) or `outsystems-custom-block` (L5)
 
 ### Pattern D: Design system inventory
 

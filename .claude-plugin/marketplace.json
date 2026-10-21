@@ -8,8 +8,8 @@
     {
       "name": "lsg",
       "source": "./",
-      "description": "Agentic Figma → OutSystems design-system workflow: token extraction, component audit, BEM CSS, Web Components, flag-don't-fix design findings, and a maker/checker build loop with a rendered-fidelity review gate and pre-commit hooks.",
-      "version": "4.0.0",
+      "description": "Agentic Figma → OutSystems design-system workflow: token extraction, component audit, BEM CSS, custom Blocks with a required Script, Live Style Guide pages, flag-don't-fix design findings, and a maker/checker build loop with a rendered-fidelity review gate and pre-commit hooks.",
+      "version": "4.1.0",
       "category": "development",
       "keywords": ["outsystems", "odc", "figma", "design-system"],
       "license": "MIT"
