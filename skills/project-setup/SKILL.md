@@ -125,7 +125,7 @@ handover still carries the fallback, so nothing blocks — but say which channel
 | Platform | MCP | Fallback, always in the handover |
 |---|---|---|
 | ODC | the tenant endpoint below | a Mentor Studio prompt per module |
-| O11 | none per project (no tenant endpoint) | Service Studio steps per module |
+| O11 | Service Studio's own MCP server, configured on each developer's machine (nothing in the repo) — ask whether it is set up, and verify with a read-only call | Service Studio steps per module |
 
 
 The OutSystems MCP is a **remote HTTP endpoint served by the tenant itself** at

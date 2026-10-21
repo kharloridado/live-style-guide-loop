@@ -4,6 +4,14 @@ All notable changes to the `lsg` plugin. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- **O11 has an MCP after all.** `project-setup` and `outsystems-style-guide-doc` name Service
+  Studio's own MCP server, configured per developer machine, as the O11 channel; Service Studio
+  steps in the handover remain the fallback.
+
 ## [4.1.0] — 2026-10-21
 
 Pair with `live-style-guide-harness` 0.3 or later, including its `modules` config and
