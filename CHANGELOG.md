@@ -21,6 +21,9 @@ Pair with `live-style-guide-harness` from this date: its `npm run init` no longe
   load it before the first tool call and follow it for sessions, publishing, polling, errors and
   confirming every tenant write; they add only the design-system layer. Where the two differ on
   the mechanics, OutSystems' skill wins.
+- **On O11, OutSystems' `servicestudio-mcp-oml` skill drives Service Studio's MCP.** Setup installs
+  it from `OutSystems/outsystems11-mcp` and registers the `servicestudio` server; `/lsg:deliver`
+  loads it and lets each write go through Service Studio's Compare-and-Merge before `omlPublish`.
 
 ### Fixed
 

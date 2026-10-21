@@ -63,7 +63,7 @@ Three rules carry most of the quality:
 After the merge, `/lsg:deliver` takes the first channel available — the same rule as every other
 OutSystems change:
 
-1. **The OutSystems MCP, when one is connected** (ODC: OutSystems' `outsystems` plugin, its server at the project's tenant; O11: Service Studio's own MCP server on the developer's machine). Drive
+1. **The OutSystems MCP, when one is connected** (ODC: OutSystems' `outsystems` plugin, its server at the project's tenant; O11: Service Studio's own MCP server with OutSystems' `servicestudio-mcp-oml` skill, on the developer's machine). Drive
    it with `outsystems-mentor-build`: read the module's menu entities and an existing pattern page
    first, then add the record, the page and the preview in the shape those already have.
 2. **No MCP on ODC → a Mentor Studio prompt** in the handover, run in `modules.liveStyleGuide`

@@ -33,7 +33,7 @@ the same version. The template already ships that setting. Release notes: [CHANG
 | --- | --- |
 | `/lsg:project-setup` | **Start here on a fresh clone.** Interview → config → deps + submodule → labels → signed inventory → verify it builds. |
 | `/lsg:design-loop` | Freeze ref → maker → checker → commit → **one PR per deliverable** with its review Artifact. One request, or the signed queue in `loop/goal.md`. |
-| `/lsg:deliver` | After a merge: build the work into OutSystems through the MCP (OutSystems' `outsystems` plugin on ODC, Service Studio's on O11) and check it in a browser; otherwise hand it over. Opens the handover issue either way. |
+| `/lsg:deliver` | After a merge: build the work into OutSystems through the MCP (OutSystems' `outsystems` plugin on ODC; Service Studio's server with OutSystems' `servicestudio-mcp-oml` skill on O11) and check it in a browser; otherwise hand it over. Opens the handover issue either way. |
 | `/lsg:revalidate` | Re-run the checker on an already-built item or PR, without rebuilding it. |
 | `outsystems-frontend-router` | First stop for OutSystems UI questions: routes into the vendored frontend-skills pack and splits work by module (theme first, then each app). |
 | `outsystems-component-audit` | Triage a design: exists as-is / customize (dual track) / build custom (L1–L5). |
@@ -72,6 +72,8 @@ The plugin holds neither platform facts, project values nor the OutSystems MCP. 
   tenant is driven, confirmations included. `/lsg:deliver` and `outsystems-mentor-build` load that
   skill and add the design-system layer on top; nothing here registers the server itself. Its Beta
   skills that build whole apps from a design or a spec are for greenfield apps, not for this loop.
+  On O11 it is Service Studio's own MCP server, driven under OutSystems' `servicestudio-mcp-oml`
+  skill ([OutSystems/outsystems11-mcp](https://github.com/OutSystems/outsystems11-mcp)).
 
 ## How it works
 

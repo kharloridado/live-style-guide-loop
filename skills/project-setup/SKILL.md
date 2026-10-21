@@ -94,7 +94,12 @@ versions rather than whatever the operator happens to have installed personally:
 - **`outsystems`** — OutSystems' own plugin, from the `OutSystems/outsystems-mcp` marketplace. It
   carries OutSystems' `outsystems` skill (the rules for driving the tenant: confirm before any
   tenant write, poll long runs, Mentor sessions, publishing) **and** declares the ODC MCP server
-  itself, built from a per-machine `tenant_hostname` option (2b).
+  itself, built from a per-machine `tenant_hostname` option (2b). ODC only.
+
+On **O11** the equivalent is OutSystems' `servicestudio-mcp-oml` skill, from
+[OutSystems/outsystems11-mcp](https://github.com/OutSystems/outsystems11-mcp): the contract for
+Service Studio's own MCP server (2b). It is not a plugin; its installer copies it into each
+developer's user skills (`bash scripts/install.sh` from a clone of that repo, re-run to update).
 
 Verify both resolve — `/lsg:design-loop` and `@lsg:maker` must exist. If
 they do not:
@@ -127,7 +132,16 @@ blocks — but say which channel the project is on:
 | Platform | MCP | Fallback, always in the handover |
 |---|---|---|
 | ODC | OutSystems' `outsystems` plugin, its server at `https://<tenant>/mcp` | a Mentor Studio prompt per module |
-| O11 | Service Studio's own MCP server (`servicestudio`), configured on each developer's machine — ask whether it is set up, and verify with a read-only call | Service Studio steps per module |
+| O11 | Service Studio's own MCP server (`servicestudio`, Service Studio 11.55.91 or later) with OutSystems' `servicestudio-mcp-oml` skill, both per developer machine — see below | Service Studio steps per module |
+
+**On O11, Service Studio serves it locally.** Each developer, once: install OutSystems'
+`servicestudio-mcp-oml` skill (above), then per session open the module in Service Studio, choose
+**Edit > MCP Configuration…** and **Start MCP Server**, and register it at user scope with the
+command that dialog shows — by default
+`claude mcp add --transport http servicestudio http://127.0.0.1:41820/mcp --scope user`. Approve
+Service Studio's access prompt on the first call, and verify with a read-only call (`listApps`).
+Reads are generally available; writes are Beta and staged through Service Studio's Compare-and-Merge
+window, so a person accepts each one there.
 
 **On ODC, OutSystems' plugin declares the server.** It builds the URL from its `tenant_hostname`
 option, which Claude Code keeps in each person's user settings: project settings cannot supply a

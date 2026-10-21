@@ -30,7 +30,7 @@ or decision it touched.
 | Platform | MCP path when | Otherwise |
 | --- | --- | --- |
 | ODC | OutSystems' `outsystems` plugin is connected — `plugin:outsystems:outsystems` at `https://<odcTenant>/mcp` — **and** a read-only call succeeds (list the apps, read `modules.theme`) | the handover's Mentor Studio prompts |
-| O11 | Service Studio's MCP server is connected in this session **and** a read-only call succeeds | the handover's Service Studio steps |
+| O11 | Service Studio's `servicestudio` server is connected in this session, OutSystems' `servicestudio-mcp-oml` skill is installed, **and** a read-only call succeeds (`listApps`) | the handover's Service Studio steps |
 
 `odcTenant: null` means the project chose no MCP. A failed read-only call means the handover path
 for this run; say why, never retry in a loop. A server at a different host than `odcTenant` is the
@@ -43,11 +43,15 @@ in the request so its platform check has its answer. Each tenant write — every
 is restated and confirmed with the user, as that skill requires: the merge approved the change, and
 the user still confirms each write.
 
+On O11, **load OutSystems' `servicestudio-mcp-oml` skill** and follow its contract: Model API
+lambdas through `applyModelApiCode`, reviewed in Service Studio's Compare-and-Merge window before
+anything is accepted, and `omlPublish` only after the user confirms.
+
 ## 3. The MCP path
 
 Run the handover's steps, in its order — on ODC through Mentor, under OutSystems' `outsystems` skill
 with `outsystems-mentor-build` on top, on
-O11 through Service Studio's tools with the same discipline. Read each module before the first
+O11 through Service Studio's MCP under `servicestudio-mcp-oml`, with the same discipline. Read each module before the first
 change and build in the shape it already has:
 
 1. **The theme**, when the merge changed `tokens/`: `dist/theme.css` from `npm run build:theme:ship`
