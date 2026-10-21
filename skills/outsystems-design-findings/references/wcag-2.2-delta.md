@@ -46,7 +46,7 @@ Any drag interaction needs a single-pointer alternative:
 
 Exceptions: drawing tools and signature pads, where the drag *is* the content.
 
-Relevant to Web Components far more than to framework widgets — a hand-built drag handle is a
+Relevant to custom Blocks far more than to framework widgets — a hand-built drag handle is a
 common L5 output and a common miss.
 
 ## 2.5.8 Target Size (Minimum) — AA
@@ -97,7 +97,7 @@ territory — check there first.
 | --- | --- | --- |
 | 2.4.11 Focus Not Obscured | Screen / layout | Component build, rendered-fidelity gate |
 | 2.4.13 Focus Appearance | Component | CSS generation (auto-applied) |
-| 2.5.7 Dragging Movements | Component | Web Component build (L5) |
+| 2.5.7 Dragging Movements | Component | Custom Block build (L5) |
 | 2.5.8 Target Size | Component | CSS generation → fix or flag |
 | 3.2.6 Consistent Help | Flow | Component audit |
 | 3.3.7 Redundant Entry | Flow | Component audit |

@@ -40,7 +40,7 @@ is worse than no audit: it produces a costed plan for work that did not need doi
 | Class | Outcome |
 |---|---|
 | **Exists as-is** | Use the OutSystems UI widget. Verify it matches within tolerance; if not, it is the row below. |
-| **Exists, not exact** | **Dual track.** Alignment: L1–L3 overrides (token / utility class / `ExtendedClass` + BEM) so the stock widget lands near the design for any developer who reaches for it. Canonical: the custom Block or Web Component (L4–L5) the team ships. |
+| **Exists, not exact** | **Dual track.** Alignment: L1–L3 overrides (token / utility class / `ExtendedClass` + BEM) so the stock widget lands near the design for any developer who reaches for it. Canonical: the custom Block (L4–L5) the team ships. |
 | **Doesn't exist** | Build it: a custom Block with a required Script (L5) — only after the L4.5 gate. |
 
 "Customize OutSystems UI" never means editing or forking the module — only layers on top of it.

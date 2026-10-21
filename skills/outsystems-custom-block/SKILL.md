@@ -108,8 +108,8 @@ The rules behind it, each one a defect seen in delivered projects:
    Inline style only for computed geometry (a measured height, a position).
 7. **Accessibility in the script** where the widgets cannot carry it: roving tabindex, arrow keys,
    `aria-expanded` / `aria-selected` / `aria-current` kept in sync, focus return on close,
-   `prefers-reduced-motion`. `outsystems-web-component` → `references/keyboard-patterns.md` and
-   `aria-recipes.md` have the recipes; they apply unchanged.
+   `prefers-reduced-motion`. `references/keyboard-patterns.md` and `references/aria-recipes.md` have
+   the recipes.
 8. **Vanilla JS, no dependencies.** The header lists the API — `init(widgetId, options, callbacks)`,
    its options and callbacks, one line each (`design-loop/references/comment-budget.md`).
 
@@ -161,7 +161,8 @@ published instance when one exists), in every state the ref draws, followed by t
   state, the class inspector beside each.
 - Checked in a real browser after publish — Service Studio preview does not run the script.
 
-## When a Web Component is still right
+## Web Components
 
-Only when the project already ships Web Components and this component belongs with them, or the
-user asks for one. Then use `outsystems-web-component`. Never mix both shapes in one component.
+Every new custom component is a custom Block. A project that already ships Web Components keeps
+them as they are until someone decides to replace them; never build a new one, and never mix both
+shapes in one component.

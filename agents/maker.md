@@ -48,7 +48,7 @@ An item lives at `specs/<kind>/<item-id>/`, where the id prefix picks the kind: 
     collision with OutSystems UI is the re-branding MECHANISM, not a defect, and never a finding.
   - The framework has **no** equivalent → *now* a `<classPrefix>-<block>--<variant>` class is
     correct, applied via `ExtendedClass`.
-  - The widget does not exist at all → a custom Block with a required Script (L5, `outsystems-custom-block`), the LAST resort. A Web Component only where the project already ships them or the request asks for one.
+  - The widget does not exist at all → a custom Block with a required Script (L5, `outsystems-custom-block`), the LAST resort. Never a new Web Component.
 - **Restyling a bare class disturbs its siblings — handle every one deliberately.** Your rules
   land at the same specificity as the framework's and later in the cascade, so `.btn { height }`
   silently kills `.btn-small`'s own height. Enumerate the framework's sibling modifiers and, for

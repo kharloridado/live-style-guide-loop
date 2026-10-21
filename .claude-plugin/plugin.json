@@ -13,7 +13,7 @@
     "design-system",
     "design-tokens",
     "bem",
-    "web-components",
+    "custom-blocks",
     "accessibility"
   ],
   "license": "MIT"

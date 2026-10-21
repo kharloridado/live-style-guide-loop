@@ -92,7 +92,7 @@ Four rules follow:
 | --- | --- |
 | Restyle a native widget or write theme CSS | `outsystems-bem-css` |
 | Prompt Mentor — over the MCP, or a prompt a human pastes | `outsystems-mentor-build` |
-| Build a component the framework does not ship | `outsystems-custom-block` (`outsystems-web-component` only where the project already ships Web Components) |
+| Build a component the framework does not ship | `outsystems-custom-block` |
 | Triage a design against what OutSystems UI ships | `outsystems-component-audit` |
 
 **Mentor sees what is in the module, not the repo.** It cannot read the vendored pack, the repo or

@@ -29,6 +29,13 @@ Pair with `live-style-guide-harness` from this date: its `npm run init` no longe
   missing `servicestudio-mcp-oml` skill or `servicestudio` server on O11. `/lsg:deliver` refuses the
   MCP path without the official skill, and setup does not report ready until it is in place.
 
+### Removed
+
+- **The `outsystems-web-component` skill.** Every new custom component is a custom Block with a
+  required Script (`outsystems-custom-block`); the loop no longer builds Web Components. Its
+  keyboard and ARIA recipes moved to `outsystems-custom-block/references/`. A project that already
+  ships Web Components keeps them as they are; the checker still reviews one when an item touches it.
+
 ### Fixed
 
 - `project-setup` said OutSystems' plugin declares no MCP server. It has since 0.20.0.

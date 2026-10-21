@@ -57,7 +57,7 @@ a tenant MCP endpoint, and what a handover carries. If the user does not say, lo
 | Project short name | `--project` | e.g. "ACME" |
 | Design system name | `--design-system` | defaults to the project name |
 | CSS class prefix | `--prefix` | lowercase, trailing hyphen. **`acme-` is rejected** — it is the template's own example |
-| JS namespace | `--js-namespace` | `window.<Ns>Toast` for Web Component helpers |
+| JS namespace | `--js-namespace` | `window.<Ns>.<Block>` for custom Block scripts |
 | Theme module | `--theme-module` | ODC library `<DS>Theme` / O11 `<DS>_Theme`; also the root of self-hosted font paths |
 | Patterns module | `--patterns-module` | ODC library `<DS>Patterns` / O11 ReactiveLibrary `<DS>_Patterns` |
 | Live Style Guide module | `--lsg-module` | ODC app `<DS>LiveStyleGuide` / O11 `<DS>_LSG` |

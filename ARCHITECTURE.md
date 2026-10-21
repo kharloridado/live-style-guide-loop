@@ -59,7 +59,7 @@ Read these; never restate them.
 
 ## What this plugin owns
 
-Figma ingestion · token translation · BEM naming · custom Blocks, their Scripts and Web Components · the
+Figma ingestion · token translation · BEM naming · custom Blocks and their Scripts · the
 flag-don't-fix findings pipeline · Style Guide pages · git artifacts · project setup · the
 maker/checker loop, the rendered-fidelity gate, risk tiers, adversarial refutation ·
 one PR per deliverable · delivery after the merge, through the MCP or a handover · the WCAG 2.2 delta · **driving Mentor over the MCP and verifying what
