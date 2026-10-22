@@ -32,6 +32,7 @@ the same version. The template already ships that setting. Release notes: [CHANG
 | Skill | Role |
 | --- | --- |
 | `/lsg:project-setup` | **Start here on a fresh clone.** Interview → config → deps + submodule → labels → signed inventory → verify it builds. |
+| `/lsg:assess` | **Before any code.** Assess a mockup (a screen, a flow, a component) against what the Live Style Guide already has, then OutSystems UI: every region gets an outcome (reuse, reuse + variant, coming, new from OutSystems UI, new custom, screen-only), every value a token or a finding, the layout a pattern. Annotated assessment, build plan, proposed `loop/goal.md` rows. |
 | `/lsg:design-loop` | Freeze ref → maker → checker → commit → **one PR per deliverable** with its review Artifact. One request, or the signed queue in `loop/goal.md`. |
 | `/lsg:deliver` | After a merge: build the work into OutSystems through the MCP (OutSystems' `outsystems` plugin on ODC; Service Studio's server with OutSystems' `servicestudio-mcp-oml` skill on O11) and check it in a browser; otherwise hand it over. Opens the handover issue either way. |
 | `/lsg:revalidate` | Re-run the checker on an already-built item or PR, without rebuilding it. |

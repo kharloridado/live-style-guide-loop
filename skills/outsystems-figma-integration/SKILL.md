@@ -51,6 +51,9 @@ When the user shares a URL:
 
 ### Pattern A: Full screen audit from Figma URL
 
+In a project, a new screen or mockup is assessed with **`/lsg:assess`**, which runs these reads and
+matches the result against the Live Style Guide. The steps below are the reads it makes.
+
 User: "Audit this Figma screen: [URL]"
 
 Steps:

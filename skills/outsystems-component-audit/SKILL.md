@@ -7,6 +7,10 @@ description: Analyze a Figma design and produce a structured component audit tha
 
 Structured triage of a design before any code is written.
 
+For a screen or a mockup in a project, start with **`/lsg:assess`**: it checks the Live Style
+Guide first (what the design system already ships) and uses this skill's buckets and levels for
+what the Live Style Guide does not have.
+
 ## Pre-flight
 
 1. Read `project.config.json` for `classPrefix`, `jsNamespace` and `environment`. If the file is missing or still holds `<<PLACEHOLDER>>` values, stop and run `/lsg:project-setup` — never guess a value. Spacing scale, grid, breakpoints and default sizes are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` — never assumed or guessed; with nothing written, raise no finding about them.

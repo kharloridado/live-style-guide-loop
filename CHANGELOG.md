@@ -13,6 +13,17 @@ Pair with `live-style-guide-harness` from this date: its `npm run init` no longe
 
 ### Added
 
+- **`/lsg:assess` — the first step for a new design.** Given a Figma mockup of a screen, a flow or
+  a component, it checks every part against what the Live Style Guide already has (usage specs,
+  frozen refs and their Figma nodes, shipped status), then OutSystems UI, and gives each region one
+  outcome: reuse, reuse + a new variant, coming (queued or in review), new from OutSystems UI, new
+  custom Block, or screen-only. Every colour, type, spacing, radius and shadow value is matched to a
+  token, or raised as a new token or a finding — never rounded; the layout is matched to a layout
+  pattern and its placeholders. Anything used twice is a Block. It writes `assessments/<slug>/`
+  (the assessment, `regions.json`, the frame) and an annotated page — every region outlined and
+  numbered on the screenshot, coloured by outcome (`scripts/annotate.mjs`) — with a build plan in
+  dependency order, the screen assembly for the app team, and proposed `loop/goal.md` rows that the
+  scope owner signs by merging the plan PR.
 - **`/lsg:ui-audit`** audits an existing app's UI and front end, read-only, for what it should
   have reused: an OutSystems UI component or a Block the team already has instead of one built from
   Containers, a class that already exists instead of a new one, a CSS variable instead of a
