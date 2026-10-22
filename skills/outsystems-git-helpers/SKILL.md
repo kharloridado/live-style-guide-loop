@@ -37,7 +37,7 @@ Use the Conventional Commits specification:
 | Type | Use For |
 |---|---|
 | `feat` | New component, new token, new pattern |
-| `fix` | Bug fix in CSS, Web Component, or Block |
+| `fix` | Bug fix in CSS, a Block or its Script |
 | `style` | Visual changes only (no behavior change) |
 | `refactor` | Internal restructure (no visible change) |
 | `docs` | Style Guide entry, README updates |
@@ -53,7 +53,7 @@ Use the Conventional Commits specification:
 | `theme` | Theme module / Theme Library CSS |
 | `tokens` | `:root` design tokens |
 | `card`, `button`, `modal`, etc. | Specific component |
-| `wc/{name}` | Web Component (e.g., `wc/pricing-toggle`) |
+| `block/{name}` | Custom Block and its Script (e.g., `block/pricing-toggle`) |
 | `block/{name}` | OutSystems Block (e.g., `block/PricingToggle`) |
 | `style-guide` | Style Guide module |
 
@@ -71,11 +71,10 @@ Refs: ACME-123
 ```
 
 ```
-feat(wc/pricing-toggle): add Web Component for monthly/annual toggle
+feat(block/pricing-toggle): add custom Block for monthly/annual toggle
 
-- Vanilla JS Web Component with Shadow DOM
-- BEM internal classes scoped to component
-- Exposes --color-primary, --space-*, --font-* for theming
+- OutSystems Block with a required Script (init / update / destroy)
+- BEM classes on the Block's widgets, token-only theme CSS
 - Keyboard navigation: Arrow keys, Home, End
 - WCAG 2.2 AA compliant: 4.78:1 contrast, focus indicators, 44px targets
 
@@ -148,7 +147,7 @@ When asked for a PR description, generate:
 - [ ] 1-Click Published to dev environment
 - [ ] Tested in Chrome, Firefox, Safari
 - [ ] Tested at all breakpoints (phone, tablet, desktop)
-- [ ] [For Web Components] Browser console clean, no warnings
+- [ ] [For custom Blocks] Browser console clean, no warnings
 
 ## Breaking changes
 
@@ -212,7 +211,7 @@ Use Keep a Changelog format:
 ## [1.2.0] - 2026-05-12
 
 ### Added
-- New `acme-pricing-toggle` Web Component with monthly/annual selection
+- New `PricingToggle` custom Block with monthly/annual selection
 - `--color-accent` token for hero variants
 - `--shadow-2xl` for elevated cards
 

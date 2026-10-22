@@ -35,7 +35,7 @@ Run this for every item the loop builds, and write the answer into the PR body a
 | A token kind `TokenReference` does not cover (icons, grid, breakpoints, utility classes) | Update that Styles page by hand; name it in the handover. |
 | A colour family added (a new hue, not a new step) | Also check the Colors page narrative and its Core / Extended split. |
 | OutSystems UI pattern restyled (L1–L3) | Its **stock pattern page** shows the new look automatically once the theme is published. Update the page's text only where this design system's usage differs, and record the ExtendedClass recipe. |
-| New Block or Web Component (L4–L5) | A **new page**: a menu record, the page, a live preview with every variant and state, the class inspector. `references/lsg-anatomy.md` has the routing for each platform. |
+| New Block (L4–L5) | A **new page**: a menu record, the page, a live preview with every variant and state, the class inspector. `references/lsg-anatomy.md` has the routing for each platform. |
 | Variant, state or input added to a component | Its preview gains that variant or state, and its options area the matching control. |
 | Component deprecated | The page stays, marked deprecated, naming its replacement. |
 | Public Block added to the patterns module for internal use | It still needs a menu record and a page, or the inventory check below fails. |
@@ -63,7 +63,7 @@ Three rules carry most of the quality:
 After the merge, `/lsg:deliver` takes the first channel available — the same rule as every other
 OutSystems change:
 
-1. **The OutSystems MCP, when one is connected** (ODC: the tenant endpoint in `.mcp.json`; O11: Service Studio's own MCP server on the developer's machine). Drive
+1. **The OutSystems MCP, when one is connected** (ODC: OutSystems' `outsystems` plugin, its server at the project's tenant; O11: Service Studio's own MCP server with OutSystems' `servicestudio-mcp-oml` skill, on the developer's machine). Drive
    it with `outsystems-mentor-build`: read the module's menu entities and an existing pattern page
    first, then add the record, the page and the preview in the shape those already have.
 2. **No MCP on ODC → a Mentor Studio prompt** in the handover, run in `modules.liveStyleGuide`

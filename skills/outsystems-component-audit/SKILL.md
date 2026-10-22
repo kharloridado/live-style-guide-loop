@@ -7,6 +7,10 @@ description: Analyze a Figma design and produce a structured component audit tha
 
 Structured triage of a design before any code is written.
 
+For a screen or a mockup in a project, start with **`/lsg:assess`**: it checks the Live Style
+Guide first (what the design system already ships) and uses this skill's buckets and levels for
+what the Live Style Guide does not have.
+
 ## Pre-flight
 
 1. Read `project.config.json` for `classPrefix`, `jsNamespace` and `environment`. If the file is missing or still holds `<<PLACEHOLDER>>` values, stop and run `/lsg:project-setup` — never guess a value. Spacing scale, grid, breakpoints and default sizes are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` — never assumed or guessed; with nothing written, raise no finding about them.
@@ -40,7 +44,7 @@ is worse than no audit: it produces a costed plan for work that did not need doi
 | Class | Outcome |
 |---|---|
 | **Exists as-is** | Use the OutSystems UI widget. Verify it matches within tolerance; if not, it is the row below. |
-| **Exists, not exact** | **Dual track.** Alignment: L1–L3 overrides (token / utility class / `ExtendedClass` + BEM) so the stock widget lands near the design for any developer who reaches for it. Canonical: the custom Block or Web Component (L4–L5) the team ships. |
+| **Exists, not exact** | **Dual track.** Alignment: L1–L3 overrides (token / utility class / `ExtendedClass` + BEM) so the stock widget lands near the design for any developer who reaches for it. Canonical: the custom Block (L4–L5) the team ships. |
 | **Doesn't exist** | Build it: a custom Block with a required Script (L5) — only after the L4.5 gate. |
 
 "Customize OutSystems UI" never means editing or forking the module — only layers on top of it.
@@ -71,6 +75,13 @@ Table of every distinct UI element identified. Three buckets:
   class**, the default; L3b = ExtendedClass + BEM, only where the framework ships no class;
   L4 = wrap in custom Block)
 - **🆕 Custom Block** — No matching pattern → an OutSystems Block of widgets, placeholders and typed inputs, with one required vanilla-JS Script for behaviour (L5)
+
+**Used more than once means a Block.** An element the design shows in two or more places — on
+one frame or across frames — is a reusable Block, whatever its bucket: an as-is or customised
+pattern used the same way each time becomes L4 (the pattern inside a Block that sets its wrapper,
+classes and arguments), a group of widgets becomes a Block of them, and an L5 is a Block already.
+Count the places in the Notes column. Rows of one list are one place; a pattern used as it ships,
+with its own defaults, is just the pattern.
 
 **L3a before L3b, always.** If OutSystems UI already names the thing — `.btn`, `.btn-primary`,
 `.card`, `.tag`, `.osui-tabs__header-item` — the audit routes it to restyling **that bare

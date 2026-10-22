@@ -6,6 +6,76 @@ All notable changes to the `lsg` plugin. The format follows
 
 ## [Unreleased]
 
+## [4.3.0] — 2026-10-22
+
+Pair with `live-style-guide-harness` from this date: its `npm run init` no longer writes
+`.mcp.json`, and `check:config` fails while an `outsystems` entry remains there.
+
+### Added
+
+- **`/lsg:assess` — the first step for a new design.** Given a Figma mockup of a screen, a flow or
+  a component, it checks every part against what the Live Style Guide already has (usage specs,
+  frozen refs and their Figma nodes, shipped status), then OutSystems UI, and gives each region one
+  outcome: reuse, reuse + a new variant, coming (queued or in review), new from OutSystems UI, new
+  custom Block, or screen-only. Every colour, type, spacing, radius and shadow value is matched to a
+  token, or raised as a new token or a finding — never rounded; the layout is matched to a layout
+  pattern and its placeholders. Anything used twice is a Block. It writes `assessments/<slug>/`
+  (the assessment, `regions.json`, the frame) and an annotated page — every region outlined and
+  numbered on the screenshot, coloured by outcome (`scripts/annotate.mjs`) — with a build plan in
+  dependency order, the screen assembly for the app team, and proposed `loop/goal.md` rows that the
+  scope owner signs by merging the plan PR.
+- **`/lsg:ui-audit`** audits an existing app's UI and front end, read-only, for what it should
+  have reused: an OutSystems UI component or a Block the team already has instead of one built from
+  Containers, a class that already exists instead of a new one, a CSS variable instead of a
+  hard-coded value. It also checks Containers standing in for widgets, inline styles, CSS outside
+  the Theme, `!important`, JavaScript in screen lifecycle actions, and anything used more than once
+that is not a Block — 23 checks, each with its
+  evidence and the existing thing to reuse. ODC first, through OutSystems' plugin (its lookups,
+  and Mentor asked to describe, never to change); O11 through Service Studio's read tools. Its
+  browser probe (`scripts/probe.mjs`) reads the published screens: duplicate classes with the class
+  to reuse, hard-coded values with the variable that already holds them, pattern look-alikes,
+  clickable divs, inline styles. The report is a review Artifact and proposes items for
+  `loop/goal.md`, for the scope owner to sign.
+- **Reuse before you write.** The maker checks OutSystems UI and the design system for an existing
+  class or Block before writing one, and extends an existing Block rather than copying it; the
+  checker fails a class or Block that repeats one the project already has.
+- **Used more than once means a Block.** Anything that appears in two or more places — a
+  component, a pattern wrapped or configured the same way, a group of widgets — is one reusable
+  Block with inputs and placeholders. The component audit counts the places and routes repeats to a
+  Block; the maker builds one and hands over its uses; the checker fails per-screen rebuilds; and
+  `/lsg:ui-audit` finds the copies in a running app: its probe compares element structures across
+  every screen it reads, counts rows of one List once, and knows a reused Block (`data-block`) from
+  pasted markup, including content placed in a Block's placeholder.
+
+### Changed
+
+- **The ODC MCP is OutSystems' own plugin.** `project-setup` installs `outsystems@outsystems` from
+  `OutSystems/outsystems-mcp` with `--config tenant_hostname=<odcTenant>` on each developer's
+  machine, and verifies `plugin:outsystems:outsystems` in `claude mcp list`. It no longer writes the
+  server into `.mcp.json`, where a second `outsystems` entry duplicated or hid the plugin's.
+- **OutSystems' `outsystems` skill drives the tenant.** `/lsg:deliver` and `outsystems-mentor-build`
+  load it before the first tool call and follow it for sessions, publishing, polling, errors and
+  confirming every tenant write; they add only the design-system layer. Where the two differ on
+  the mechanics, OutSystems' skill wins.
+- **On O11, OutSystems' `servicestudio-mcp-oml` skill drives Service Studio's MCP.** Setup installs
+  it from `OutSystems/outsystems11-mcp` and registers the `servicestudio` server; `/lsg:deliver`
+  loads it and lets each write go through Service Studio's Compare-and-Merge before `omlPublish`.
+- **The official skill is required, by platform.** The session-start check flags as REQUIRED a
+  missing `outsystems` plugin or tenant on ODC (and a tenant that differs from `odcTenant`), or a
+  missing `servicestudio-mcp-oml` skill or `servicestudio` server on O11. `/lsg:deliver` refuses the
+  MCP path without the official skill, and setup does not report ready until it is in place.
+
+### Removed
+
+- **The `outsystems-web-component` skill.** Every new custom component is a custom Block with a
+  required Script (`outsystems-custom-block`); the loop no longer builds Web Components. Its
+  keyboard and ARIA recipes moved to `outsystems-custom-block/references/`. A project that already
+  ships Web Components keeps them as they are; the checker still reviews one when an item touches it.
+
+### Fixed
+
+- `project-setup` said OutSystems' plugin declares no MCP server. It has since 0.20.0.
+
 ## [4.2.1] — 2026-10-21
 
 ### Fixed

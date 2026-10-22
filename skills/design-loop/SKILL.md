@@ -37,6 +37,9 @@ as `queued` if it is new, run pre-flight steps 1, 3 and 4, then build it once wi
 `references/per-item-build.md` and stop at the PR. A ref can be a Figma node or, on a project
 restyling a live app, a written spec plus before screenshots of the live screen.
 
+**A new screen or mockup** starts with **`/lsg:assess`**, not here: it says which parts the Live
+Style Guide already has and plans the rest, and its signed rows are the items this loop builds.
+
 **A queue run** — a library, a batch, or an optional nightly routine. The queue is the signed inventory in
 `loop/goal.md`; its Run settings (mode, tiers, pauses, max rounds, items per run) govern the run.
 All pre-flight steps apply, then the token pass and the per-item loop below.

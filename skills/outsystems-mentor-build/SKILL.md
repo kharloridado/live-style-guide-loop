@@ -5,8 +5,12 @@ description: Drive a build inside a real ODC module through Mentor over the OutS
 
 # Driving an ODC build through Mentor
 
-This skill is the **process and verification layer** for changing a live ODC module over the
-MCP. It holds no platform facts: what a Layout is, which placeholders it exposes, which
+This skill is the **design-system layer** for changing a live ODC module over the MCP. The MCP
+itself is OutSystems' — its `outsystems` plugin declares the server and its `outsystems` skill owns
+how to drive it: read `tools/list` first, Mentor sessions, publishing inside a Mentor turn, polling
+long runs, error categories, and **confirming every tenant write with the user**. Load that skill
+before the first tool call; where the two differ on the mechanics, OutSystems' skill wins. This
+skill adds what a design system needs on top. It holds no platform facts: what a Layout is, which placeholders it exposes, which
 widget is right for a piece of content — all of that is upstream's, cited below and never
 restated here.
 

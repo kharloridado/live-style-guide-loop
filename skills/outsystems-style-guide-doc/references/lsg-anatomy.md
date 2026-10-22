@@ -35,7 +35,7 @@ Read the module's real entity names before adding a record; kits differ in spell
 | What | ODC | O11 |
 |---|---|---|
 | Restyled OutSystems UI pattern | the stock `PatternDetail` page for that pattern — the restyle shows once the theme is published | same |
-| New component (Block or Web Component wrapper) | a `<DS>MenuSubCategories` record → the `Patterns_<DS>` screen (input `<DS>MenuSubCategoriesId`), with the preview in the `Patterns_Preview_<DS>` flow | a `MenuSubCategories` record under **Custom** → an If branch in the `Patterns_Custom` block's "Custom Sandbox", comparing the selected Id with the record → the demo Block from `PatternsCustom` in PatPreview |
+| New component (custom Block) | a `<DS>MenuSubCategories` record → the `Patterns_<DS>` screen (input `<DS>MenuSubCategoriesId`), with the preview in the `Patterns_Preview_<DS>` flow | a `MenuSubCategories` record under **Custom** → an If branch in the `Patterns_Custom` block's "Custom Sandbox", comparing the selected Id with the record → the demo Block from `PatternsCustom` in PatPreview |
 | A new category beyond the stock set | a `<DS>MenuCategories` record | a `MenuCategories` record and a `Patterns_<Category>` dispatcher block |
 
 Never an ad-hoc screen outside the menu data, and never a custom component hidden inside a stock

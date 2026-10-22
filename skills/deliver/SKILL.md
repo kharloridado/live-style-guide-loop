@@ -29,16 +29,35 @@ or decision it touched.
 
 | Platform | MCP path when | Otherwise |
 | --- | --- | --- |
-| ODC | `.mcp.json` names the tenant in `odcTenant` **and** a read-only call succeeds (list the apps, read `modules.theme`) | the handover's Mentor Studio prompts |
-| O11 | Service Studio's MCP server is connected in this session **and** a read-only call succeeds | the handover's Service Studio steps |
+| ODC | OutSystems' `outsystems` plugin is connected — `plugin:outsystems:outsystems` at `https://<odcTenant>/mcp` — **and** a read-only call succeeds (list the apps, read `modules.theme`) | the handover's Mentor Studio prompts |
+| O11 | Service Studio's `servicestudio` server is connected in this session, OutSystems' `servicestudio-mcp-oml` skill is installed, **and** a read-only call succeeds (`listApps`) | the handover's Service Studio steps |
+
+**OutSystems' official skill for the platform is required for the MCP path, not optional:** the
+`outsystems` plugin's `outsystems` skill on ODC, `servicestudio-mcp-oml` on O11. If the server is
+connected but that skill is not available in this session, do not drive the MCP with this plugin's
+skills alone — stop, name what is missing (the session-start check lists it) and how to install it,
+and hand over this run.
 
 `odcTenant: null` means the project chose no MCP. A failed read-only call means the handover path
-for this run; say why, never retry in a loop.
+for this run; say why, never retry in a loop. A server at a different host than `odcTenant` is the
+wrong tenant: stop and say so, never build into it.
+
+On ODC, **load OutSystems' `outsystems` skill before the first tool call** and follow its rules: it
+owns the tools and how to drive them (Mentor sessions, publishing inside a Mentor turn, polling long
+runs, error categories, asset keys). The platform is `project.config.json` → `environment`; name it
+in the request so its platform check has its answer. Each tenant write — every publish included —
+is restated and confirmed with the user, as that skill requires: the merge approved the change, and
+the user still confirms each write.
+
+On O11, **load OutSystems' `servicestudio-mcp-oml` skill** and follow its contract: Model API
+lambdas through `applyModelApiCode`, reviewed in Service Studio's Compare-and-Merge window before
+anything is accepted, and `omlPublish` only after the user confirms.
 
 ## 3. The MCP path
 
-Run the handover's steps, in its order — on ODC through Mentor with `outsystems-mentor-build`, on
-O11 through Service Studio's tools with the same discipline. Read each module before the first
+Run the handover's steps, in its order — on ODC through Mentor, under OutSystems' `outsystems` skill
+with `outsystems-mentor-build` on top, on
+O11 through Service Studio's MCP under `servicestudio-mcp-oml`, with the same discipline. Read each module before the first
 change and build in the shape it already has:
 
 1. **The theme**, when the merge changed `tokens/`: `dist/theme.css` from `npm run build:theme:ship`
@@ -53,9 +72,8 @@ change and build in the shape it already has:
    by Mentor and any other agent building in those apps, not only by people. Where the MCP has no
    way to add a Resource, the handover names the files to import (§4).
 
-Publish to the **development** environment only. Deploying or promoting to any other stage is a
-person's call, never this step's; the server's mutating tools ask for confirmation, and the merge
-approved the change, not a release.
+A publish lands in the **development** environment. Deploying or promoting to any other stage is a
+person's call, never this step's: the merge approved the change, not a release.
 
 Then **verify in a real browser**, never by Mentor's report or Service Studio preview: the LSG page
 is reachable from the menu, the preview renders every state the ref draws, the class inspector

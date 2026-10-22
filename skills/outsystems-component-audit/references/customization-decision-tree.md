@@ -158,5 +158,4 @@ its OnReady / OnParametersChanged / OnDestroy (`init` / `update` / `destroy`, ke
 - Styling is ordinary theme CSS, held to the same token audit as every restyle.
 - The Script owns behaviour only, and a Block with no behaviour needs no Script at all.
 
-Route L5 to `outsystems-custom-block`. Use `outsystems-web-component` only where the project already
-ships Web Components and the new component belongs with them, or the user asks for one.
+Route L5 to `outsystems-custom-block`. New Web Components are not built.

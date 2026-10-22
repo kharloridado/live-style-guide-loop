@@ -60,7 +60,7 @@ a card's bottom anchor.
 
 - The TOC and section banners in `dist/theme.css`. The build generates them and the project
   requires them; they survive `build:theme:ship` on purpose.
-- A Script's or Web Component's header API contract — `init` options and callbacks (or attributes, properties, events, slots), one line each.
+- A Script's header API contract — `init` options and callbacks, one line each.
   That is the element's public interface and it is read in ODC, not in review. Keep it; it is not
   a place for rationale.
 - Licence and attribution headers in vendored files.

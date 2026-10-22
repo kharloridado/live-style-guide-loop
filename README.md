@@ -32,16 +32,17 @@ the same version. The template already ships that setting. Release notes: [CHANG
 | Skill | Role |
 | --- | --- |
 | `/lsg:project-setup` | **Start here on a fresh clone.** Interview → config → deps + submodule → labels → signed inventory → verify it builds. |
+| `/lsg:assess` | **Before any code.** Assess a mockup (a screen, a flow, a component) against what the Live Style Guide already has, then OutSystems UI: every region gets an outcome (reuse, reuse + variant, coming, new from OutSystems UI, new custom, screen-only), every value a token or a finding, the layout a pattern. Annotated assessment, build plan, proposed `loop/goal.md` rows. |
 | `/lsg:design-loop` | Freeze ref → maker → checker → commit → **one PR per deliverable** with its review Artifact. One request, or the signed queue in `loop/goal.md`. |
-| `/lsg:deliver` | After a merge: build the work into OutSystems through the MCP (ODC tenant, or Service Studio's on O11) and check it in a browser; otherwise hand it over. Opens the handover issue either way. |
+| `/lsg:deliver` | After a merge: build the work into OutSystems through the MCP (OutSystems' `outsystems` plugin on ODC; Service Studio's server with OutSystems' `servicestudio-mcp-oml` skill on O11) and check it in a browser; otherwise hand it over. Opens the handover issue either way. |
 | `/lsg:revalidate` | Re-run the checker on an already-built item or PR, without rebuilding it. |
+| `/lsg:ui-audit` | Audit an existing app's UI, read-only: what should have reused an OutSystems UI component, an existing Block or class, or a CSS variable; anything used more than once that is not a Block; Containers standing in for widgets; inline styles; CSS outside the Theme; JavaScript in lifecycle actions. ODC through OutSystems' plugin, O11 through Service Studio's MCP, plus a browser probe. Proposes items for `loop/goal.md`. |
 | `outsystems-frontend-router` | First stop for OutSystems UI questions: routes into the vendored frontend-skills pack and splits work by module (theme first, then each app). |
 | `outsystems-component-audit` | Triage a design: exists as-is / customize (dual track) / build custom (L1–L5). |
 | `outsystems-token-extractor` | Figma variables → `:root` custom properties. |
 | `outsystems-figma-integration` | Read Figma through the MCP. |
 | `outsystems-bem-css` | BEM CSS that restyles native widgets, token-only. |
 | `outsystems-custom-block` | L5 by default: a custom Block (widgets, placeholders, typed inputs) with one required Script driven by OnReady / OnParametersChanged / OnDestroy. |
-| `outsystems-web-component` | Vanilla-JS Web Components + Block wrapper — only where a project already ships them, or on request. |
 | `outsystems-mentor-build` | Drive a build into a live ODC module through Mentor, or write the prompt a developer pastes, and verify it landed. |
 | `outsystems-design-findings` | Flag, don't fix: classify, challenge and route design-conformance findings. |
 | `outsystems-style-guide-doc` | The Live Style Guide: which page a change touches, the page spec, the ODC and O11 routing, and how the page reaches the module. |
@@ -52,11 +53,11 @@ the same version. The template already ships that setting. Release notes: [CHANG
 | Hook | Does |
 | --- | --- |
 | `PreToolUse` → `pre-commit-gate.mjs` | Before a `git commit` touching `tokens/ src/ specs/ build/`, runs `npm run build:theme` and blocks the commit with its errors when it fails. Skipped in the unfilled template. |
-| `SessionStart` → `session-check.mjs` | Lists missing setup steps (deps, submodule, OutSystems UI base, unfilled config). Silent when set up. |
+| `SessionStart` → `session-check.mjs` | Lists missing setup steps (deps, submodule, OutSystems UI base, unfilled config) and, as REQUIRED, OutSystems' official MCP skill for the project's platform: the `outsystems` plugin with its tenant on ODC, `servicestudio-mcp-oml` and the `servicestudio` server on O11. Silent when set up. |
 
-## Two contracts
+## Three contracts
 
-The plugin holds neither platform facts nor project values. It reads both at runtime.
+The plugin holds neither platform facts, project values nor the OutSystems MCP. It uses all three.
 
 - **Platform knowledge** comes from OutSystems' own frontend-skills pack, pinned at
   `vendor/outsystems-frontend-skills/` in the project. Skills read block names, arguments, CSS
@@ -66,6 +67,14 @@ The plugin holds neither platform facts nor project values. It reads both at run
   `findings` and `knownFalsePositiveClasses`. Spacing scale, grid, breakpoints and default sizes
   are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` —
   never assumed or guessed; with nothing written, no finding is raised about them.
+- **The OutSystems MCP** is OutSystems' own `outsystems` plugin
+  ([OutSystems/outsystems-mcp](https://github.com/OutSystems/outsystems-mcp)): it declares the ODC
+  server from each developer's `tenant_hostname` option, and its `outsystems` skill owns how the
+  tenant is driven, confirmations included. `/lsg:deliver` and `outsystems-mentor-build` load that
+  skill and add the design-system layer on top; nothing here registers the server itself. Its Beta
+  skills that build whole apps from a design or a spec are for greenfield apps, not for this loop.
+  On O11 it is Service Studio's own MCP server, driven under OutSystems' `servicestudio-mcp-oml`
+  skill ([OutSystems/outsystems11-mcp](https://github.com/OutSystems/outsystems11-mcp)).
 
 ## How it works
 

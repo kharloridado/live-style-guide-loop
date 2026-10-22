@@ -1,6 +1,6 @@
 # Keyboard Interaction Patterns
 
-Standard keyboard support for common component types. Apply these when generating Web Components or BEM components.
+Standard keyboard support for common component types. Apply these in a custom Block's Script, or in BEM restyles where the widget lacks them.
 
 ## Button
 
@@ -108,7 +108,7 @@ For complex select, refer to WAI-ARIA Combobox pattern.
 | `Home` | Minimum value |
 | `End` | Maximum value |
 
-Use native `<input type="range">` when possible. For custom Web Component, implement all these handlers.
+Use native `<input type="range">` when possible. For a custom Block, implement all these handlers in its Script.
 
 ## Carousel
 
@@ -151,39 +151,30 @@ Whenever a component supports dragging, also support:
 
 Or provide buttons (move up, move down) as a simpler alternative.
 
-## Implementation in Web Components
+## Implementation in a custom Block's Script
 
-When generating a Web Component, add keyboard handlers in `connectedCallback`:
+Attach the handler in `init`, keyed by the Block's widget Id, and remove it in `destroy`:
 
 ```javascript
-connectedCallback() {
-  this.render();
-  this.addEventListener('keydown', this._handleKeydown);
+init(widgetId, options, callbacks) {
+  const root = document.getElementById(widgetId);
+  const onKeydown = (e) => {
+    switch (e.key) {
+      case "ArrowRight":
+      case "ArrowDown": e.preventDefault(); focusNext(root); break;
+      case "ArrowLeft":
+      case "ArrowUp": e.preventDefault(); focusPrevious(root); break;
+      case "Home": e.preventDefault(); focusFirst(root); break;
+      case "End": e.preventDefault(); focusLast(root); break;
+      case "Escape": callbacks.onCancel?.(); break;
+    }
+  };
+  root.addEventListener("keydown", onKeydown);
+  instances.set(widgetId, { root, onKeydown });
+},
+destroy(widgetId) {
+  const it = instances.get(widgetId);
+  it?.root.removeEventListener("keydown", it.onKeydown);
+  instances.delete(widgetId);
 }
-
-_handleKeydown = (e) => {
-  switch (e.key) {
-    case 'ArrowRight':
-    case 'ArrowDown':
-      e.preventDefault();
-      this._focusNext();
-      break;
-    case 'ArrowLeft':
-    case 'ArrowUp':
-      e.preventDefault();
-      this._focusPrevious();
-      break;
-    case 'Home':
-      e.preventDefault();
-      this._focusFirst();
-      break;
-    case 'End':
-      e.preventDefault();
-      this._focusLast();
-      break;
-    case 'Escape':
-      this._handleEscape();
-      break;
-  }
-};
 ```
