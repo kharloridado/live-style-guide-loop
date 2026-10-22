@@ -94,6 +94,7 @@ Four rules follow:
 | Prompt Mentor — over the MCP, or a prompt a human pastes | `outsystems-mentor-build` |
 | Build a component the framework does not ship | `outsystems-custom-block` |
 | Triage a design against what OutSystems UI ships | `outsystems-component-audit` |
+| Audit an existing app's UI and front end against what already exists | `/lsg:ui-audit` |
 
 **Mentor sees what is in the module, not the repo.** It cannot read the vendored pack, the repo or
 this skill. It *may* be able to read Markdown the project imports into an ODC module as Resources —

@@ -6,10 +6,27 @@ All notable changes to the `lsg` plugin. The format follows
 
 ## [Unreleased]
 
-## [4.3.0] — 2026-10-21
+## [4.3.0] — 2026-10-22
 
 Pair with `live-style-guide-harness` from this date: its `npm run init` no longer writes
 `.mcp.json`, and `check:config` fails while an `outsystems` entry remains there.
+
+### Added
+
+- **`/lsg:ui-audit`** audits an existing app's UI and front end, read-only, for what it should
+  have reused: an OutSystems UI component or a Block the team already has instead of one built from
+  Containers, a class that already exists instead of a new one, a CSS variable instead of a
+  hard-coded value. It also checks Containers standing in for widgets, inline styles, CSS outside
+  the Theme, `!important`, and JavaScript in screen lifecycle actions — 23 checks, each with its
+  evidence and the existing thing to reuse. ODC first, through OutSystems' plugin (its lookups,
+  and Mentor asked to describe, never to change); O11 through Service Studio's read tools. Its
+  browser probe (`scripts/probe.mjs`) reads the published screens: duplicate classes with the class
+  to reuse, hard-coded values with the variable that already holds them, pattern look-alikes,
+  clickable divs, inline styles. The report is a review Artifact and proposes items for
+  `loop/goal.md`, for the scope owner to sign.
+- **Reuse before you write.** The maker checks OutSystems UI and the design system for an existing
+  class or Block before writing one, and extends an existing Block rather than copying it; the
+  checker fails a class or Block that repeats one the project already has.
 
 ### Changed
 

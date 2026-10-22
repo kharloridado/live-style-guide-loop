@@ -29,6 +29,13 @@ An item lives at `specs/<kind>/<item-id>/`, where the id prefix picks the kind: 
 - Build EXACTLY to the design. Consume brand values from `:root` tokens.
 - **NEVER** change a brand color/value/token to satisfy accessibility. If a pairing fails WCAG 2.2 AA, append a FINDING to `loop/state.json.findings[]` (it will be filed as a bug). Do NOT re-shade.
 - Apply implementation-level a11y that does **not** alter the design: focus rings in the design's own colors, keyboard handlers, ARIA, semantic HTML, reduced-motion, target sizes where layout allows.
+- **Reuse before you write — never make what already exists.** Before a new class, check
+  OutSystems UI's utilities and variables (`ui-frameworks/outsystems-ui/styles-and-utilities.md`)
+  and the project's own (`src/blocks/`, `tokens/`, `specs/tokens/token-reference.md`); a class
+  whose declarations another class already has is not written — the existing one is applied.
+  Before a new Block, check OutSystems UI's (`blocks-index.md`) and the design system's
+  (`specs/components/`); one that covers the item gets the missing variant (an input, a
+  placeholder, a modifier), never a second copy.
 - **Restyle, don't shadow — never mint a name the framework already has.** Before writing a
   single `<classPrefix>-` class, read the pattern in the frontend-skills pack
   (`vendor/outsystems-frontend-skills/ui-frameworks/outsystems-ui/SKILL.md` routes you to it) and

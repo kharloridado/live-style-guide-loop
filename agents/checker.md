@@ -152,6 +152,9 @@ State which depth you applied. **When unsure, round UP.**
      - A `<classPrefix>-` **modifier that duplicates a framework modifier** — `--big` where
        `.btn-large` exists, `--success` where `.btn-success` exists — is a **FAIL**. Map onto
        the framework's class.
+     - A class or Block that **repeats one the project already has** — same declarations as a
+       class in `src/blocks/` or `tokens/`, the same job as a Block in `specs/components/` — is
+       a **FAIL**. Apply or extend the existing one.
      - A `<classPrefix>-` class for a variant the framework genuinely lacks is **correct**.
        Verify the lack; don't take the maker's word for it.
      - **Sibling-collateral check:** when a bare framework class is restyled, list the
