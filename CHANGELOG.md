@@ -17,7 +17,8 @@ Pair with `live-style-guide-harness` from this date: its `npm run init` no longe
   have reused: an OutSystems UI component or a Block the team already has instead of one built from
   Containers, a class that already exists instead of a new one, a CSS variable instead of a
   hard-coded value. It also checks Containers standing in for widgets, inline styles, CSS outside
-  the Theme, `!important`, and JavaScript in screen lifecycle actions — 23 checks, each with its
+  the Theme, `!important`, JavaScript in screen lifecycle actions, and anything used more than once
+that is not a Block — 23 checks, each with its
   evidence and the existing thing to reuse. ODC first, through OutSystems' plugin (its lookups,
   and Mentor asked to describe, never to change); O11 through Service Studio's read tools. Its
   browser probe (`scripts/probe.mjs`) reads the published screens: duplicate classes with the class
@@ -27,6 +28,13 @@ Pair with `live-style-guide-harness` from this date: its `npm run init` no longe
 - **Reuse before you write.** The maker checks OutSystems UI and the design system for an existing
   class or Block before writing one, and extends an existing Block rather than copying it; the
   checker fails a class or Block that repeats one the project already has.
+- **Used more than once means a Block.** Anything that appears in two or more places — a
+  component, a pattern wrapped or configured the same way, a group of widgets — is one reusable
+  Block with inputs and placeholders. The component audit counts the places and routes repeats to a
+  Block; the maker builds one and hands over its uses; the checker fails per-screen rebuilds; and
+  `/lsg:ui-audit` finds the copies in a running app: its probe compares element structures across
+  every screen it reads, counts rows of one List once, and knows a reused Block (`data-block`) from
+  pasted markup, including content placed in a Block's placeholder.
 
 ### Changed
 

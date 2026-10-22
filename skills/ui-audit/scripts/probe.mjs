@@ -15,10 +15,14 @@
  *   containerControls a div or span with a click listener or a control role — a Container
  *                     standing in for a widget
  *   fakeHeadings      text styled like a heading that is not an h1–h6
+ *   blocks            Block instances on the screen (data-block) and how often each is used
+ *   repeats           (across all URLs) the same element structure in two or more places that is
+ *                     not one Block — "used more than once, so it must be a Block". Rows of one
+ *                     List count once; a bare OutSystems UI pattern counts as a leaf
  *
  * Usage (run from a project with playwright or playwright-core installed):
  *   node <plugin>/skills/ui-audit/scripts/probe.mjs --out <dir> [--storage-state <file>]
- *        [--viewport 1440x900] <url> [<url> …]
+ *        [--viewport 1440x900] [--min-nodes 5] <url> [<url> …]
  * CHROMIUM_PATH overrides the browser executable. Writes <dir>/probe.json; exit 0 ok · 1 error */
 import { mkdirSync, writeFileSync, existsSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -36,6 +40,7 @@ const opt = (name) => {
 const out = opt("out") || "ui-audit";
 const storageState = opt("storage-state");
 const [vw, vh] = (opt("viewport") || "1440x900").split("x").map(Number);
+const minNodes = Number(opt("min-nodes") || 5);
 const urls = args.filter((a) => /^https?:|^file:/.test(a));
 if (!urls.length) {
   console.error("usage: probe.mjs --out <dir> [--storage-state <file>] [--viewport WxH] <url> [<url> …]");
@@ -55,7 +60,7 @@ const executablePath =
   process.env.CHROMIUM_PATH || (existsSync("/opt/pw-browsers/chromium") ? "/opt/pw-browsers/chromium" : undefined);
 
 /* Runs inside the page: everything is read from the live DOM and CSSOM. */
-function scan(fetched) {
+function scan(fetched, minNodes) {
   const FRAMEWORK = /outsystemsui|outsystems-ui|osui/i;
   const PATTERNS = {
     accordion: "Accordion", tabs: "Tabs", tab: "Tabs", modal: "Popup", dialog: "Popup", popup: "Popup",
@@ -244,9 +249,66 @@ function scan(fetched) {
   }
   probe.remove();
 
+  /* Structure signatures: tag and stable classes, children in order, text ignored (text is what a
+   * Block's inputs vary). An OutSystems UI pattern is a leaf: using one twice is not a repeat,
+   * wrapping it the same way twice is. */
+  const STATE = /^(active|selected|open|opened|closed|disabled|hidden|focus|focused|hover|is-.*|has-.*|ng-.*|ss-.*)$/i;
+  const hash = (str) => { let h = 5381; for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
+  /* The Block an element belongs to. Content in a placeholder (.ph) is the caller's, not the
+   * Block's: a card pasted into a Layout's MainContent is the screen's markup. */
+  const ownerBlock = (el) => {
+    let skip = 0;
+    for (let n = el.parentElement; n; n = n.parentElement) {
+      if (n.classList.contains("ph")) skip++;
+      else if (n.matches("[data-block]")) { if (skip) skip--; else return n.getAttribute("data-block"); }
+    }
+    return "";
+  };
+  const nodes = new Map();
+  let uid = 0;
+  const sign = (el) => {
+    const tag = el.tagName.toLowerCase();
+    const cls = [...el.classList].filter((c) => !STATE.test(c)).sort().join(".");
+    if (/^(script|style|svg|noscript|template)$/.test(tag) || [...el.classList].some((c) => /^osui-[a-z-]+$/.test(c) && !c.includes("__"))) {
+      return { sig: `${tag}.${cls}`, size: 1 };
+    }
+    let size = 1;
+    const kids = [];
+    for (const k of el.children) { const r = sign(k); kids.push(r.sig); size += r.size; }
+    const sig = hash(`${tag}.${cls}(${kids.join(",")})`);
+    if (size >= minNodes && !el.matches("[data-block]")) {
+      const parent = el.parentElement;
+      if (!parent.dataset.lsgUid) parent.dataset.lsgUid = String(++uid);
+      const entry = nodes.get(sig) || { sig, size, count: 0, parents: new Set(), blocks: new Set(), element: pathOf(el), html: el.outerHTML.slice(0, 240), parentSigs: new Set() };
+      entry.count++;
+      entry.parents.add(parent.dataset.lsgUid);
+      entry.blocks.add(ownerBlock(el));
+      nodes.set(sig, entry);
+      el.dataset.lsgSig = sig;
+    }
+    return { sig, size };
+  };
+  sign(document.body);
+  for (const e of nodes.values()) {
+    const first = document.querySelector(`[data-lsg-sig="${e.sig}"]`);
+    const up = first?.parentElement?.closest("[data-lsg-sig]");
+    if (up) e.parentSigs.add(up.dataset.lsgSig);
+  }
+  document.querySelectorAll("[data-lsg-sig]").forEach((el) => el.removeAttribute("data-lsg-sig"));
+  document.querySelectorAll("[data-lsg-uid]").forEach((el) => el.removeAttribute("data-lsg-uid"));
+  const structures = [...nodes.values()].map((e) => ({
+    sig: e.sig, size: e.size, count: e.count, placements: e.parents.size, element: e.element, html: e.html,
+    blocks: [...e.blocks], parentSigs: [...e.parentSigs],
+  }));
+  const blocks = {};
+  for (const el of document.querySelectorAll("[data-block]")) {
+    const n = el.getAttribute("data-block");
+    blocks[n] = (blocks[n] || 0) + 1;
+  }
+
   return {
     title: document.title, url: location.href, variables: Object.keys(vars).length, sheets,
-    inlineStyles, hardcoded, important, duplicateClasses, lookalikes, fakeHeadings,
+    inlineStyles, hardcoded, important, duplicateClasses, lookalikes, fakeHeadings, blocks, structures,
   };
 }
 
@@ -267,7 +329,7 @@ for (const url of urls) {
         else { const res = await context.request.get(href); if (res.ok()) fetched[href] = await res.text(); }
       } catch {}
     }
-    const result = await page.evaluate(scan, fetched);
+    const result = await page.evaluate(`(${scan})(${JSON.stringify(fetched)}, ${minNodes})`);
 
     const cdp = await context.newCDPSession(page);
     const { root } = await cdp.send("DOM.getDocument", { depth: -1 });
@@ -292,6 +354,7 @@ for (const url of urls) {
       url, title: result.title, inline: result.inlineStyles.filter((s) => !s.frameworkSet).length,
       hardcoded: result.hardcoded.length, important: result.important.length, duplicates: result.duplicateClasses.length,
       lookalikes: result.lookalikes.length, containerControls: containerControls.length, fakeHeadings: result.fakeHeadings.length,
+      blocks: Object.keys(result.blocks).length,
     }));
   } catch (e) {
     failed++;
@@ -302,7 +365,34 @@ for (const url of urls) {
   }
 }
 await browser.close();
+
+/* Across every screen: a structure in two or more places (rows of one List are one place) that is
+ * not already the root of one Block. Only the outermost repeat is kept. */
+const bySig = new Map();
+for (const p of pages) {
+  for (const st of p.structures || []) {
+    const e = bySig.get(st.sig) || { sig: st.sig, size: st.size, placements: 0, uses: 0, screens: [], blocks: new Set(), parentSigs: new Set(), element: st.element, html: st.html };
+    e.placements += st.placements;
+    e.uses += st.count;
+    e.screens.push({ url: p.url, title: p.title, uses: st.count, placements: st.placements });
+    st.blocks.forEach((b) => e.blocks.add(b));
+    st.parentSigs.forEach((s) => e.parentSigs.add(s));
+    bySig.set(st.sig, e);
+  }
+  delete p.structures;
+}
+const repeated = [...bySig.values()].filter((e) => e.placements >= 2 && !(e.blocks.size === 1 && !e.blocks.has("")));
+const repeatedSigs = new Map(repeated.map((e) => [e.sig, e]));
+const repeats = repeated
+  .filter((e) => ![...e.parentSigs].some((s) => repeatedSigs.get(s)?.placements >= e.placements))
+  .map((e) => ({
+    element: e.element, nodes: e.size, placements: e.placements, uses: e.uses, screens: e.screens,
+    alreadyBlock: [...e.blocks].filter(Boolean), html: e.html,
+  }))
+  .sort((a, b) => b.nodes * b.placements - a.nodes * a.placements);
+console.log(JSON.stringify({ repeats: repeats.length }));
+
 mkdirSync(out, { recursive: true });
-writeFileSync(join(out, "probe.json"), JSON.stringify({ probedAt: new Date().toISOString(), viewport: `${vw}x${vh}`, pages }, null, 2));
+writeFileSync(join(out, "probe.json"), JSON.stringify({ probedAt: new Date().toISOString(), viewport: `${vw}x${vh}`, minNodes, repeats, pages }, null, 2));
 console.log(`wrote ${join(out, "probe.json")}`);
 process.exit(failed === urls.length ? 1 : 0);

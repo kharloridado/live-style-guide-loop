@@ -22,7 +22,7 @@ only), **G** O11 `getScreen`, **R** a read of the rendered screen.
 | **UA-C1** | Hand-built where an **OutSystems UI component exists** — tabs, accordion, popup, dropdown, tooltip, card, alert, badge, tag, pagination, wizard, date picker made from Containers and HTML | P `lookalikes` (class named like a pattern, `osuiPattern` is a hint to verify), `containerControls`; G/M widget tree; R | The component, named from `blocks-index.md` with the arguments and placeholders that cover the design; restyle it with `ExtendedClass` where it does not look right | high |
 | **UA-C2** | A **Block that already exists re-created** — a second card, header or empty state when the design system or the app already ships one | inventory: same structure and purpose under another name; P repeated markup with different class names; L/G Block lists | Replace with the existing Block; where it lacks one variant, add the variant to it (an input or a placeholder), never a copy | high |
 | **UA-C3** | A **Container where a widget or semantic element belongs** — a clickable div, a text styled as a heading, a div list | P `containerControls` (click listener or control role on a div/span), `fakeHeadings`; G | Button / Link / the pattern for the job; an AdvancedHtml `h1`–`h6`, `ul`, `nav` — the order in `common/atomic-design.md` | high (clickable), medium |
-| **UA-C4** | **Repeated markup** that should be one Block — the same 4+ widgets pasted across screens | G/M widget trees compared across screens; P same class sequence on several screens | Extract one Block with typed inputs and placeholders (`common/atomic-design.md` → Molecules) | medium |
+| **UA-C4** | **Used more than once, not a Block** — a component, a pattern wrapped or configured the same way, or a group of widgets that appears in two or more places, on one screen or across screens, built each time instead of being one reusable Block | P `repeats` (the same structure in 2+ places across every probed screen, text ignored; `alreadyBlock` names a Block some copies already use); G/M widget trees compared; P `blocks` for what is a Block already | One Block with typed inputs for what varies (text, state, data) and placeholders for what each caller fills; every copy replaced by it. Where a Block for it already exists, that Block (UA-C2) | high across screens · medium on one screen |
 | **UA-C5** | A **custom atom** replacing Button, Input or another core widget | G/M; P an input or button built from divs | The core widget, restyled — the custom one loses validation, accessibility and theming | high |
 | **UA-C6** | A **template Block overridden** until unrecognisable, or a screen built from Empty when a Screen Template fits | G/M; R | The closest template or pattern (`ui-frameworks/outsystems-ui/screen-templates.md`) | low |
 
@@ -67,11 +67,29 @@ UA-S1 → 6 Utilities-First · UA-S5 → 7 `!important` · UA-C3 → 8 Layout Co
 UA-S7 → 12 Chrome Placement · UA-S2 → 14 Block-Native Treatment vs CSS Override. The JavaScript
 checks and inline styles are this skill's own.
 
+## Used more than once means a Block
+
+Anything used in two or more places is a reusable Block — never built twice, never pasted. That
+covers a whole component, an OutSystems UI pattern wrapped or configured the same way each time
+(the pattern inside a Block that sets its wrapper, `ExtendedClass` and arguments), a group of
+widgets (a labelled field, a card header, an empty state), and the JavaScript behind them (UA-J6).
+The fix is one Block plus a usage, never "keep the copies in sync". What it does not cover:
+
+- **Rows of one List or Table.** One template rendered per record is one place.
+- **A pattern used as it ships.** Two Dropdowns with their own defaults are two uses of
+  OutSystems UI, not a repeat; the probe treats a bare pattern as a leaf for this reason.
+- **Used once.** A Block for something used in one place adds indirection, not reuse
+  (`common/atomic-design.md` → Page-specific organisms).
+
 ## Known false positives
 
 - Inline custom properties and inline styles inside `osui-` elements: OutSystems UI writes them.
 - `lookalikes` is a name match. A class called `card-…` inside the app's own Card Block is fine;
   verify the element against the pack before UA-C1.
+- `repeats` matches structure, not purpose. Two structures that look alike but mean different
+  things (an address card and a product card) are still one Block with inputs when the structure
+  is the same, and two Blocks when their states or behaviour differ — judge it on the screens.
+  Raise `--min-nodes` (default 5) when small repeats drown the large ones.
 - `duplicateClasses` compares single-class rules only, and exact declaration sets. A class that
   differs by one declaration is a restyle candidate (UA-S2), not a duplicate.
 - `existingVariable` means the same value under a fitting name, not the same meaning: 16px padding

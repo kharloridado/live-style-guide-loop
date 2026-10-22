@@ -36,6 +36,10 @@ An item lives at `specs/<kind>/<item-id>/`, where the id prefix picks the kind: 
   Before a new Block, check OutSystems UI's (`blocks-index.md`) and the design system's
   (`specs/components/`); one that covers the item gets the missing variant (an input, a
   placeholder, a modifier), never a second copy.
+- **Used more than once, it is a Block.** A component, a pattern wrapped or configured the same
+  way, or a group of widgets the design shows in two or more places is built as one Block with
+  typed inputs and placeholders, and its handover says to use that Block at every place — never
+  steps that rebuild it per screen.
 - **Restyle, don't shadow — never mint a name the framework already has.** Before writing a
   single `<classPrefix>-` class, read the pattern in the frontend-skills pack
   (`vendor/outsystems-frontend-skills/ui-frameworks/outsystems-ui/SKILL.md` routes you to it) and

@@ -155,6 +155,9 @@ State which depth you applied. **When unsure, round UP.**
      - A class or Block that **repeats one the project already has** — same declarations as a
        class in `src/blocks/` or `tokens/`, the same job as a Block in `specs/components/` — is
        a **FAIL**. Apply or extend the existing one.
+     - Something the ref shows in **two or more places** — a component, a wrapped pattern, a group
+       of widgets — delivered as anything but one Block (handover steps that rebuild it per
+       screen, markup to paste twice) is a **FAIL**.
      - A `<classPrefix>-` class for a variant the framework genuinely lacks is **correct**.
        Verify the lack; don't take the maker's word for it.
      - **Sibling-collateral check:** when a bare framework class is restyled, list the

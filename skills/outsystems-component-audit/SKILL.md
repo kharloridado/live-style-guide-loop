@@ -72,6 +72,13 @@ Table of every distinct UI element identified. Three buckets:
   L4 = wrap in custom Block)
 - **🆕 Custom Block** — No matching pattern → an OutSystems Block of widgets, placeholders and typed inputs, with one required vanilla-JS Script for behaviour (L5)
 
+**Used more than once means a Block.** An element the design shows in two or more places — on
+one frame or across frames — is a reusable Block, whatever its bucket: an as-is or customised
+pattern used the same way each time becomes L4 (the pattern inside a Block that sets its wrapper,
+classes and arguments), a group of widgets becomes a Block of them, and an L5 is a Block already.
+Count the places in the Notes column. Rows of one list are one place; a pattern used as it ships,
+with its own defaults, is just the pattern.
+
 **L3a before L3b, always.** If OutSystems UI already names the thing — `.btn`, `.btn-primary`,
 `.card`, `.tag`, `.osui-tabs__header-item` — the audit routes it to restyling **that bare
 name**, not to a new `<prefix>-` class beside it. Classifying a native widget as "customize via

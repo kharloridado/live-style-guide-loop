@@ -1,6 +1,6 @@
 ---
 name: ui-audit
-description: Audit the UI and front end of an existing OutSystems app against OutSystems' own best practices, read-only — custom-built where an OutSystems UI component or a Block the team already has would do, a new class where one already exists, a Container where a widget belongs, inline styles, hard-coded values where a CSS variable exists, CSS outside the Theme, !important, and JavaScript in screen lifecycle actions. ODC first, through OutSystems' own MCP plugin, with a browser probe of the published screens; O11 through Service Studio's MCP. Use it when someone asks to audit, review or assess an app's UI, front end, screens, CSS or JavaScript, or asks what could have used out-of-the-box components. It reports and proposes; it never changes the app.
+description: Audit the UI and front end of an existing OutSystems app against OutSystems' own best practices, read-only — custom-built where an OutSystems UI component or a Block the team already has would do, anything used more than once that is not a reusable Block, a new class where one already exists, a Container where a widget belongs, inline styles, hard-coded values where a CSS variable exists, CSS outside the Theme, !important, and JavaScript in screen lifecycle actions. ODC first, through OutSystems' own MCP plugin, with a browser probe of the published screens; O11 through Service Studio's MCP. Use it when someone asks to audit, review or assess an app's UI, front end, screens, CSS or JavaScript, or asks what could have used out-of-the-box components. It reports and proposes; it never changes the app.
 ---
 
 # ui-audit — what an existing app should have reused
@@ -76,7 +76,9 @@ Read-only. It writes `probe.json` per screen: stylesheets (framework or app), in
 OutSystems UI patterns write themselves are marked `frameworkSet`), hard-coded literals with the
 variable that already holds the value, `!important`, app classes that duplicate an existing class
 (with the class to reuse), elements named like an OutSystems UI pattern that are not one, divs and
-spans acting as controls, and text styled as a heading that is not one. Run it at the desktop
+spans acting as controls, and text styled as a heading that is not one. Across all the URLs of a
+run it adds `repeats`: the same element structure in two or more places that is not one Block,
+with every screen it is on — so probe every screen in one run. Run it at the desktop
 viewport, and again at `--viewport 390x844` when the app is responsive.
 
 ### c. Browser only
@@ -89,6 +91,10 @@ actions, and which stylesheet (Theme, Screen or Block) a rule was written in.
 
 `references/checks.md` is the catalogue — components (UA-C), styling (UA-S) and JavaScript (UA-J),
 each with how to detect it, the fix, a default severity and the known false positives.
+
+**Used more than once means a Block.** A component, a pattern wrapped the same way, or a group of
+widgets that appears in two or more places is one reusable Block with inputs and placeholders,
+never copies (UA-C4).
 
 **Reuse first, in this order, in every fix:** an OutSystems UI component or class → a design-system
 Block, token or class → a Block or class the app already has → only then something new. A fix that
