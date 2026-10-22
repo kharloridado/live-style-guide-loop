@@ -4,7 +4,9 @@ Each check names its evidence and its fix. Paths are under `vendor/outsystems-fr
 Severity is a default; raise it where the pattern repeats across screens, lower it on a one-off.
 
 Sources: **P** probe (`probe.json`), **L** ODC lookups or app references, **M** Mentor (a lead
-only), **G** O11 `getScreen`, **R** a read of the rendered screen.
+only), **G** O11 `getScreen`, **X** ODC `context_graph` parsed with `scripts/xre/`, **D** the
+deployed CSS or compiled script bundles, **H** an anonymous read-only HTTP GET, **R** a read of the
+rendered screen.
 
 ## The reuse ladder — every fix climbs it, top first
 
@@ -39,12 +41,13 @@ only), **G** O11 `getScreen`, **R** a read of the rendered screen.
 | **UA-S7** | **A reserved layout class reused** — `.main-content`, `.sidebar`, `.header`, `.content`, `.footer`, `.main`, `.layout` on app elements, or a hand-built sidebar or header | P app rules on those selectors; R | The Layout's own placeholders and the Menu; app names prefixed (`outsystems-design-to-app` → theme-collisions) | medium |
 | **UA-S8** | **A framework imported over OutSystems UI** — Bootstrap, Tailwind and the like | P `sheets` | Remove it; OutSystems UI has the primitives (`common/ui-performance.md`) | high |
 | **UA-S9** | **Global selectors** — `*`, `body`, bare element selectors in app CSS | P app rules | Scope to a class | low |
+| **UA-S10** | **`@import` in an ODC Theme** (web fonts, usually) — it never loads: at publish the compiler puts the generated `:root{--color-primary…}` (Theme properties) and `.login-screen{…}` in front of the stylesheet, so the `@import` follows a rule and browsers ignore it. Often hidden by JavaScript that injects the same `<link>` | D the deployed Theme CSS: an `@import` after the first rule; P the font requested only by a script | **Not** "move the `@import` to the top" — it cannot be first on ODC. Load fonts with one guarded JavaScript node in the OnApplicationReady system event (`<link rel=preconnect>` + `<link id="<app>-fonts" rel=stylesheet>`, skipped if the id exists), or self-host them with `@font-face` as Resources | high when the font matters to the brand |
 
 ## JavaScript
 
 Lifecycle actions: OnInitialize, OnReady, OnRender, OnParametersChanged, OnDestroy. Evidence is
-G on O11, M on ODC (confirm on the page: a listener left behind, a slow first paint, a console
-error).
+G on O11, X on ODC (every `IJavaScriptNode` with its source and owning action; M only as a
+fallback), confirmed on the page: a listener left behind, a slow first paint, a console error.
 
 | Id | What | Evidence | Fix | Sev |
 | --- | --- | --- | --- | --- |
@@ -56,6 +59,23 @@ error).
 | **UA-J6** | **The same JavaScript pasted** in several screens | G/M | One Block with one required Script (`outsystems-custom-block`) | medium |
 | **UA-J7** | **Styling from JavaScript** — `element.style.x = …` | G/M; P inline styles that appear only after load | Toggle a class | medium |
 | **UA-J8** | **Script tags or libraries in HTML** instead of Required Scripts | G/M; P script elements in the body | A Script resource with Required Scripts | low |
+
+## App health
+
+Not front-end checks, but they sit in the same model and a UI-only pass misses them. Evidence is
+X on ODC (G and the data model on O11), confirmed by H or R where it can be. Report them in their
+own section, and lead the report with any that are high.
+
+| Id | What | Evidence | Fix | Sev |
+| --- | --- | --- | --- | --- |
+| **UA-A1** | **No per-user data ownership** in an app whose records are personal: no User Identifier on the root entities, and `GetUserId()` used only on Login | X entity attributes; `GetUserId` references by owner | A `UserId` on each root entity, every aggregate and SQL filtered by it, ownership checked in every server action that takes a record id (raise a `NotFound` user exception) — or record "shared by design" as a decision | high |
+| **UA-A2** | **Hard-coded data literals in logic** — a fallback to one record by name, a magic id, a date | X aggregate filters comparing an attribute with a Text literal (recover hashed literals with `crack.py`) | An empty or not-found state; never another record | medium |
+| **UA-A3** | **Exposed REST without authentication** — `Authentication: None`, cross-site requests allowed, documentation on | X `RestService` properties; H anonymous GET of the method and `swagger.json`, `access-control-allow-origin` | Delete it when nothing needs it; otherwise authentication, no documentation, a narrow CORS | medium (high when it writes or returns data) |
+| **UA-A4** | **Timers that write data on publish, or on a fixed clock** — `Schedule: When published` seeding data in every environment; a daily evaluation with a fixed UTC offset | X `ITimer.Schedule` and the action it wakes; the arguments it passes (`AddHours(CurrDateTime(), -5)`) | No seeding timer (opt-in seed behind a Setting); time-zone-aware evaluation per user | medium |
+| **UA-A5** | **Server calls inside loops, or several per user action** — N+1 in data actions; a client action calling 2+ server actions in sequence (non-atomic) | X For Each cycles containing `IExecuteServerActionNode`; the platform's `ConsecutiveServerInteractions` warning | One server action per user intent; set-based aggregates; helpers as in-memory functions | medium |
+| **UA-A6** | **SQL where an aggregate does** — correlated subqueries per row, a column/structure mismatch warning | X `ISQLNode.SQL`; the `SQL_ColumnsMismatch` warning | Aggregates, plus building rows in memory | medium |
+| **UA-A7** | **Prototype or seed screens reachable** — a screen marked temporary whose OnInitialize writes data | X the screen's OnInitialize flow; D the route table in `_osbundle-<App>.index` (is it deployed yet?) | Remove before promotion; never open it during the audit | high |
+| **UA-A8** | **Dead scaffolding** — a consumed REST with a placeholder base URL, a timer nothing wakes, an unused aggregate, template screens and Layouts nothing uses | X references and validation messages (`Unused …`) | Delete | low |
 
 ## OutSystems' implementation rubric
 

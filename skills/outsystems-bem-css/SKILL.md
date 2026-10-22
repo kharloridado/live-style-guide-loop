@@ -189,6 +189,10 @@ Then provide:
 
 - `references/state-vocabulary.md` — Standard state modifier names (loop convention)
 - `references/common-patterns.md` — BEM examples for common OS UI patterns (loop convention)
+- `references/odc-runtime.md` — what the ODC runtime adds to your markup (gutters, `OSFillParent`,
+  the `OSBlockWidget` wrapper, bare Buttons, the RadioGroup structure, the prepended `:root`) and
+  how to restyle on top without `!important` (zero-specificity resets). Read it before writing
+  CSS for a delivered ODC screen.
 
 Platform knowledge is not duplicated here. For where CSS belongs, the variable and utility catalog,
 breakpoints, and the block index, read the upstream pack listed in **Pre-flight** above.

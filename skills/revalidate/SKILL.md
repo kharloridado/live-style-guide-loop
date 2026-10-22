@@ -26,6 +26,39 @@ verdict cannot tell you whether the judgment or the code moved. This answers the
 For an actual **change** to the artifact, do not use this — put the feedback on the PR, set the
 item back to `queued`, and let the loop rebuild.
 
+**After every delivery (`/lsg:deliver`), on ODC and O11, this runs on each delivered screen.** That
+is the delivered mode below; it is not optional.
+
+## Delivered mode: the published screen against its reference
+
+`/lsg:revalidate <item-id | screen-url> --delivered [--reference <url>]`
+
+The target is what the MCP built, at its published URL. The reference is the item's frozen ref,
+or the original app's screen when the delivery is a rebuild. The rules are unchanged: never build,
+never edit, and a missing reference is BLOCKED.
+
+1. **Prerequisites.** The user has the screen's role, and the minimum test data exists. Without
+   either, say what is missing and stop; a page that redirects to InvalidPermissions measures
+   nothing.
+2. **Same conditions.** Open both in the user's own browser (signed-in OutSystems pages: Claude in
+   Chrome; SSO loops in headless browsers), at the same window size, with the same data shape where
+   it can be.
+3. **Compare region by region.** Use zoomed screenshots of the same region, then, for every
+   difference:
+   - the **DOM skeleton** of both (a `tag.class` tree with the text nodes)
+   - the **CSS rules matching the element** (`document.styleSheets`, filtered with
+     `el.matches(rule.selectorText)`)
+
+   That names the cause directly: a specificity loss, an OutSystems UI rule, a widget property, a
+   leftover default text.
+4. **Run the leftover lint** from `outsystems-mentor-build` → "Lint for Mentor's leftovers".
+5. **Not drift** — rule these out before calling FAIL:
+   - JPEG tinting of greys (read the computed colour)
+   - differences that come from data: empty states, a first free week, a disabled prev arrow
+   - quirks the reference has too (check it in the reference before blaming the delivery)
+6. **Report** a table per screen: region, reference, delivered, cause, fix. Drift goes back through
+   `/lsg:deliver`'s MCP path. Re-run this mode after each fix round, until it passes.
+
 ## Procedure
 
 ### 1. Resolve the target to an item and a ref
