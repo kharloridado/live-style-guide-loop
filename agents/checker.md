@@ -127,6 +127,24 @@ PASS/DRIFT/UNVERIFIED`. Then:
 numbers cannot express: optical weight, alignment, stroke, spacing rhythm. Numbers agreeing while
 the thing plainly looks wrong is a real outcome — say so in the CRITIQUE.
 
+**Step 5 — delivered screens (from `/lsg:revalidate --delivered`).** When the target is a
+published OutSystems screen rather than a specimen, point the probes at its URL and compare against
+the frozen ref, or the original app's screen for a rebuild, at the same viewport. Add these checks,
+because they fail silently on a delivered screen and pass every model-side check:
+- **Leftover default texts.** No Button or Link whose text starts with `Button`, `link` or `Link`.
+  No radio labelled `New Item` or `Option n`.
+- **Icons.** No icon widget without its icon name.
+- **Widths.** No `ThemeGrid_Width*` class the ref does not call for.
+- **Native elements.** A native `<button>` or `ul` the ref styles must not show browser defaults
+  (a border, a background, bullets, a 40 px indent).
+- **Layout.** The layout's regions stack. The content column has the ref's width, not a
+  shrink-to-fit flex item.
+- **Divider rules.** Sibling rules (`.row + .row`) still match. Blocks wrap every instance in
+  `div.OSBlockWidget`, which breaks adjacent-sibling selectors.
+
+For every drift row, name its cause from the matched CSS rules (specificity, an OutSystems UI rule,
+a widget property), not from the screenshot.
+
 ## 3. Risk-tiered depth (scale scrutiny to blast radius — don't review uniformly)
 Read the item's `tier`/`level` (from the prompt / `loop/state.json`) and the maker's self-declared RISK-TIER, then pick a depth. The maker's declaration is a **floor, not a ceiling** — the party being reviewed does not get to cap the reviewer's scrutiny. Round UP whenever the artifact overrides framework- or provider-owned selectors, touches an interactive path, or ships a new public contract:
 - **trivial** (utility classes, config, primitive token aliases) — light glance: tokens + naming only.

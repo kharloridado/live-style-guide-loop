@@ -6,6 +6,41 @@ All notable changes to the `lsg` plugin. The format follows
 
 ## [Unreleased]
 
+## [4.4.0] — 2026-10-22
+
+What auditing, rebuilding and re-checking an ODC app through the OutSystems MCP taught (the
+Kojoshin audit and its KojoshinRebuild).
+
+### Added
+
+- **`/lsg:revalidate --delivered`.** It checks a published OutSystems screen against its frozen
+  ref, or against the original app's screen for a rebuild. It compares region by region using the
+  DOM skeleton and the CSS rules that match each element, so every drift row names its cause.
+  `@lsg:checker` gains the matching step: leftover default texts, missing icons, stray grid widths,
+  bare native elements, layout stacking, and sibling rules broken by `OSBlockWidget`.
+- **`ui-audit/scripts/xre/`.** It parses an ODC `context_graph` (XRE) into widget trees and action
+  flows, and recovers hashed text literals from the compiled JavaScript.
+- **`ui-audit` app-health checks (UA-A1–A8)** and UA-S10, for a dead theme `@import` on ODC.
+- **`outsystems-bem-css/references/odc-runtime.md`.** Covers what the ODC runtime adds to your
+  markup (`ThemeGrid_MarginGutter`, `OSFillParent`, the `OSBlockWidget` wrapper, bare Buttons, the
+  RadioGroup structure, the prepended `:root`) and how to restyle on top of it with
+  zero-specificity resets.
+
+### Changed
+
+- **`/lsg:deliver` is not done until revalidation passes**, on ODC and O11. A publish with
+  `changeApplied: true` and 0 errors is not that check. Before checking, the user assigns the
+  roles, and the minimum test data is created through the app's own UI.
+- **`ui-audit` on ODC starts from `context_graph`.** It parses the graph with the scripts and reads
+  the theme CSS from the deployed files. The role gate is read from the compiled chunks, because
+  the graph's role and validation messages can be stale. It records the revision it read.
+- **`outsystems-mentor-build`:**
+  - Start a fresh Mentor session per screen when the conversation fills up (OS-AISA-50001/50002);
+    attachments belong to one conversation; creating an app needs `portfolioKey`.
+  - Lint for Mentor's leftovers after every publish.
+  - Parse the graph instead of asking what was built.
+  - Don't add a layout region nobody fills.
+
 ## [4.3.0] — 2026-10-22
 
 Pair with `live-style-guide-harness` from this date: its `npm run init` no longer writes

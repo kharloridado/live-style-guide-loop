@@ -56,12 +56,23 @@ outside `indexedKinds`, so "the app does not use library X" is never a finding f
 - **ODC:** search the app, then in parallel its references and the screens and themes lookups
   (`owned_only: false`, so inherited OutSystems UI rows show). Those say which screens and themes
   exist and what the app depends on; they do not return CSS, widget trees or JavaScript.
-- For what the lookups cannot answer — a screen's widget tree, its Screen and Block stylesheets,
-  the JavaScript nodes in OnInitialize / OnReady / OnRender / OnParametersChanged / OnDestroy —
-  ask Mentor **descriptive questions in a fresh session**, after telling the user it spends their
-  tenant's AI credits. Phrase every turn as "describe, change nothing", one screen per turn, and
-  never ask it to publish or reload. Close nothing by publishing; let the session lapse. Mentor's
-  answers are leads: a finding needs the same thing confirmed by the probe or the lookups.
+- **ODC, the whole model: `context_graph` first.** One call returns the app's model as XRE:
+  - every widget tree with its Style Classes and extended properties
+  - every JavaScript node (`IJavaScriptNode.JsSourceText`)
+  - every client, data and server action flow
+  - entities, timers, REST, roles
+  - the platform's own validation messages
+
+  It is usually 4–5 MB, so the harness saves it to a file. Parse that file offline with `scripts/xre/` (see its README) rather than reading it in context. No Mentor credits are spent. What to know about it:
+  - **Edges.** `relationType: "Parent"` edges point **src = parent → dst = child**; every other edge is a reference (`DataType`, `ReferedObject`, `Style`, `Role`…).
+  - **Hashed texts.** Many `Text` literals carry only `TextHash`, which is the first 10 hex characters of the literal's SHA-1. `scripts/xre/crack.py` recovers most of them by brute force and from the strings in the deployed client bundles.
+  - **Not in the graph: the Theme stylesheet.** Read it from the deployed CSS. The paths are in `<app-url>/moduleservices/moduleinfo` → `urlVersions` (`/<App>/css/<App>.<Theme>__*.css`).
+  - **Not proof of a role gate: `IPermission` on a screen.** A Login screen can carry one and still be open. The gate is in the compiled screen chunk (`/<App>/scripts/_oschunk-*.js`): `static checkPermissions(){…ensureUserHasRole({roles:[…]})}` means role-gated, and an empty body means open to everyone. The route table is in `_osbundle-<App>.index__*.js`.
+  - **Validation messages are leads, not findings.** They can be stale (for example, "Server Action exposed for public access" on screens the deployed build gates).
+  - **Revisions.** Record three of them in the report: the graph's `revision` / `latest_revision`, and the deployed one from `env_app`. They often differ. Model findings describe the model, browser findings describe what is deployed.
+- Only for what the graph cannot answer, ask Mentor **descriptive questions in a fresh session**, after telling the user it spends their tenant's AI credits. Phrase every turn as "describe, change nothing", one screen per turn, and never ask it to publish or reload. Close nothing by publishing; let the session lapse. Mentor's answers are leads: a finding needs the same thing confirmed by the probe, the graph or the lookups.
+- **Never open a screen whose OnInitialize writes data** (a prototype or seed screen). Read its flow in the graph first.
+- **Anonymous, read-only HTTP is evidence too.** GET a public REST endpoint, its `swagger.json` and the static script bundles, to confirm exposure (status code, `access-control-allow-origin`). Never POST, and never call a screen action.
 - **O11:** `getScreen` per screen gives the widget tree, Style Classes, inline styles and the
   lifecycle actions with their JavaScript nodes — the strongest source; use it first.
 
@@ -89,8 +100,16 @@ actions, and which stylesheet (Theme, Screen or Block) a rule was written in.
 
 ## 4. Run the checks
 
-`references/checks.md` is the catalogue — components (UA-C), styling (UA-S) and JavaScript (UA-J),
-each with how to detect it, the fix, a default severity and the known false positives.
+`references/checks.md` is the catalogue — components (UA-C), styling (UA-S), JavaScript (UA-J)
+and app health (UA-A), each with how to detect it, the fix, a default severity and the known
+false positives.
+
+**Run the app-health checks too (UA-A), not only the UI ones.** On Kojoshin, a UI-only first pass
+missed every one of the serious issues: no per-user data ownership, a hard-coded fallback to one
+record, a timer with a fixed UTC offset, demo data seeded on every publish, a public
+unauthenticated REST endpoint, and server calls inside For Each loops. They all sit in the same
+graph the UI checks read, so they cost one more pass over data already on disk. Report them in
+their own section; they are not front-end findings.
 
 **Used more than once means a Block.** A component, a pattern wrapped the same way, or a group of
 widgets that appears in two or more places is one reusable Block with inputs and placeholders,

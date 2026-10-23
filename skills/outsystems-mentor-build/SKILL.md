@@ -389,6 +389,21 @@ number is changing a design value without telling anyone.
 - **Resume the same session** with `mentor_session_id` + the newest `mentor_session_token`.
   A failed or cancelled turn never advances committed state — resume it, don't start a fresh
   `app_key` session, which burns a tenant slot and drops unpublished edits.
+- **…until the conversation fills up. Then a fresh session per screen.** Attachments are
+  inlined into the conversation history (Mentor answers "I used the CSS pasted in your
+  message"). After a few large turns, every prompt fails within seconds, even a bare "Publish":
+  - `OS-AISA-50001` ("Mentor ran into an issue… clear the chat")
+  - `OS-AISA-50002` ("Problem with the AI Provider service")
+
+  Retrying the same session does not recover it. Its unpublished work is lost.
+
+  On KojoshinRebuild, three 25–80 KB attachments plus one 12-Block, 17-minute turn killed a session. What then worked every time, for 8 screens:
+  - `mentor_start_session` → `mentor_load_asset` (the published revision) → upload one **pack of 20 KB or less** for that screen (its original widget tree, its logic, its spec lines) → one build turn → a separate "Publish" turn → `mentor_close_session`.
+  - Up to two small screens share a session.
+  - Never put a whole theme and a dozen Blocks in one turn.
+- **Attachments are per conversation.** Re-upload them in every new session: `mentor_request_upload`, then `curl -X PUT --data-binary @file "<uploadUrl>"` (it expires after 30 minutes). At most 3 refs per prompt. Wrap CSS in a ```` ```css ```` block inside a `.md`; `.css` is not an allowed type.
+- **A fresh session knows nothing of earlier turns.** Open each prompt with what already exists ("the data model, server actions, theme, LayoutEnso and the Blocks X, Y already exist"). For navigation to screens that don't exist yet, leave a TODO and wire it in the turn that creates them.
+- **Creating an app:** `mentor_create_asset` requires `portfolioKey` (the Development environment's, from `env_list`). The asset comes from the platform template: Login, InvalidPermissions, two RecoverPassword screens, UserProfile, ChangePassword, five Layouts, Menu, MenuIcon, ApplicationTitle, UserInfo, an EmailTheme and a role named after the app. Plan a clean-up turn, and check you did not end up with a second role (`<App>2`).
 - **On a timeout, raise `max_turn_time` and retry the same app.** Never create a new app; that
   discards everything the session already applied.
 - **When moving existing widgets, say MOVE.** "Move the tree into the Content placeholder,
@@ -445,6 +460,37 @@ Read the model back through the context lookups as well as looking at the page, 
 the browser as the authority. Note that the context lookups can lag a publish by some
 seconds; a screen missing from `context_screens` immediately after a successful publish is
 usually index lag, and the browser settles it.
+
+### Lint for Mentor's leftovers after every publish
+
+These defects passed Mentor's own validation with 0 errors and a confident "done", and were
+visible only in the DOM or the model graph. Check for them after every publish, not once at
+the end:
+
+| Leftover | Find it |
+| --- | --- |
+| The widget's default text left beside the real content: `Button` in Buttons (calendar days, Cancel/Save, back), `link` in Links. A row link's accessible name becomes "link" | `[...document.querySelectorAll('button,a')].filter(e=>/^(Button\|link\|Link)/.test(e.textContent.trim()))` |
+| A RadioGroup keeping the template's `Option 1/2/3` beside new items labelled `New Item` | the labels of `[data-radio-group] label` |
+| Icon widgets with no icon name | `i.ph` (or the icon library's class) with no `ph-<name>` class |
+| A Container Width set in grid columns by accident (`ThemeGrid_Width1`: a 36 px note) | `[class*=ThemeGrid_Width]` |
+| A second role (`<App>2`), indexes reported but not created, a reported delete rule that differs from the model | `context_graph`: `IRole`, `IEntity` attributes (`DeleteRule`), index nodes |
+| Logic silently dropped ("LogMessage isn't available in this module") | the turn's own reply, then the flow in the graph |
+
+**Parse the graph instead of asking.** `ui-audit/scripts/xre/` dumps every widget tree and action flow of the published revision, which turns "did it build what I asked" into a diff.
+
+**Layout regions nobody fills.** A Layout placeholder that no screen uses still renders an
+empty element on every screen. Before you add a region, check which screens will fill it.
+Give every optional one `placeholder-empty` (rule 2 above), or don't add it.
+
+### Constraints Mentor reported that were true
+
+- A Layout placeholder cannot be named `Content` (it is reserved); use `MainContent`.
+- The HTML Element widget rejects the tag `main`; use a Container with `role="main"`.
+- A screen cannot read a Setting directly; return it from a server action.
+- A List source cannot be a list literal; fill a local list in OnInitialize.
+- ProgressCircle colour inputs take colour identifiers; wrap hex values in a text-to-identifier conversion. Set TrailColor and ProgressColor explicitly, or it uses its blue-grey defaults.
+- The platform log action may be unavailable in a fresh module. Mentor then drops the logging silently, so ask for it explicitly or accept the gap.
+- **A theme `@import` never loads on ODC.** The compiler prepends the generated `:root` (Theme properties) and `.login-screen` rules to the stylesheet. Load web fonts with one guarded JavaScript node in OnApplicationReady instead (`<link rel=preconnect>` + `<link id="<app>-fonts">`, skipped when the id exists). Verify it by diffing the deployed `/<App>/css/<App>.<Theme>__*.css` against the source.
 
 ### Never verify a size or a count from the model's own report
 
