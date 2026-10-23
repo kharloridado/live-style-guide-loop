@@ -15,6 +15,8 @@
  *   containerControls a div or span with a click listener or a control role — a Container
  *                     standing in for a widget
  *   fakeHeadings      text styled like a heading that is not an h1–h6
+ *   gridTables        elements with role="grid" (the ODC Table widget's default) holding no
+ *                     control at all — a read-only table announced as an interactive grid
  *   blocks            Block instances on the screen (data-block) and how often each is used
  *   repeats           (across all URLs) the same element structure in two or more places that is
  *                     not one Block — "used more than once, so it must be a Block". Rows of one
@@ -247,6 +249,11 @@ function scan(fetched, minNodes) {
       fakeHeadings.push({ element: pathOf(el), text: text.slice(0, 60), fontSize: cs.fontSize, fontWeight: cs.fontWeight });
     }
   }
+  const gridTables = [];
+  for (const el of document.querySelectorAll('[role="grid"]')) {
+    if (el.querySelector("input,select,textarea,button,a[href],[tabindex]:not([tabindex='-1']),[contenteditable]")) continue;
+    gridTables.push({ element: pathOf(el), rows: el.querySelectorAll("tr,[role=row]").length });
+  }
   probe.remove();
 
   /* Structure signatures: tag and stable classes, children in order, text ignored (text is what a
@@ -308,7 +315,7 @@ function scan(fetched, minNodes) {
 
   return {
     title: document.title, url: location.href, variables: Object.keys(vars).length, sheets,
-    inlineStyles, hardcoded, important, duplicateClasses, lookalikes, fakeHeadings, blocks, structures,
+    inlineStyles, hardcoded, important, duplicateClasses, lookalikes, fakeHeadings, gridTables, blocks, structures,
   };
 }
 
@@ -354,6 +361,7 @@ for (const url of urls) {
       url, title: result.title, inline: result.inlineStyles.filter((s) => !s.frameworkSet).length,
       hardcoded: result.hardcoded.length, important: result.important.length, duplicates: result.duplicateClasses.length,
       lookalikes: result.lookalikes.length, containerControls: containerControls.length, fakeHeadings: result.fakeHeadings.length,
+      gridTables: result.gridTables.length,
       blocks: Object.keys(result.blocks).length,
     }));
   } catch (e) {

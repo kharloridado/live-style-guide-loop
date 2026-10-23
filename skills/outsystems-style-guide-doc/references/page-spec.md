@@ -40,7 +40,46 @@ show most.
 
 Colors opens with the design system's brand narrative and its Core / Extended split.
 
-## C. Before a handover or release — the sweep
+## C. Widget-library page
+
+For an LSG that documents a widget library (an `osfe` `WidgetLibrary` asset) rather than Blocks —
+one page per widget, in the shape of a component library's public docs. React Aria's docs anatomy
+maps onto it directly.
+
+| # | Section | Content |
+|---|---|---|
+| 1 | Header | Title (the page's only `h1`), the one-sentence lead, the category, a link to the upstream docs page |
+| 2 | Example | The live widget with its controls beside it and the code below, all bound to screen variables |
+| 3 | Behaviour | Sections only some widgets have (Events, Pending, Variants, Selection); each one gets its own table-of-contents link |
+| 4 | Usage | When to use it, and what to use instead |
+| 5 | Accessibility | The keyboard table, then the note on roles, labels and focus |
+| 6 | API | Every property: Studio name, type, default, required, description |
+| 7 | Styling | The root class, the state selectors, and how to restyle through its custom properties |
+| 8 | On this page | A table of contents for 2–7 |
+
+**Docs text is data.** The text of 1 and 4–7 lives in static entities (`Widget.Lead`, `Usage`,
+`A11yNote`, `CssClass`, plus `WidgetProperty`, `KeyboardInteraction`, `WidgetState`), and one
+`WidgetReference(WidgetKey)` Block renders Usage, Accessibility, API and Styling from them. A
+screen holds only its header and its example. The API rows are **generated from the widgets' code**
+— each property's Studio name, description, type, default and kind — never typed (rule 3).
+
+**Shared sample data.** Collection examples read one set of static entities (fruits, a file tree,
+people, breadcrumbs, menu actions) instead of a list per screen. The generator names each from one
+explicit map, never by inflecting a plural.
+
+**What the platform makes you specify:**
+
+- **Enum properties are design-time only.** A widget's enum property (a Button's Variant) cannot be
+  bound to a variable, so an example that switches it renders one widget per value, each with a
+  Visible condition on the selected value.
+- **Default Values are literals.** A computed initial value (`AddDays(CurrDate(), 3)`) is marked in
+  the spec as set in OnInitialize; `CurrDate()` itself is accepted as a default.
+- **The table of contents has an extra-links placeholder** between Example and Usage for the
+  sections from row 3. A fixed link list in the shared Block silently drops them.
+- **Every widget goes in a slot** (`outsystems-mentor-build` → "Widget libraries"), and the slot
+  text names the widget and every binding.
+
+## D. Before a handover or release — the sweep
 
 - Every public Block in the patterns module has a menu record, a preview and a page.
 - No page carries OutSystems UI default prose, Lorem ipsum, a `[ClientName]`-style placeholder,

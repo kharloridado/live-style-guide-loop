@@ -39,13 +39,15 @@ Run this for every item the loop builds, and write the answer into the PR body a
 | Variant, state or input added to a component | Its preview gains that variant or state, and its options area the matching control. |
 | Component deprecated | The page stays, marked deprecated, naming its replacement. |
 | Public Block added to the patterns module for internal use | It still needs a menu record and a page, or the inventory check below fails. |
+| Widget added to, or changed in, a **widget library** (`osfe`) | Regenerate the catalogue and the page specs from the widgets' code (the harness's `npm run widgets:catalogue` and `widgets:pages`), reseed the static entities, and build the page as slots first, widgets last. `references/page-spec.md` → C. |
 
 ## Writing the page
 
 The project's usage spec carries a `## 9. Live Style Guide` section (the template's
 `specs/README.md`): the page, the definition, "When to use", provenance, preview and class
 inspector. Write it in the same PR as the code. `references/page-spec.md` has the full page
-spec, section by section, and the foundation-page spec.
+spec, section by section, the foundation-page spec, and the spec for an LSG that documents a widget
+library.
 
 Three rules carry most of the quality:
 
@@ -94,6 +96,7 @@ check.
    a component whose handover does not cover its page.
 2. Register every custom component in the menu data. Never an ad-hoc screen, never hidden inside
    a stock category.
-3. Never hand-maintain a list that can be read live: token values, token names, class lists.
+3. Never hand-maintain a list that can be read live: token values, token names, class lists — and
+   a widget library's properties, which are generated from the widgets' own declarations.
 4. Build the page in the shape the module already uses; read it before adding to it.
 5. A value the design states that the page cannot show faithfully is a finding, not a rounding.

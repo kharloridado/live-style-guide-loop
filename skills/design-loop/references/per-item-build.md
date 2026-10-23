@@ -129,6 +129,13 @@ Take the maker's LSG-IMPACT and settle it with `outsystems-style-guide-doc`:
   (`TokenReference`); otherwise the handover names the Styles page and the rows to update.
 - **A restyle** names its stock pattern page and anything on it that differs for this design
   system.
+- **A widget from a widget library** (a `WidgetLibrary` asset, not a Block) gets its page built as
+  **slots first, widgets last**: Mentor cannot reference a widget library or open an app that does
+  (`outsystems-mentor-build` → "Widget libraries"). The handover's Mentor prompt builds the page with
+  a slot for each widget — a Container `Slot_<Purpose>` with the slot class, holding a Text naming
+  the widget and every binding — and a second, Studio step drops the widgets in, using the slot
+  texts as the checklist. Page specs for many widgets come from the harness generators
+  (`npm run widgets:pages`), one category file per Mentor turn, each turn publishing on its own.
 
 Nothing reaches a module before the merge. After it, `/lsg:deliver` builds the Block and then
 its page through the OutSystems MCP when one is connected, or the handover carries both. The PR

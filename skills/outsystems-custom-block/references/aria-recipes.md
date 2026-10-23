@@ -209,6 +209,50 @@ Use native `<input type="range">` when possible. For custom:
 
 `aria-valuetext` is for human-friendly values when `aria-valuenow` alone isn't clear.
 
+## In-page table of contents ("On this page")
+
+On ODC an `id` cannot be set and the scroller is `.active-screen`
+(`outsystems-bem-css/references/odc-runtime.md`), so targets carry `data-anchor` and the link runs
+one shared client action:
+
+```js
+// ScrollToAnchor(AnchorId) — one client action, called by every page
+var target = document.querySelector('[data-anchor="' + $parameters.AnchorId + '"]');
+if (target) {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  target.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' });
+  if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+  target.focus({ preventScroll: true });
+}
+```
+
+```css
+[data-anchor] { scroll-margin-top: var(--header-size); } /* the sticky header; a project token without OutSystems UI */
+[data-anchor]:focus { outline: none; }
+```
+
+- **Move focus to the target.** A smooth scroll alone leaves keyboard focus on the link, so the
+  next Tab jumps back up the page. `tabindex="-1"` makes the section focusable without putting it
+  in the tab order; `preventScroll` keeps the focus call from cancelling the smooth scroll.
+- **`behavior: 'auto'` under `prefers-reduced-motion: reduce`.**
+- The table of contents is a `nav` landmark (`role="navigation"`, `aria-label="On this page"`), and
+  the skip link uses the same action with the main region's anchor.
+- A Link's OnClick calls screen actions only, so each screen wraps the shared action in a one-node
+  screen action (`outsystems-custom-block/SKILL.md` → "Calling a shared client action").
+- Testing: a hidden or background browser runs no `requestAnimationFrame`, so a smooth scroll never
+  moves there. Check the focused element, or scroll with `behavior: 'auto'`, rather than reading
+  the scroll position after a smooth scroll.
+
+## Read-only data table
+
+The ODC Table widget renders `role="grid"`, which tells a screen reader to expect an interactive
+grid with cell navigation. A reference table (properties, keyboard shortcuts, tokens) is not one:
+
+- Set `role="table"` on the Table widget as an attribute.
+- Header cells are `th` with `scope="col"`.
+- Keep `role="grid"` only where the table really is a grid: arrow-key cell navigation, editable or
+  selectable cells.
+
 ## Visually hidden helper (always include in Theme)
 
 ```css

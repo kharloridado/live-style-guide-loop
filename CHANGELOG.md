@@ -6,6 +6,51 @@ All notable changes to the `lsg` plugin. The format follows
 
 ## [Unreleased]
 
+## [4.5.0] — 2026-10-23
+
+What building React Aria Docs taught: an ODC Live Style Guide for a widget library (osfe
+`WidgetLibrary`), without OutSystems UI, built through Mentor over the OutSystems MCP. Pair with
+`live-style-guide-harness` from this date for `uiFramework`, the `widgets:*` generators,
+`build/gate/probe-pages.js` and `findings/PLATFORM-DEFECT-TEMPLATE.md`.
+
+### Added
+
+- **`outsystems-mentor-build` → "Widget libraries".** Mentor can neither reference a widget library
+  nor load a revision that has one, so the build is slots first, widgets last: Mentor leaves a
+  `Slot_<Purpose>` Container whose text names the widget and its bindings, and Studio fills it.
+- **`outsystems-mentor-build/references/odc-studio-computer-use.md`.** Driving ODC Studio by
+  computer use: slow drags, the Widget Tree for pasting and deleting, typing property values in
+  short chunks, Return not Tab.
+- **`outsystems-style-guide-doc` page spec C, the widget-library page:** the React Aria docs
+  anatomy, docs text as data rendered by one `WidgetReference` Block, shared sample data, and what
+  the platform makes you specify (enum properties, literal Default Values, the TOC's extra-links
+  placeholder).
+- **`aria-recipes.md`:** an in-page table of contents that moves focus and respects reduced motion,
+  and the read-only data table (`role="table"` on the ODC Table widget).
+- **`ui-audit` UA-C7** and a `gridTables` probe field, for read-only tables announced as grids.
+- **`odc-runtime.md`:** a List laid out as a grid (`[data-list]`, its script, its virtualized
+  rows), and in-page anchors (`data-anchor`; the scroller is `.active-screen`).
+
+### Changed
+
+- **`outsystems-mentor-build`:** batches of 5–7 screens (≤ 14 KB) as attached spec files, each turn
+  publishing on its own; seeds in batches of about 150; publishing from an older base needs an
+  explicit instruction; reload a lost asset and resend; wait for a terminal run and trust `env_app`,
+  not the prose; a failed step shows only in the turn's prose; the template's OutSystems UI, Charts
+  and Maps come out in the first turn of a no-OutSystems-UI app; `portfolioKey` is required although
+  the schema says optional; more constraints that were true (literal Default Values, no settable
+  `id`, Link OnClick calls screen actions only, enum properties are design-time).
+- **`/lsg:deliver`:** detects a widget-library dependency and routes it and the widgets to Studio;
+  a build-engine `OS-*` failure is named, retried once at most and written up as a platform defect.
+- **`@lsg:checker`** (delivered screens): heading order, table roles, every requested step checked
+  one by one, waiting for data rows, `probe-pages.js` for many routes, and no smooth-scroll reads in
+  a hidden browser.
+- **`outsystems-design-findings`:** a platform defect is not a finding.
+- **`per-item-build`:** a widget-library widget's page is built slots first, widgets last.
+- **`outsystems-custom-block`:** a shared client action behind a Link needs a screen-action wrapper.
+- **`project-setup`:** asks for the UI framework and the widget library; the session-start hook
+  skips the OutSystems UI checks when `uiFramework` is `none`.
+
 ## [4.4.0] — 2026-10-22
 
 What auditing, rebuilding and re-checking an ODC app through the OutSystems MCP taught (the
