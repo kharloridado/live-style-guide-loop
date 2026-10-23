@@ -69,7 +69,7 @@ An item lives at `specs/<kind>/<item-id>/`, where the id prefix picks the kind: 
     classes the platform emits. OutSystems UI's patterns, utilities and variables are not loaded:
     read the pack's `outsystems-ui/` pages only for native widget markup, don't build on
     `vendor/outsystems-ui/`, and an Accordion, Tabs, DatePicker or Tooltip is an L5. There is no
-    framework token to redefine: `tokens/*.css` declares every token as `--<prefix>-*`, named and
+    framework token to redefine: `tokens/*.css` declares every token as `--<classPrefix>*` (e.g. `--uswds-color-primary`), named and
     valued from the source design system's own tokens.
 - **Restyling a bare class disturbs its siblings — handle every one deliberately.** Your rules
   land at the same specificity as the framework's and later in the cascade, so `.btn { height }`

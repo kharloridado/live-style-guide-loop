@@ -28,7 +28,7 @@ Generate production-grade BEM CSS for OutSystems Reactive Web and ODC.
    utilities, variables and patterns are not loaded. Skip rule minus-one, and read rule zero's
    "framework" as the platform's native widget classes (Button, Input, Checkbox, Dropdown…, styled
    only by the theme), read from the pack's `outsystems-ui/` pages for markup only — not from
-   `vendor/outsystems-ui/`. Tokens are the theme's own `--<prefix>-*`; there is none to redefine.
+   `vendor/outsystems-ui/`. Tokens are the theme's own `--<classPrefix>*`; there is none to redefine.
    A widget only an OutSystems UI pattern would supply (Accordion, Tabs, Tooltip…) is L5.
 
 ## When to use

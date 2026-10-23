@@ -300,8 +300,9 @@ Do not hand-edit `project.config.json` for these values and do not write a prefi
 file — one source, many readers, and a previous generation of this template shipped a project
 whose two config files disagreed about its own class prefix for its entire life.
 
-Then confirm: `npm run check:config` must print ok. If this template's `init` does not take
-`--framework` yet, set `framework` in `project.config.json` — `check:config` validates it.
+Then confirm: `npm run check:config` must print ok. `init` asks the framework question itself
+(`--framework=yes|no|outsystems-ui|none`) on templates from live-style-guide-harness#22 on; on an
+older template, set `framework` in `project.config.json` by hand.
 
 ## 4. Dependencies and the submodules — the step everyone skipped
 
