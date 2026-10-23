@@ -1,6 +1,6 @@
 ---
 name: outsystems-token-extractor
-description: Translate Figma design tokens into OutSystems UI CSS custom properties declared in :root — or, for a migrated design system built without OutSystems UI (framework none), into the source system's own tokens with the project prefix. Use this skill whenever the user shares Figma token specs, design system values, brand colors, or asks how to set up :root CSS variables. Pull tokens directly from Figma via get_variable_defs MCP tool when a URL is provided.
+description: Translate Figma design tokens into OutSystems UI CSS custom properties declared in :root — or, for a project built without OutSystems UI (framework none, only when the owner said so), into the source system's own tokens with the project prefix. Use this skill whenever the user shares Figma token specs, design system values, brand colors, or asks how to set up :root CSS variables. Pull tokens directly from Figma via get_variable_defs MCP tool when a URL is provided.
 ---
 
 # OutSystems Token Extractor (Figma-aware)
@@ -23,8 +23,8 @@ one `:root`.
 
 ## `framework: "none"` — the source system's own tokens
 
-A migrated design system (USWDS, GOV.UK Frontend, Material, Carbon…) built without OutSystems UI
-maps onto nothing. There is no framework underneath, so no variable to redefine and nothing to fall
+A design system built without OutSystems UI (`framework: "none"`, set only when the owner
+explicitly said not to use it) maps onto nothing. There is no framework underneath, so no variable to redefine and nothing to fall
 back on: `tokens/*.css` declares every token. Take each name and value from the source system's
 published tokens (USWDS's on designsystem.digital.gov), keep its own type and token names, and put
 the project prefix in front — `--uswds-color-primary`, `--uswds-units-2`. Never round a value onto

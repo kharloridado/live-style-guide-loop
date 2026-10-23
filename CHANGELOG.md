@@ -8,15 +8,15 @@ All notable changes to the `lsg` plugin. The format follows
 
 ## [4.5.0] — 2026-10-23
 
-A project that migrates an established design system (USWDS, GOV.UK Frontend, Material, Carbon…)
-no longer builds on OutSystems UI: it migrates that system and builds it as is. Pair with
+A project can now build without OutSystems UI, when its owner explicitly says not to use it: the
+design system is built as is, from its own tokens. OutSystems UI stays the default. Pair with
 `live-style-guide-harness` from this date, which adds `framework` to `project.config.json`.
 
 ### Added
 
 - **`/lsg:project-setup` asks whether the project builds on OutSystems UI**, right after the
-  platform and before modules or tokens. For an established design system it recommends
-  `framework: "none"`, records the answer in `project.config.json` and the ruling in
+  platform and before modules or tokens. The default is `outsystems-ui`. It sets
+  `framework: "none"` only when the owner explicitly says not to use OutSystems UI, and records the answer in `project.config.json` and the ruling in
   `specs/decisions.md`. With `none`, the modules are Blank (ODC: libraries and apps) with no base
   theme, the Patterns module references no theme, and the OutSystems UI submodule and
   `build:osui` are skipped.

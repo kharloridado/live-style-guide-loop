@@ -13,8 +13,8 @@ Take ONE work item (named in the prompt, referenced in `loop/state.json`) and pr
 - `jsNamespace` — the `window.<Ns>` namespace a custom Block's Script registers on (`window.<Ns>.<Block>`).
 - Spacing scale, grid, breakpoints and default sizes are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` — never assumed or guessed; with nothing written, raise no finding about them.
 - `knownFalsePositiveClasses` — finding classes this project has already refuted. Do not re-raise them.
-- `framework` — `"outsystems-ui"` (the default; the theme stacks on OutSystems UI) or `"none"` (a
-  migrated design system built as is, with no OutSystems UI underneath). The rules below say where
+- `framework` — `"outsystems-ui"` (the default; the theme stacks on OutSystems UI) or `"none"` (no
+  OutSystems UI underneath, set only when the owner explicitly said not to use it). The rules below say where
   `none` differs.
 
 ## 1. Read the specs before you write anything

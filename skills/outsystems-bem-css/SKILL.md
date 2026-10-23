@@ -24,7 +24,7 @@ Generate production-grade BEM CSS for OutSystems Reactive Web and ODC.
 
    Do not restate their contents here or infer them from memory. If the submodule is missing, stop
    and say so — guessing a variable name produces a rule that silently never applies.
-4. **With `framework: "none"`** (a migrated design system, no OutSystems UI underneath), its
+4. **With `framework: "none"`** (no OutSystems UI underneath), its
    utilities, variables and patterns are not loaded. Skip rule minus-one, and read rule zero's
    "framework" as the platform's native widget classes (Button, Input, Checkbox, Dropdown…, styled
    only by the theme), read from the pack's `outsystems-ui/` pages for markup only — not from

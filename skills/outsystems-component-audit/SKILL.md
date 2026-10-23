@@ -49,7 +49,7 @@ is worse than no audit: it produces a costed plan for work that did not need doi
 
 "Customize OutSystems UI" never means editing or forking the module — only layers on top of it.
 
-**With `framework: "none"`** (a migrated design system, no OutSystems UI underneath), the first
+**With `framework: "none"`** (no OutSystems UI underneath), the first
 class is **native platform widget**: Button, Input, Checkbox, Dropdown… render with the platform's
 own classes, and only the theme styles them. "Exists, not exact" restyles that widget through
 `ExtendedClass`. OutSystems UI patterns (Accordion, Tabs, Date Picker, Tooltip…) are unavailable,

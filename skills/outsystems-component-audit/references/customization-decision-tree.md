@@ -4,8 +4,8 @@ Walk top to bottom. Stop at the first level that satisfies the design.
 
 **With `framework: "none"`** (`project.config.json`) there is no OutSystems UI: L2 and L4.5 drop
 out, L3a restyles the platform's native widget classes, L4 wraps native widgets, and a pattern
-OutSystems UI would have supplied is L5. The distribution below assumes OutSystems UI; a migrated
-design system has more L5.
+OutSystems UI would have supplied is L5. The distribution below assumes OutSystems UI; without it
+there is more L5.
 
 ```
 ┌─────────────────────────────────────────────────────┐

@@ -18,8 +18,8 @@ Work in this order. **Earlier steps gate later ones.**
 `project.config.json` at the repo root defines what "correct" means for THIS project:
 - `classPrefix` — the BEM prefix to enforce.
 - `knownFalsePositiveClasses` — finding classes this project has already refuted.
-- `framework` — `"outsystems-ui"` (the default) or `"none"` (no OutSystems UI underneath: a
-  migrated design system built as is). The steps below say where `none` differs.
+- `framework` — `"outsystems-ui"` (the default) or `"none"` (no OutSystems UI underneath, set
+  only when the owner explicitly said not to use it). The steps below say where `none` differs.
 
 > ### The rule that prevents the most expensive class of mistake
 > **Spacing scale, grid, breakpoints and default sizes are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` — never assumed or guessed; with nothing written, raise no finding about them.**

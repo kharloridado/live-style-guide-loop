@@ -1,6 +1,6 @@
 ---
 name: project-setup
-description: Stand up a freshly cloned OutSystems design-system project in one pass — interview for the project's values, identify the platform (ODC or O11), whether the project builds on OutSystems UI or migrates an established design system as is, and the modules and applications the work lands in, wire up the toolchain (the lsg plugin, OutSystems' own outsystems plugin with its MCP server set to the project's tenant, the Figma connector), fill project.config.json, install dependencies (and the OutSystems UI submodule when the project builds on it), create the GitHub labels, turn a list of deliverables + Figma links into the signed inventory and the loop queue, offer an optional nightly run, and verify the whole thing builds. Use this when a project is newly cloned from the template, when project.config.json still contains <<PLACEHOLDER>> values, when the plugins/skills/MCP servers need configuring for a project, or whenever the user asks to set up / initialise / bootstrap / configure a new project or engagement.
+description: Stand up a freshly cloned OutSystems design-system project in one pass — interview for the project's values, identify the platform (ODC or O11), whether the project builds on OutSystems UI (the default) or, when the owner explicitly says not to, without it, and the modules and applications the work lands in, wire up the toolchain (the lsg plugin, OutSystems' own outsystems plugin with its MCP server set to the project's tenant, the Figma connector), fill project.config.json, install dependencies (and the OutSystems UI submodule when the project builds on it), create the GitHub labels, turn a list of deliverables + Figma links into the signed inventory and the loop queue, offer an optional nightly run, and verify the whole thing builds. Use this when a project is newly cloned from the template, when project.config.json still contains <<PLACEHOLDER>> values, when the plugins/skills/MCP servers need configuring for a project, or whenever the user asks to set up / initialise / bootstrap / configure a new project or engagement.
 ---
 
 # Project setup — one sitting, one pass
@@ -51,14 +51,14 @@ a tenant MCP endpoint, and what a handover carries. If the user does not say, lo
 (an ODC tenant URL, an `.oap`/`.oml`, a Service Studio screenshot) and confirm it; never assume.
 
 **Then whether it builds on OutSystems UI**, before modules or tokens — it decides the module
-types, what the tokens are and what the gates load. Ask it as a choice: *is this a migration of an
-established design system (USWDS, GOV.UK Frontend, Material, Carbon…), or a brand on OutSystems
-UI?*
+types, what the tokens are and what the gates load. **The default is yes.** Confirm it in the same
+batch (*"this builds on OutSystems UI unless you tell me not to use it"*); never infer the answer
+from the source, not even for an established design system such as USWDS.
 
-- **A brand on OutSystems UI** → `framework: "outsystems-ui"`, the default: tokens redefine
-  OutSystems UI's variables, and its widgets and patterns are restyled first.
-- **An established design system** → recommend `framework: "none"`: it is migrated and built as is,
-  with no OutSystems UI. The theme has no base theme and no module references OutSystemsUI. Every
+- **Default** → `framework: "outsystems-ui"`: tokens redefine OutSystems UI's variables, and its
+  widgets and patterns are restyled first.
+- **Only when the owner explicitly says not to use OutSystems UI** → `framework: "none"`: the
+  design system is built as is, with no OutSystems UI. The theme has no base theme and no module references OutSystemsUI. Every
   token is declared in `tokens/*.css` with the project prefix, named and valued from the source
   system's own tokens (`--uswds-color-primary` from designsystem.digital.gov). Native platform
   widgets still render with the platform's classes, but only the theme styles them; OutSystems UI
