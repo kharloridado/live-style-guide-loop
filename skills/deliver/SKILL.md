@@ -81,6 +81,24 @@ shows the classes the spec names, and the result matches the item's review Artif
 (`loop/state.json` → `items[].review_url`). A step that did not land is not retried blind: stop,
 and hand the rest over (§4) with what landed and what did not.
 
+**Then revalidate. Delivery is not done until the checker passes on what was delivered**, on ODC
+and O11 alike. Run `/lsg:revalidate` on every delivered item and screen in its delivered mode: the
+published URL against the frozen ref, or against the original app for a rebuild. Only then does the
+handover say "all landed".
+
+A publish with `changeApplied: true` and 0 validation errors is not that check. On KojoshinRebuild,
+every screen passed both and still drifted. The causes were default widget texts, unstyled native
+buttons, list bullets, a flex-row layout and the wrong cell markup, and it took four fix rounds,
+each closed by a fresh checker pass.
+
+Before the check:
+- **Roles.** The delivered screens are usually role-gated. Ask the user to assign the role in the
+  ODC Portal or Users app (never change roles yourself), and ask before the check, not after.
+- **Test data.** Create the minimum through the delivered app's own UI; that also exercises its
+  save flows. Say what you created, because it stays in the Development database.
+- **Drift found.** It goes back through the MCP path (shared causes first, then per screen), then
+  to the checker again, until it passes or the remainder is handed over.
+
 ## 4. The handover — opened in both cases
 
 ```bash
