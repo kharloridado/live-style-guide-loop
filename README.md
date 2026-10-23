@@ -31,8 +31,8 @@ the same version. The template already ships that setting. Release notes: [CHANG
 
 | Skill | Role |
 | --- | --- |
-| `/lsg:project-setup` | **Start here on a fresh clone.** Interview → config → deps + submodule → labels → signed inventory → verify it builds. |
-| `/lsg:assess` | **Before any code.** Assess a mockup (a screen, a flow, a component) against what the Live Style Guide already has, then OutSystems UI: every region gets an outcome (reuse, reuse + variant, coming, new from OutSystems UI, new custom, screen-only), every value a token or a finding, the layout a pattern. Annotated assessment, build plan, proposed `loop/goal.md` rows. |
+| `/lsg:project-setup` | **Start here on a fresh clone.** Interview (including whether it builds on OutSystems UI) → config → deps + submodules → labels → signed inventory → verify it builds. |
+| `/lsg:assess` | **Before any code.** Assess a mockup (a screen, a flow, a component) against what the Live Style Guide already has, then OutSystems UI: every region gets an outcome (reuse, reuse + variant, coming, new from OutSystems UI or, with `framework: "none"`, new native widget, new custom, screen-only), every value a token or a finding, the layout a pattern. Annotated assessment, build plan, proposed `loop/goal.md` rows. |
 | `/lsg:design-loop` | Freeze ref → maker → checker → commit → **one PR per deliverable** with its review Artifact. One request, or the signed queue in `loop/goal.md`. |
 | `/lsg:deliver` | After a merge: build the work into OutSystems through the MCP (OutSystems' `outsystems` plugin on ODC; Service Studio's server with OutSystems' `servicestudio-mcp-oml` skill on O11) and check it in a browser; otherwise hand it over. Opens the handover issue either way. |
 | `/lsg:revalidate` | Re-run the checker on an already-built item or PR, without rebuilding it. |
@@ -53,7 +53,7 @@ the same version. The template already ships that setting. Release notes: [CHANG
 | Hook | Does |
 | --- | --- |
 | `PreToolUse` → `pre-commit-gate.mjs` | Before a `git commit` touching `tokens/ src/ specs/ build/`, runs `npm run build:theme` and blocks the commit with its errors when it fails. Skipped in the unfilled template. |
-| `SessionStart` → `session-check.mjs` | Lists missing setup steps (deps, submodule, OutSystems UI base, unfilled config) and, as REQUIRED, OutSystems' official MCP skill for the project's platform: the `outsystems` plugin with its tenant on ODC, `servicestudio-mcp-oml` and the `servicestudio` server on O11. Silent when set up. |
+| `SessionStart` → `session-check.mjs` | Lists missing setup steps (deps, unfilled config, and the OutSystems UI submodule and base unless `framework` is `none`) and, as REQUIRED, OutSystems' official MCP skill for the project's platform: the `outsystems` plugin with its tenant on ODC, `servicestudio-mcp-oml` and the `servicestudio` server on O11. Silent when set up. |
 
 ## Three contracts
 

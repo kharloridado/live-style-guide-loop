@@ -28,6 +28,11 @@ Navigation is data, not hand-built screens.
 ODC LSGs keep those for the restyled OutSystems UI patterns and add a parallel pair for the design
 system's own components: `<DS>MenuCategories` and `<DS>MenuSubCategories` (with `Is_Active`).
 
+With `framework: "none"` (`project.config.json`) the LSG modules are Blank and reference no
+OutSystems UI, so the stock pattern pages and records do not exist, and `patterns` references
+neither OutSystems UI nor the theme. Every component, a restyled native widget included, is a new
+page in the module's own menu structure (`specs/foundations/platform.md`).
+
 Read the module's real entity names before adding a record; kits differ in spelling.
 
 ## Routing a page

@@ -11,7 +11,7 @@ Annotated: <Artifact link>
 | Reuse | |
 | Reuse + variant | |
 | Coming (queued or in review) | |
-| New from OutSystems UI | |
+| New from OutSystems UI (`framework: "none"`: New native widget) | |
 | New custom | |
 | Screen-only | |
 

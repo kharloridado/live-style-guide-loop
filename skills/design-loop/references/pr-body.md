@@ -44,8 +44,8 @@ and where it goes in ODC.>
 
 ## Plan
 
-<What the maker set out to build, in 3–6 bullets: which OutSystems UI widget is being restyled
-or why a custom Block was necessary, which tokens it consumes, which files it touches.>
+<What the maker set out to build, in 3–6 bullets: which OutSystems UI widget (with
+`framework: "none"`, native platform widget) is being restyled or why a custom Block was necessary, which tokens it consumes, which files it touches.>
 
 ## Gates
 

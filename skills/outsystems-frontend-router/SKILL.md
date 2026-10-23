@@ -40,6 +40,9 @@ token budget.
 
 Quote the path you read when you state a fact from it, so a reviewer can check it.
 
+With `framework: "none"` (`project.config.json`), read `ui-frameworks/outsystems-ui/` for native
+widget markup only: its patterns, layouts, utilities and variables are not loaded in the project.
+
 ## Step 3 — Check the pack against the live app
 
 The pack documents the OutSystems templates. A real app runs **its own copies** of the template
@@ -75,6 +78,9 @@ Then assign each part:
 | Design-system Blocks (custom Blocks and their Scripts) shared by every app | the theme module, or a design-system library if the project has one |
 | App-specific chrome that **fills** a layout's placeholders — the app's `Menu`, `ApplicationTitle`, `UserInfo` | each consumer app's `Common` flow |
 | Screens, data, logic | each consumer app — a Live Style Guide is a consumer too |
+
+With `framework: "none"` (`project.config.json`), the layout Block wraps native widgets: there is
+no OutSystems UI layout.
 
 Four rules follow:
 

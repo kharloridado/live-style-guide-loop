@@ -8,14 +8,14 @@ description: Assess a new design before any code is written — a Figma mockup o
 `/lsg:assess <figma-url> [name]` — a frame for a screen, a flow (several frames) or one component.
 
 The question for every part of the design: **does the Live Style Guide already have this?** Then:
-does OutSystems UI? Only what neither has is new work, and anything the design uses in two or more
+does OutSystems UI (with `framework: "none"`: does a native platform widget)? Only what neither has is new work, and anything the design uses in two or more
 places is one Block (hard rule "Reuse, never re-make"). The assessment plans; it builds nothing,
 freezes no ref and files nothing on its own.
 
 ## 1. Pre-flight
 
-1. `project.config.json`: `environment`, `classPrefix`, `figma.fileKey` (the library of record),
-   `modules`. Missing or placeholder values → `/lsg:project-setup`.
+1. `project.config.json`: `environment`, `framework`, `classPrefix`, `figma.fileKey` (the library
+   of record), `modules`. Missing or placeholder values → `/lsg:project-setup`.
 2. The Figma MCP connected (`outsystems-figma-integration`). A screenshot alone is a weaker
    assessment: say so, and mark every match "by eye" until the Figma file is readable.
 3. The frontend-skills pack at `vendor/outsystems-frontend-skills/` — the OutSystems UI side is a
@@ -65,6 +65,11 @@ and group in them — and give each **one outcome**:
 | **New custom** | Neither has it, and the extensibility gate is cleared (`outsystems-component-audit` → L4.5) | A new item: a Block over a pattern (L4) or a custom Block with a Script (L5) |
 | **Screen-only** | A composition of the above used in one place on this screen | No design-system item: the screen assembles it |
 
+**With `framework: "none"`** there is no OutSystems UI: **New from OutSystems UI** becomes **New
+native widget** (outcome `native` in `regions.json`) — no item, but a platform widget (Button,
+Input, Checkbox, Dropdown…) renders it and the theme styles it. Anything an OutSystems UI pattern
+would supply (Accordion, Tabs, Date Picker, Tooltip…) is **New custom** (L5), with no L4.5 gate.
+
 Then the rules that override a single region's outcome:
 
 - **Used twice, it is a Block.** A group that appears in two or more places — on this screen, in
@@ -76,7 +81,7 @@ Then the rules that override a single region's outcome:
   behaviour is new or a variant, never "close enough"; say what differs.
 
 The OutSystems UI side of a region (bucket, level, the extensibility gate) follows
-`outsystems-component-audit`.
+`outsystems-component-audit`, which also says what changes with `framework: "none"`.
 
 ## 5. Match every style value
 
@@ -98,7 +103,8 @@ Name the layout: a Live Style Guide layout pattern (`pat-layout-*`) or the OutSy
 Block (`LayoutTopMenu`, `LayoutSideMenu`, …) and which of its placeholders each region fills; the
 closest screen template (`ui-frameworks/outsystems-ui/screen-templates.md`); and the column Blocks
 for the grid. A layout the library does not have is a pattern item of its own, and it comes first
-in the plan.
+in the plan. With `framework: "none"` there is no OutSystems UI layout Block or screen template:
+the layout is a Live Style Guide pattern, or a new one.
 
 ## 7. Output
 

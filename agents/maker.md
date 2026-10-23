@@ -13,6 +13,9 @@ Take ONE work item (named in the prompt, referenced in `loop/state.json`) and pr
 - `jsNamespace` — the `window.<Ns>` namespace a custom Block's Script registers on (`window.<Ns>.<Block>`).
 - Spacing scale, grid, breakpoints and default sizes are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` — never assumed or guessed; with nothing written, raise no finding about them.
 - `knownFalsePositiveClasses` — finding classes this project has already refuted. Do not re-raise them.
+- `framework` — `"outsystems-ui"` (the default; the theme stacks on OutSystems UI) or `"none"` (no
+  OutSystems UI underneath, set only when the owner explicitly said not to use it). The rules below say where
+  `none` differs.
 
 ## 1. Read the specs before you write anything
 The project's `specs/` folder is what you read before writing UI code, in the order
@@ -60,6 +63,14 @@ An item lives at `specs/<kind>/<item-id>/`, where the id prefix picks the kind: 
   - The framework has **no** equivalent → *now* a `<classPrefix>-<block>--<variant>` class is
     correct, applied via `ExtendedClass`.
   - The widget does not exist at all → a custom Block with a required Script (L5, `outsystems-custom-block`), the LAST resort. Never a new Web Component.
+  - **With `framework: "none"`** the order is: the platform's native widget (Button, Input,
+    Checkbox, Dropdown… render with the platform's own classes, and only this theme styles them)
+    → restyle through `ExtendedClass` → custom Block (L5). The bare-class rules above hold for the
+    classes the platform emits. OutSystems UI's patterns, utilities and variables are not loaded:
+    read the pack's `outsystems-ui/` pages only for native widget markup, don't build on
+    `vendor/outsystems-ui/`, and an Accordion, Tabs, DatePicker or Tooltip is an L5. There is no
+    framework token to redefine: `tokens/*.css` declares every token as `--<classPrefix>*` (e.g. `--uswds-color-primary`), named and
+    valued from the source design system's own tokens.
 - **Restyling a bare class disturbs its siblings — handle every one deliberately.** Your rules
   land at the same specificity as the framework's and later in the cascade, so `.btn { height }`
   silently kills `.btn-small`'s own height. Enumerate the framework's sibling modifiers and, for
@@ -85,8 +96,9 @@ An item lives at `specs/<kind>/<item-id>/`, where the id prefix picks the kind: 
 ## The specimen — what the checker measures and the owner reviews
 Write or update `specs/<kind>/<item-id>/specimen.html`: a fragment with the widget as ODC renders it,
 in every state the ref draws. `npm run gate:measure` and `npm run review` wrap it in the page that
-stacks the compiled framework base, `dist/theme.css` and every block file, so you never hand-link a
-stylesheet. The rules are in the project's `specs/README.md`; the ones that bite:
+stacks the compiled framework base (none with `framework: "none"`), `dist/theme.css` and every
+block file, so you never hand-link a stylesheet. The rules are in the project's `specs/README.md`;
+the ones that bite:
 - The real rendered markup (classes, wrappers, provider DOM), never an idealised copy.
 - `data-gate="hover | active | focus"` holds a cell in that state.
 - `<!-- include: <other-id> -->` renders another item's specimen where a probe checks collateral.

@@ -1,6 +1,6 @@
 ---
 name: project-setup
-description: Stand up a freshly cloned OutSystems design-system project in one pass — interview for the project's values, identify the platform (ODC or O11) and the modules and applications the work lands in, wire up the toolchain (the lsg plugin, OutSystems' own outsystems plugin with its MCP server set to the project's tenant, the Figma connector), fill project.config.json, install dependencies and the OutSystems UI submodule, create the GitHub labels, turn a list of deliverables + Figma links into the signed inventory and the loop queue, offer an optional nightly run, and verify the whole thing builds. Use this when a project is newly cloned from the template, when project.config.json still contains <<PLACEHOLDER>> values, when the plugins/skills/MCP servers need configuring for a project, or whenever the user asks to set up / initialise / bootstrap / configure a new project or engagement.
+description: Stand up a freshly cloned OutSystems design-system project in one pass — interview for the project's values, identify the platform (ODC or O11), whether the project builds on OutSystems UI (the default) or, when the owner explicitly says not to, without it, and the modules and applications the work lands in, wire up the toolchain (the lsg plugin, OutSystems' own outsystems plugin with its MCP server set to the project's tenant, the Figma connector), fill project.config.json, install dependencies (and the OutSystems UI submodule when the project builds on it), create the GitHub labels, turn a list of deliverables + Figma links into the signed inventory and the loop queue, offer an optional nightly run, and verify the whole thing builds. Use this when a project is newly cloned from the template, when project.config.json still contains <<PLACEHOLDER>> values, when the plugins/skills/MCP servers need configuring for a project, or whenever the user asks to set up / initialise / bootstrap / configure a new project or engagement.
 ---
 
 # Project setup — one sitting, one pass
@@ -50,9 +50,28 @@ the free-text ones; do not ask nine questions in nine turns.
 a tenant MCP endpoint, and what a handover carries. If the user does not say, look for evidence
 (an ODC tenant URL, an `.oap`/`.oml`, a Service Studio screenshot) and confirm it; never assume.
 
+**Then whether it builds on OutSystems UI**, before modules or tokens — it decides the module
+types, what the tokens are and what the gates load. **The default is yes.** Confirm it in the same
+batch (*"this builds on OutSystems UI unless you tell me not to use it"*); never infer the answer
+from the source, not even for an established design system such as USWDS.
+
+- **Default** → `framework: "outsystems-ui"`: tokens redefine OutSystems UI's variables, and its
+  widgets and patterns are restyled first.
+- **Only when the owner explicitly says not to use OutSystems UI** → `framework: "none"`: the
+  design system is built as is, with no OutSystems UI. The theme has no base theme and no module references OutSystemsUI. Every
+  token is declared in `tokens/*.css` with the project prefix, named and valued from the source
+  system's own tokens (`--uswds-color-primary` from designsystem.digital.gov). Native platform
+  widgets still render with the platform's classes, but only the theme styles them; OutSystems UI
+  patterns (Accordion, Tabs, Date Picker, Tooltip…) are unavailable, so the system's own versions
+  are custom Blocks (L5).
+
+Record the answer as `framework` (§3) and the ruling as a row in `specs/decisions.md` → Project
+decisions, with who decided and the date — the loop re-asks anything that lives only in chat.
+
 | Value | Flag | Notes |
 |---|---|---|
 | **Platform** | `--environment` | `ODC` or `O11` |
+| **Framework** | `--framework` | `outsystems-ui` (default) or `none` — see above |
 | Customer | `--customer` | e.g. "Acme Corp" — appears in comments and issue titles |
 | Project short name | `--project` | e.g. "ACME" |
 | Design system name | `--design-system` | defaults to the project name |
@@ -72,6 +91,11 @@ The module and application names default to the playbook's (`init` proposes them
 system name). Ask whether the environment **already has** these modules — an existing Live Style
 Guide or theme keeps its real names; a guessed name sends every handover prompt to a module that
 does not exist. `project.config.json` → `modules` records them; every skill reads them from there.
+
+With `framework: "none"`, the Theme, Live Style Guide, PatPreview and Template modules are O11
+**Blank** modules (ODC: the libraries and apps above), and the Patterns module is a Library. The
+Theme module's theme has **no base theme**, and the Patterns module references no theme. A module
+created from an OutSystems UI template brings OutSystemsUI with it — say which to pick.
 
 Also raise **the deliverables** (§5) in this same batch: *"list the components you want built,
 each with its Figma link"*.
@@ -265,7 +289,7 @@ node build/init-project.mjs \
   --prefix="nimbus-" --js-namespace="Nimbus" --environment=ODC \
   --theme-module="NimbusTheme" --patterns-module="NimbusPatterns" \
   --lsg-module="NimbusLiveStyleGuide" --template-module="Template_Nimbus" \
-  --odc-tenant="acme.outsystems.dev" \
+  --odc-tenant="acme.outsystems.dev" --framework=outsystems-ui \
   --repo="acme/design-system" \
   --figma-url="https://www.figma.com/design/KEY/Library"
 ```
@@ -276,7 +300,9 @@ Do not hand-edit `project.config.json` for these values and do not write a prefi
 file — one source, many readers, and a previous generation of this template shipped a project
 whose two config files disagreed about its own class prefix for its entire life.
 
-Then confirm: `npm run check:config` must print ok.
+Then confirm: `npm run check:config` must print ok. `init` asks the framework question itself
+(`--framework=yes|no|outsystems-ui|none`) on templates from live-style-guide-harness#22 on; on an
+older template, set `framework` in `project.config.json` by hand.
 
 ## 4. Dependencies and the submodules — the step everyone skipped
 
@@ -291,6 +317,11 @@ npm install
 git submodule update --init
 npm run build:osui
 ```
+
+**With `framework: "none"`, skip the OutSystems UI half of this section**: nothing builds against
+`vendor/outsystems-ui/`, `build:osui` is skipped, and the specimen pages load no framework base.
+Initialise only the frontend-skills pack (§4b), which still describes what native widgets render.
+The rest of this section applies to `outsystems-ui`.
 
 **`vendor/outsystems-ui/` is a submodule and clones empty** (`git submodule status` shows a leading
 `-`). `npm run build:osui` compiles it into `review/vendor/outsystems-ui/` — layer 1 of every
@@ -455,7 +486,8 @@ npm run gate:selftest
 
 Exit `0` means a browser was found, the page was served, and the cascade was complete. Exit `4`
 means no browser (`npm install` did not take). Exit `3` with a failed-request line usually means
-the submodule step in §4 did not happen. **Fix it now** — this is exactly the failure that makes
+the submodule step in §4 did not happen (with `outsystems-ui`; with `none` there is no base to
+miss). **Fix it now** — this is exactly the failure that makes
 every build report `unverified`.
 
 ## 9. Commit, then hand back
@@ -466,8 +498,8 @@ git add -A && git commit -m "chore: initialise <project> from the template"
 
 Report in this shape — short, and honest about what is not done:
 
-- **Configured** — platform, prefix, namespace, repo, Figma file key, ODC tenant, and every module
-  (and O11 application) by role.
+- **Configured** — platform, framework (and its `specs/decisions.md` row), prefix, namespace,
+  repo, Figma file key, ODC tenant, and every module (and O11 application) by role.
 - **Delivery channel** — the OutSystems MCP (connected and verified), or the fallback the handovers
   carry: Mentor prompts (ODC) or Service Studio steps (O11).
 - **Toolchain** — both plugins and their scope, the ODC MCP (`plugin:outsystems:outsystems` and its host), the Figma connector, `gh`,
@@ -490,6 +522,7 @@ the loop by hand, or a plain request such as *"add the error state to the input"
 ## Rules
 
 1. **Never invent a scope row**, a spacing scale or a breakpoint. "Ask" is a correct answer.
+   Never assume the framework either: ask, and record the ruling.
 2. **Never write a project value anywhere but `project.config.json`**, and always through
    `init-project.mjs`. The plugin's `tenant_hostname` is set *from* `odcTenant`, never typed from memory.
 3. **Never guess the ODC tenant** — not from the customer name, not from another project. A wrong
@@ -502,7 +535,7 @@ the loop by hand, or a plain request such as *"add the error state to the input"
    customer's library.
 7. **Ask before anything outward-facing** — creating a repository, creating a scheduled routine,
    pushing to a remote.
-8. **Do not skip the submodules.** `vendor/outsystems-ui/` is the most-skipped step and it
-   invalidates the fidelity gate. `vendor/outsystems-frontend-skills/` is the newer one, and
+8. **Do not skip the submodules.** With `outsystems-ui`, `vendor/outsystems-ui/` is the
+   most-skipped step and it invalidates the fidelity gate (with `none` it is not needed). `vendor/outsystems-frontend-skills/` is the newer one, and
    skipping it degrades quietly rather than loudly — the skills keep answering, just from memory
    instead of from the catalog. Verify both.

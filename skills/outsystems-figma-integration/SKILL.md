@@ -119,7 +119,10 @@ Figma Variables (the new design tokens system) come categorized:
 | STRING (font names) | `--font-family-*` |
 | BOOLEAN (rare) | Generally skip |
 
-Pass the variable list directly to `outsystems-token-extractor` for mapping.
+Pass the variable list directly to `outsystems-token-extractor` for mapping. With
+`framework: "none"` (`project.config.json`) the families above do not apply: tokens keep the source
+design system's own names with the project prefix, and component instances are matched against
+native platform widgets and the project's Blocks, not OutSystems UI patterns.
 
 ## Output guidance
 

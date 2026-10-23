@@ -1,6 +1,8 @@
 # Figma Variables → OutSystems CSS Variables
 
-How to map data returned from `Figma:get_variable_defs` to OutSystems UI CSS variables.
+How to map data returned from `Figma:get_variable_defs` to OutSystems UI CSS variables. With
+`framework: "none"`, there is nothing to map onto: each variable keeps the source design system's
+own name with the project prefix (`outsystems-token-extractor`). The conversions below still apply.
 
 ## Figma Variable structure
 

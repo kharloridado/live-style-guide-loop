@@ -88,7 +88,7 @@ returns VERDICT, RISK-TIER, DET-GATE, VISUAL, MEASUREMENTS, CONFIDENCE, CRITIQUE
 FINDINGS-CONFIRMED, FINDINGS-CHALLENGED-OUT, DECISION-LOG.
 
 The gate is headless and driven from Node, so it runs the same unattended. If it reports no usable browser (`npm install` never ran), a missing framework base
-(`npm run build:osui`) or a stale theme (`npm run build:theme`), that is a **harness fault to fix and re-run** — not a design
+(`npm run build:osui`; none exists with `framework: "none"`) or a stale theme (`npm run build:theme`), that is a **harness fault to fix and re-run** — not a design
 verdict, and never a reason to relax the gate.
 
 Route the verdict:
