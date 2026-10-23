@@ -141,6 +141,20 @@ because they fail silently on a delivered screen and pass every model-side check
   shrink-to-fit flex item.
 - **Divider rules.** Sibling rules (`.row + .row`) still match. Blocks wrap every instance in
   `div.OSBlockWidget`, which breaks adjacent-sibling selectors.
+- **Order.** Headings in document order, one `h1`, and each section's heading before its content.
+  Mentor has put a heading after the content it titles with no validation error; only the DOM shows
+  it.
+- **Tables.** A read-only table has `role="table"`, not the Table widget's default `role="grid"`.
+- **Every requested step.** Check each step the handover or prompt asked for, one by one. A Mentor
+  turn reports `changeApplied: true` and 0 errors while a step failed; only its prose says so.
+
+Measure after the data arrives. Aggregates resolve after first paint, so a probe or screenshot
+taken at load sees empty lists: set `waitFor` to an element that exists only once the data is there
+(a row, not the list). For many screens of one app (an LSG with a page per component), run the
+harness's `build/gate/probe-pages.js` from one page of the app; it loads each route in a hidden
+same-origin iframe and returns only the pages with problems. A hidden or background browser runs no
+`requestAnimationFrame`, so a smooth scroll never moves there: check scroll targets with the
+focused element or an instant `scrollIntoView`, never a position read after a smooth scroll.
 
 For every drift row, name its cause from the matched CSS rules (specificity, an OutSystems UI rule,
 a widget property), not from the screenshot.

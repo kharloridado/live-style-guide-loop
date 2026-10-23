@@ -139,6 +139,13 @@ Nimbus.Stepper.destroy($parameters.WidgetId);
 Set the Script as the Block's **Required Script**, never as a module-wide include. The handover's
 Mentor prompt (ODC) or Service Studio steps (O11) carry exactly these three nodes.
 
+### Calling a shared client action
+
+A Link's OnClick can call a **screen action** only, not a client action. Behaviour shared by many
+screens (a ScrollToAnchor for every page's table of contents) is one client action, plus a
+one-node screen action on each screen that calls it. Never a copy of the JavaScript per screen;
+that is the same JavaScript pasted in several places (`ui-audit` UA-J6).
+
 ## The specimen
 
 `specs/<kind>/<id>/specimen.html` is the Block's widgets **as the platform renders them** (capture a

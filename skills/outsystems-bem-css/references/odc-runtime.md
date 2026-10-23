@@ -19,6 +19,20 @@ and the DOM before relying on any of it for your tenant's version.
     `li > .OSBlockWidget { display:block }` and `width:100%` on the control.
 - **A List with Mode Custom and Tag `ul`** renders a real `ul` / `li` (good for semantics), adds
   `<script>` nodes between the items, and keeps the browser's bullets and 40 px indent until reset.
+- **A List laid out as a grid** (cards, tiles) breaks three ways when the grid goes on the List's
+  parent. The List wraps its items in its own `[data-list]` element, puts a `<script>` first with
+  an inline `display`, and virtualizes off-screen items with an inline `height: 0`. Mentor cannot
+  turn virtualization off, so all three fixes go in the theme, under the class on the List's parent:
+
+  ```css
+  .my-card-grid > [data-list] { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--space-m); }
+  .my-card-grid > [data-list] > script { display: none !important; }
+  .my-card-grid > [data-list] > [data-container] { height: auto !important; min-width: 0; }
+  ```
+
+  The two `!important`s are the justified kind: they beat inline styles the runtime writes, which
+  nothing else can. The attribute selectors are the runtime's structure, not a styling hook of
+  ours, so they stay scoped under the design-system class.
 - **The ODC compiler prepends** `:root{--color-primary…}` (from the Theme properties) and
   `.login-screen{background-image…}` to the Theme stylesheet. A Theme `@import` therefore never
   loads. Load web fonts from the OnApplicationReady system event, or self-host them with
@@ -51,6 +65,17 @@ and the DOM before relying on any of it for your tenant's version.
   Container with `role="main"`).
 - An empty placeholder still renders its element. Give optional regions `placeholder-empty`, and
   don't add a region no screen fills (see `outsystems-mentor-build` → "Extending a Layout").
+
+## In-page anchors and scrolling
+
+- **An element `id` cannot be set** as an extended attribute; the platform owns ids. Mark targets
+  with a `data-anchor="<name>"` attribute and find them with
+  `querySelector('[data-anchor="…"]')`.
+- **The scroll container is `.active-screen`, not the document.** `window.scrollTo` and
+  `document.scrollingElement` do nothing; `element.scrollIntoView()` scrolls the right container.
+  Offset a sticky header with `[data-anchor] { scroll-margin-top: … }`.
+- Moving focus to the target, and reduced motion, are in
+  `outsystems-custom-block/references/aria-recipes.md` → "In-page table of contents".
 
 ## Restyling without `!important`
 

@@ -87,7 +87,8 @@ Read-only. It writes `probe.json` per screen: stylesheets (framework or app), in
 OutSystems UI patterns write themselves are marked `frameworkSet`), hard-coded literals with the
 variable that already holds the value, `!important`, app classes that duplicate an existing class
 (with the class to reuse), elements named like an OutSystems UI pattern that are not one, divs and
-spans acting as controls, and text styled as a heading that is not one. Across all the URLs of a
+spans acting as controls, text styled as a heading that is not one, and read-only tables announced
+as `role="grid"`. Across all the URLs of a
 run it adds `repeats`: the same element structure in two or more places that is not one Block,
 with every screen it is on — so probe every screen in one run. Run it at the desktop
 viewport, and again at `--viewport 390x844` when the app is responsive.

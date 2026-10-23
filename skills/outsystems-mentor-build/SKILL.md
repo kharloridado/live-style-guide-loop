@@ -164,6 +164,35 @@ drive, add these on top of everything above:
 - **After it runs, measure the published page and send a delta** — a short prompt scoped to one
   Block: numbered steps, a `Result:` snippet, "No CSS, no JavaScript, no other changes."
 
+## Widget libraries — Mentor builds around them, Studio adds them
+
+An app that uses a `WidgetLibrary` asset (one built with the OutSystems Frontend CLI, `osfe`) cannot
+be built end to end through Mentor. Two limits, both seen on every widget library tried:
+
+- **Mentor cannot add the dependency.** Its element search has no widget type, so the library never
+  shows up, and referencing it by asset key fails with "An internal error occurred while referencing
+  producer". `(System)`, OutSystemsUI and OutSystemsCharts reference fine, so this is specific to
+  widget libraries, not to dependencies.
+- **Mentor cannot load a revision that has the dependency** ("An unexpected error occurred"). The
+  revision before it still loads.
+
+So the order is fixed: **slots first, widgets last.**
+
+1. Mentor builds everything else — data, blocks, screens, actions, variables, theme — from a
+   revision **without** the dependency. Where a widget goes, it leaves a **slot**: a Container named
+   `Slot_<Purpose>` with the project's slot class, holding one Text that names the widget and every
+   binding (`ReactAria Switch · Label "Is pending" · Is selected = ExampleIsPending`). Every variable
+   and action the binding names exists before the slot is handed over.
+2. A person (or a computer-use agent, `references/odc-studio-computer-use.md`) adds the dependency in
+   ODC Studio and fills each slot. **The slot text is the checklist**: delete it, drop the widget,
+   set exactly what it says.
+3. After that the app stays in Studio. To change it through Mentor again, load the last revision
+   without the dependency and **publish over** the Studio revisions (see "Sequencing turns"), then
+   redo step 2. Say which Studio work that discards before you ask.
+
+Detect it before the first turn: if the spec, the handover or the app's references name a
+`WidgetLibrary` asset, plan this split up front instead of discovering it at the reference step.
+
 ## Classing a widget — Style Classes first, Extended Properties as the fallback
 
 A widget gets its classes from the **Style Classes** property. Use it whenever it can do the
@@ -403,9 +432,28 @@ number is changing a design value without telling anyone.
   - Never put a whole theme and a dozen Blocks in one turn.
 - **Attachments are per conversation.** Re-upload them in every new session: `mentor_request_upload`, then `curl -X PUT --data-binary @file "<uploadUrl>"` (it expires after 30 minutes). At most 3 refs per prompt. Wrap CSS in a ```` ```css ```` block inside a `.md`; `.css` is not an allowed type.
 - **A fresh session knows nothing of earlier turns.** Open each prompt with what already exists ("the data model, server actions, theme, LayoutEnso and the Blocks X, Y already exist"). For navigation to screens that don't exist yet, leave a TODO and wire it in the turn that creates them.
-- **Creating an app:** `mentor_create_asset` requires `portfolioKey` (the Development environment's, from `env_list`). The asset comes from the platform template: Login, InvalidPermissions, two RecoverPassword screens, UserProfile, ChangePassword, five Layouts, Menu, MenuIcon, ApplicationTitle, UserInfo, an EmailTheme and a role named after the app. Plan a clean-up turn, and check you did not end up with a second role (`<App>2`).
+- **Creating an app:** `mentor_create_asset` requires `portfolioKey`, though its schema marks it optional. Read it from `env_list` (the Development environment's) or from an existing app. The asset comes from the platform template: Login, InvalidPermissions, two RecoverPassword screens, UserProfile, ChangePassword, five Layouts, Menu, MenuIcon, ApplicationTitle, UserInfo, an EmailTheme and a role named after the app. Plan a clean-up turn, and check you did not end up with a second role (`<App>2`).
+  The web app template also brings OutSystems UI, OutSystemsCharts and OutSystemsMaps, and there is
+  no blank option. An app that must not use OutSystems UI spends its first turn removing them: every
+  template screen, block, layout, menu and action that depends on them, then the references, then a
+  theme with no base theme.
 - **On a timeout, raise `max_turn_time` and retry the same app.** Never create a new app; that
   discards everything the session already applied.
+- **Large specs go as attached files, one batch per turn.** For many similar screens, generate one
+  spec file per batch — 5 to 7 screens, at most 14 KB — attach it, and ask the turn to build that
+  batch and publish. Six screens took about 1.5 minutes plus the publish, and a failure cost one
+  batch, not the app. Check the batch in the browser before sending the next.
+- **Large seeds go in batches of about 150 records.** Mentor's seeding script ran out of memory on
+  537 static-entity records in one go; it recovered by batching on its own, but ask for batches up
+  front.
+- **Publishing from an older base revision is rejected as a conflict.** Mentor publishes over the
+  newer revisions only when the prompt says so explicitly. When that is the intent (the
+  widget-library split above), say it, and name what the newer revisions held that will be lost.
+- **A session can lose its loaded asset.** A run comes back `not_found`, then Mentor answers that no
+  app is selected. `mentor_load_asset` again, then resend the same prompt; do not start a new app.
+- **Wait for the run to be terminal before the next prompt.** A turn can publish, lose track of what
+  it built and publish the same revision again as a no-op ("the screens were already in the app").
+  The live revision is what `env_app` says, never what the turn's prose says.
 - **When moving existing widgets, say MOVE.** "Move the tree into the Content placeholder,
   do not rebuild it" preserves classes, text and order. Left ambiguous, Mentor may
   regenerate — and a regenerated tree is a new chance to drift from the spec.
@@ -415,6 +463,11 @@ number is changing a design value without telling anyone.
 **`change_applied: true` is not evidence.** Neither is `validation.error_count: 0`, nor a
 confident summary. All three were present on a screen that shipped rendering its own markup
 as visible text.
+
+**A step that failed shows only in the prose.** A turn asked for six steps reported
+`changeApplied: true` and 0 errors while one step (adding a widget-library reference) had failed;
+only a sentence in its reply said so. Read the whole reply, then check each requested step against
+the model or the page — not the turn as a whole.
 
 Nothing else in the pipeline can catch this class of defect: the deterministic build gate
 checks the repo, not the tenant; Mentor's validation checks the model, not the rendering;
@@ -461,6 +514,13 @@ the browser as the authority. Note that the context lookups can lag a publish by
 seconds; a screen missing from `context_screens` immediately after a successful publish is
 usually index lag, and the browser settles it.
 
+**Batch builds: probe the DOM, not screenshots.** After each batch publish, run one DOM probe over
+the batch's pages: h1 count, h2 list in order, slot texts, table-of-contents links, table roles,
+`aria-current`. It is faster than screenshots and catches what they miss — Mentor put a section
+heading after its content with no validation error. Probe many routes from one page by loading each
+in a hidden same-origin iframe (the harness's `build/gate/probe-pages.js`), not one navigation per
+route.
+
 ### Lint for Mentor's leftovers after every publish
 
 These defects passed Mentor's own validation with 0 errors and a confident "done", and were
@@ -488,6 +548,16 @@ Give every optional one `placeholder-empty` (rule 2 above), or don't add it.
 - The HTML Element widget rejects the tag `main`; use a Container with `role="main"`.
 - A screen cannot read a Setting directly; return it from a server action.
 - A List source cannot be a list literal; fill a local list in OnInitialize.
+- A variable's Default Value must be a literal. `CurrDate()` is accepted; `AddDays(CurrDate(), 3)`
+  is rejected. Mark computed initial values in the spec so the builder assigns them in
+  OnInitialize, which only assigns variables and never fetches data.
+- An element `id` cannot be set as an extended attribute (the platform owns ids). In-page anchors
+  use a `data-anchor` attribute and `scrollIntoView`; on ODC the scroll container is
+  `.active-screen`, not the document (`outsystems-bem-css/references/odc-runtime.md`).
+- A Link's OnClick can call a screen action only, not a client action. A shared client action
+  (ScrollToAnchor) needs a one-node screen-action wrapper on each screen that uses it.
+- Enum properties of library widgets are design-time only and cannot be bound to a variable. An
+  example that switches one renders one widget per value, each with a Visible condition.
 - ProgressCircle colour inputs take colour identifiers; wrap hex values in a text-to-identifier conversion. Set TrailColor and ProgressColor explicitly, or it uses its blue-grey defaults.
 - The platform log action may be unavailable in a fresh module. Mentor then drops the logging silently, so ask for it explicitly or accept the gap.
 - **A theme `@import` never loads on ODC.** The compiler prepends the generated `:root` (Theme properties) and `.login-screen` rules to the stylesheet. Load web fonts with one guarded JavaScript node in OnApplicationReady instead (`<link rel=preconnect>` + `<link id="<app>-fonts">`, skipped when the id exists). Verify it by diffing the deployed `/<App>/css/<App>.<Theme>__*.css` against the source.

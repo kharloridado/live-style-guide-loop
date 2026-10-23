@@ -75,6 +75,23 @@ change and build in the shape it already has:
 A publish lands in the **development** environment. Deploying or promoting to any other stage is a
 person's call, never this step's: the merge approved the change, not a release.
 
+**A module that uses a widget library** (a `WidgetLibrary` asset, built with `osfe`) cannot take
+the dependency, or be opened at all once it has it, through Mentor (`outsystems-mentor-build` →
+"Widget libraries"). Check the module's references before the first turn. Then build everything
+else through the MCP with a slot where each widget goes, and route the dependency and the widgets
+to Studio: a handover step with the slot checklist, or computer use under
+`outsystems-mentor-build/references/odc-studio-computer-use.md` when the user asks for it. Say so in
+the Delivery line.
+
+**A publish that fails in the build engine is a result, not a flake.** An `OS-*` code on a failed
+publish (seen: `OS-FEW-POST-50000` "Internal Error", then `OS-DPL-50205` "An error has occurred while
+building the application") comes from the build itself. Name the codes, retry once at most, and
+stop: Development stays on the last good revision, so record which one with `env_app`. Find the
+last revision that built and what changed after it (on React Aria Docs: the dependency alone built,
+placing its widgets did not), and write it up from the project's
+`findings/PLATFORM-DEFECT-TEMPLATE.md` for OutSystems, not as a design finding. The handover says
+what landed and links the report.
+
 Then **verify in a real browser**, never by Mentor's report or Service Studio preview: the LSG page
 is reachable from the menu, the preview renders every state the ref draws, the class inspector
 shows the classes the spec names, and the result matches the item's review Artifact

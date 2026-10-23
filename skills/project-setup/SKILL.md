@@ -65,6 +65,8 @@ a tenant MCP endpoint, and what a handover carries. If the user does not say, lo
 | Template module | `--template-module` | `Template_<DS>` |
 | O11 applications | `--theme-app`, `--lsg-app` | "<Customer> Theme", "<Customer> Live Style Guide" |
 | **ODC tenant hostname** | `--odc-tenant` | e.g. `acme.outsystems.dev`, no scheme. Becomes the `tenant_hostname` of OutSystems' plugin, so the server is `https://<tenant>/mcp` — see §2b. `none` when the project has no MCP access |
+| **UI framework** | `--ui-framework` | `outsystems-ui` (default) or `none`, for apps built without OutSystems UI — a Live Style Guide for a widget library, say. With `none` there is no framework base to build or measure against; see §4 |
+| Widget library (optional) | `--widget-library`, `--widget-library-source` | the `WidgetLibrary` asset the LSG documents and the path to its `osfe` source, for the harness's `widgets:*` generators. Ask only when the project documents one |
 | GitHub repo | `--repo` | `owner/repo` |
 | Figma library URL | `--figma-url` | the file key is parsed out of it automatically |
 
@@ -296,6 +298,12 @@ npm run build:osui
 `-`). `npm run build:osui` compiles it into `review/vendor/outsystems-ui/` — layer 1 of every
 specimen page, the real framework CSS the checker measures against. Skip it and the gate refuses to
 measure (exit 4): loud, but still a wasted run.
+
+**With `uiFramework: "none"`** the submodule stays empty and `build:osui` skips itself: the specimen
+pages stack the theme alone, as the app does. Tell the user what that costs before they choose it:
+the OutSystems UI blocks, patterns and utilities are gone, and on ODC the app's first Mentor turn
+removes what the web app template brings (OutSystems UI, Charts, Maps — there is no blank template)
+and sets a theme with no base theme (`specs/foundations/platform.md` → "Without OutSystems UI").
 
 **Then pin it to the version the target ODC environment actually runs** — not `main`, not the
 newest tag. Ask which version; if they do not know, say so in the report and leave it, but record

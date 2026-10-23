@@ -82,6 +82,13 @@ owner, not authority to edit the palette.
 - `design-token` — a value (spacing, radius, shadow, font weight, etc.) that is hard-coded with no matching token, or close-but-not-exact to an existing token.
 - `consistency` — flow/screen-level WCAG 2.2 items (consistent help, redundant entry, accessible auth) that surface during audit.
 
+**A platform defect is not a finding.** When OutSystems itself fails — a build-engine error on
+publish (`OS-FEW-POST-50000` / `OS-DPL-50205`), a Mentor tool that cannot do what it documents —
+nobody on the design side can rule on it. Write it from the project's
+`findings/PLATFORM-DEFECT-TEMPLATE.md` (title, summary, environment with every key and revision,
+steps, expected and actual, the last good revision, what is not known yet) for the user to send to
+OutSystems, and keep it out of the register and the `finding` label.
+
 ## Severity
 
 - `blocker` — ships broken or legally exposed (e.g., body text fails contrast badly, < 3:1).

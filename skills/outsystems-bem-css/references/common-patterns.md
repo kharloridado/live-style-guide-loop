@@ -178,6 +178,14 @@ needs a status the utilities don't cover, *then* add `.acme-tag--<status>`.
 
 ---
 
+## A List as a card grid
+
+Not a framework class to restyle but the List widget's runtime structure: the grid goes on its
+`[data-list]` wrapper, with two overrides for the inline styles it writes. The recipe is in
+`odc-runtime.md` → "A List laid out as a grid".
+
+---
+
 ## When there is genuinely no framework equivalent
 
 Full BEM under the project prefix, applied via `ExtendedClass`. This is the shape for the

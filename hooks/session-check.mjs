@@ -10,25 +10,29 @@ const input = await readInput();
 const dir = projectRoot(input);
 if (!dir) process.exit(0);
 
+const readJson = (f) => { try { return JSON.parse(readFileSync(f, "utf8")); } catch { return null; } };
+const cfg = readJson(join(dir, "project.config.json")) ?? {};
+
 const missing = [];
 if (isUnfilledTemplate(dir)) {
   missing.push("project.config.json still holds <<PLACEHOLDER>> values — run /lsg:project-setup.");
 }
 if (!existsSync(join(dir, "node_modules"))) missing.push("dependencies are not installed — run `npm install`.");
-const osui = join(dir, "vendor", "outsystems-ui");
-if (!existsSync(osui) || readdirSync(osui).length === 0) {
-  missing.push("the OutSystems UI submodule is empty — run `git submodule update --init vendor/outsystems-ui`.");
-}
-if (!existsSync(join(dir, "review", "vendor", "outsystems-ui", "outsystems-ui.css"))) {
-  missing.push("the OutSystems UI base is not built — run `npm run build:osui` (build:theme and the fidelity gate need it).");
+/* A project built without OutSystems UI (uiFramework "none") has no framework base to build. */
+if (cfg.uiFramework !== "none") {
+  const osui = join(dir, "vendor", "outsystems-ui");
+  if (!existsSync(osui) || readdirSync(osui).length === 0) {
+    missing.push("the OutSystems UI submodule is empty — run `git submodule update --init vendor/outsystems-ui`.");
+  }
+  if (!existsSync(join(dir, "review", "vendor", "outsystems-ui", "outsystems-ui.css"))) {
+    missing.push("the OutSystems UI base is not built — run `npm run build:osui` (build:theme and the fidelity gate need it).");
+  }
 }
 if (!existsSync(join(dir, "vendor", "outsystems-frontend-skills", "ui-frameworks", "outsystems-ui", "blocks-index.md"))) {
   missing.push("the platform-knowledge pack is missing at vendor/outsystems-frontend-skills — the skills cannot look up blocks.");
 }
 
 /* OutSystems' official MCP skill for the project's platform is required, not optional. */
-const readJson = (f) => { try { return JSON.parse(readFileSync(f, "utf8")); } catch { return null; } };
-const cfg = readJson(join(dir, "project.config.json")) ?? {};
 const configDir = process.env.CLAUDE_CONFIG_DIR || join(homedir(), ".claude");
 if ((cfg.environment ?? "ODC") === "O11") {
   const skill = ["skills/servicestudio-mcp-oml/SKILL.md"].some(
