@@ -6,6 +6,15 @@ All notable changes to the `lsg` plugin. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- **`project-setup` §7: an unattended run must prove it works.** How the routine is created
+  decides whether it does anything: a fresh session per firing (never the creating session, which
+  may be in plan mode), the Figma connector attached, the project repository as its source, a
+  pinned model, and a public marketplace repository. Each fails silently. Setup now fires the
+  routine once with a build-nothing brief and trusts it only after that firing has pushed a branch.
+  The README says why the marketplace repository must stay public.
+
 ## [4.4.0] — 2026-10-22
 
 What auditing, rebuilding and re-checking an ODC app through the OutSystems MCP taught (the

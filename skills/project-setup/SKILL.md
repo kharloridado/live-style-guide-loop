@@ -437,6 +437,22 @@ routine that runs `/lsg:design-loop` on the queue in `loop/goal.md`, up to its i
 attached to the routine (no ref, no build), stops at every pause in `goal.md`, and never merges:
 it opens PRs and the human merging one is the approval.
 
+**How the routine is created decides whether it works at all.** Each of these fails silently: the
+routine fires on time and produces no branch, no PR and no report.
+
+| Must be true | What happens otherwise |
+| --- | --- |
+| It starts a **fresh session** on each firing | By default a routine fires into the session that created it. If that session is in plan mode, it cannot write, commit or push, so the run lands in an old conversation and does nothing. |
+| The **Figma connector** is attached to it | Fired sessions run without connector tools: no ref, so no build. Where the organization does not allow attaching connectors, say so; the routine cannot build from Figma. |
+| The **project repository** is its source | Nothing to build in. |
+| The **model** is pinned | Fired sessions run on a default that can be a smaller tier than the one the loop was set up with. |
+| The plugin's **marketplace repository is public** | A cloud run has none of the user's GitHub credentials. A private marketplace cannot be cloned, the plugin never installs, and the run falls back to general-purpose agents with none of the checker's gate. Their output is advisory, never a checker PASS. |
+
+**Then fire it once, now**, with a brief that builds nothing: pre-flight only, write one file, push
+one branch. Check that the branch exists on the remote. A routine is trusted only after a firing
+has pushed; waiting for its first scheduled run costs a whole night, and the failure arrives when
+nobody is there to read it.
+
 ## 8. Verify — do not report success you have not seen
 
 Run the whole gate, in order, and show the real output:

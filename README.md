@@ -18,6 +18,10 @@ A versioned plugin rather than copied files, so an improvement reaches every pro
 `--scope project` records the plugin in the repo's `.claude/settings.json`, so the whole team gets
 the same version. The template already ships that setting. Release notes: [CHANGELOG.md](CHANGELOG.md).
 
+**Keep this marketplace repository public** if any project runs the loop unattended. A scheduled
+cloud run has none of your GitHub credentials: from a private repository the plugin silently never
+installs, and the run carries on with general-purpose agents and none of the checker's gate.
+
 ## What's in it
 
 **Agents**
