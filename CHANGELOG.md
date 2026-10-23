@@ -6,6 +6,40 @@ All notable changes to the `lsg` plugin. The format follows
 
 ## [Unreleased]
 
+## [4.5.0] — 2026-10-23
+
+A project that migrates an established design system (USWDS, GOV.UK Frontend, Material, Carbon…)
+no longer builds on OutSystems UI: it migrates that system and builds it as is. Pair with
+`live-style-guide-harness` from this date, which adds `framework` to `project.config.json`.
+
+### Added
+
+- **`/lsg:project-setup` asks whether the project builds on OutSystems UI**, right after the
+  platform and before modules or tokens. For an established design system it recommends
+  `framework: "none"`, records the answer in `project.config.json` and the ruling in
+  `specs/decisions.md`. With `none`, the modules are Blank (ODC: libraries and apps) with no base
+  theme, the Patterns module references no theme, and the OutSystems UI submodule and
+  `build:osui` are skipped.
+
+### Changed
+
+- **Every OutSystems UI rule now depends on `framework`.** With `outsystems-ui` (the default)
+  nothing changes. With `none`:
+  - The order is native platform widget → restyle through `ExtendedClass` → custom Block (L5).
+    Button, Input, Checkbox, Dropdown… still render with the platform's classes, but only the
+    theme styles them. OutSystems UI patterns (Accordion, Tabs, Date Picker, Tooltip…) are
+    unavailable, so they are L5, with no L4.5 gate.
+  - The token extractor declares every token from the source system's own names and values, with
+    the project prefix (`--uswds-color-primary`), instead of mapping onto OutSystems UI variables.
+  - The component audit's first class is "native platform widget", and `/lsg:assess` has a
+    matching outcome, **New native widget** (`native` in `regions.json`, drawn by `annotate.mjs`).
+  - `@lsg:checker` measures without a framework base, and its framework-grain domain marks the
+    OutSystems UI criteria N/A.
+  - The session-start check no longer asks for `vendor/outsystems-ui` or a built OutSystems UI
+    base.
+  - The Live Style Guide has no stock pattern pages: a restyled native widget gets a page of its
+    own.
+
 ## [4.4.0] — 2026-10-22
 
 What auditing, rebuilding and re-checking an ODC app through the OutSystems MCP taught (the

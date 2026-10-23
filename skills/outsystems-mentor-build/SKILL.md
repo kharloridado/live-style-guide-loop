@@ -47,6 +47,10 @@ Guessing either is how a screen ends up detached from the app it lives in.
 | Where CSS belongs — Theme vs Screen vs Block | `vendor/outsystems-frontend-skills/common/css-customization.md` |
 | Semantic structure and landmarks for a11y | `vendor/outsystems-frontend-skills/common/accessibility.md` |
 
+With `framework: "none"` (`project.config.json`) the modules reference no OutSystems UI: its
+Blocks and layouts are unavailable, the Layout is the design system's own Block, and the hierarchy
+below starts at `AdvancedHtml`.
+
 Two upstream points are worth naming here only because ignoring them is the common failure,
 not because this skill restates them:
 
@@ -135,7 +139,9 @@ drive, add these on top of everything above:
 
 - **Self-contained.** Mentor sees no repo, no handover, no vendored pack and no skill — only what is
   in the module. Cite no repo file, path, finding id or ref section. State each upstream rule in
-  plain words in an "OutSystems UI rules to follow" list.
+  plain words in an "OutSystems UI rules to follow" list. With `framework: "none"`, that list says
+  instead: never add an OutSystemsUI reference or its Blocks and layouts; use native widgets and the
+  design system's Blocks.
 - **Imported specs, once proven.** The project template keeps the design system agent-readable as
   Markdown in `specs/` (usage specs, foundations, token reference, decisions) so it can be imported
   into an ODC module as Resources — context for Mentor and for whoever uses the Live Style Guide.

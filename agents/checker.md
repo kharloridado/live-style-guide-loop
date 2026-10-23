@@ -18,6 +18,8 @@ Work in this order. **Earlier steps gate later ones.**
 `project.config.json` at the repo root defines what "correct" means for THIS project:
 - `classPrefix` — the BEM prefix to enforce.
 - `knownFalsePositiveClasses` — finding classes this project has already refuted.
+- `framework` — `"outsystems-ui"` (the default) or `"none"` (no OutSystems UI underneath: a
+  migrated design system built as is). The steps below say where `none` differs.
 
 > ### The rule that prevents the most expensive class of mistake
 > **Spacing scale, grid, breakpoints and default sizes are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` — never assumed or guessed; with nothing written, raise no finding about them.**
@@ -111,7 +113,9 @@ missing stylesheet does not throw — the cascade silently falls back and every 
 reads as a perfectly plausible number describing a page nobody will ever see. The specimen page
 stacks the real OutSystems UI base *under* the theme, so a missing base (usually
 `review/vendor/outsystems-ui/` not built — `git submodule update --init && npm run build:osui`)
-invalidates every colour and metric in the run. Fix the harness and re-run; do not report numbers taken through a broken cascade.
+invalidates every colour and metric in the run. With `framework: "none"` there is no base: the page
+is the theme alone, as it renders in the modules, and the absent `review/vendor/outsystems-ui/` is
+expected. Fix the harness and re-run; do not report numbers taken through a broken cascade.
 
 **Step 3 — emit the measurement table.** One row per property: `property | ref | measured |
 PASS/DRIFT/UNVERIFIED`. Then:
@@ -178,6 +182,10 @@ State which depth you applied. **When unsure, round UP.**
        screen, markup to paste twice) is a **FAIL**.
      - A `<classPrefix>-` class for a variant the framework genuinely lacks is **correct**.
        Verify the lack; don't take the maker's word for it.
+     - **With `framework: "none"`**, "the framework" above means the platform's native widget
+       classes. OutSystems UI patterns and their variant classes do not exist, so skip
+       `vendor/outsystems-ui/`, and a `<classPrefix>-` Block for an Accordion, Tabs or Tooltip is
+       a correct L5.
      - **Sibling-collateral check:** when a bare framework class is restyled, list the
        framework's sibling modifiers and confirm each is either mapped or deliberately excluded.
        A `.btn { height }` override at equal specificity, loaded later, silently overrides
@@ -216,7 +224,8 @@ State which depth you applied. **When unsure, round UP.**
      existing pattern is a finding against the *plan*, not just the code. If `extensibility.md`
      upstream offers a `Set*Configs`, a `Set*Event`, or a JS API path that reaches the required
      behaviour, say so and FAIL the item back to L4.5. A correct implementation of an unnecessary
-     component is still the wrong deliverable.
+     component is still the wrong deliverable. With `framework: "none"` there is no pattern to
+     extend; check only that no native widget or existing project Block covers it.
 6. **Framework grain** — did this build *with* OutSystems UI or merely *on top of* it? Score it
    with the upstream rubric, do not invent criteria here:
    `vendor/outsystems-frontend-skills/.claude/skills/review-ui-implementation/rubric.md`
@@ -227,6 +236,9 @@ State which depth you applied. **When unsure, round UP.**
    CSS where the framework already shipped `Gallery`, `Pagination`, `ProgressBar` or a screen
    template. Upstream's rubric is what catches it, so run it and quote the criteria that scored
    below tier rather than re-deriving a judgement of your own.
+
+   With `framework: "none"`, score the criteria about native widgets and the platform's layout;
+   a criterion that expects an OutSystems UI pattern or screen template is N/A, not a failure.
 
    For the item's specimen page, the perceived-quality counterpart is
    `.claude/skills/runtime-ui-audit/rubric.md` in the same pack — its 16 criteria judge what the

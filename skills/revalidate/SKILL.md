@@ -94,6 +94,8 @@ git submodule status         # a leading `-` means vendor/outsystems-ui is not c
 If `vendor/outsystems-ui/` is missing, `git submodule update --init && npm run build:osui` **before**
 judging. Without the compiled base the specimen page has no framework under the theme and the gate
 refuses to measure (exit 4) — a run that measured anyway would describe a page nobody will ever see.
+With `framework: "none"` (`project.config.json`) there is no base to build: skip the submodule
+check, and the specimen page is the theme alone.
 
 ### 3. Delegate to the checker
 

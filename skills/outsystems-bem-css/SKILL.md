@@ -9,7 +9,7 @@ Generate production-grade BEM CSS for OutSystems Reactive Web and ODC.
 
 ## Pre-flight
 
-1. Read `project.config.json` for `classPrefix`, `jsNamespace` and `environment`. If the file is missing or still holds `<<PLACEHOLDER>>` values, stop and run `/lsg:project-setup` — never guess a value. Spacing scale, grid, breakpoints and default sizes are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` — never assumed or guessed; with nothing written, raise no finding about them.
+1. Read `project.config.json` for `classPrefix`, `jsNamespace`, `environment` and `framework`. If the file is missing or still holds `<<PLACEHOLDER>>` values, stop and run `/lsg:project-setup` — never guess a value. Spacing scale, grid, breakpoints and default sizes are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` — never assumed or guessed; with nothing written, raise no finding about them.
 2. Use `classPrefix` throughout. Never ask for the prefix.
 3. **Read upstream before writing a selector.** This skill owns BEM naming and nothing else. Where
    the CSS belongs, which variables exist, and which utility classes already cover the property are
@@ -24,6 +24,12 @@ Generate production-grade BEM CSS for OutSystems Reactive Web and ODC.
 
    Do not restate their contents here or infer them from memory. If the submodule is missing, stop
    and say so — guessing a variable name produces a rule that silently never applies.
+4. **With `framework: "none"`** (a migrated design system, no OutSystems UI underneath), its
+   utilities, variables and patterns are not loaded. Skip rule minus-one, and read rule zero's
+   "framework" as the platform's native widget classes (Button, Input, Checkbox, Dropdown…, styled
+   only by the theme), read from the pack's `outsystems-ui/` pages for markup only — not from
+   `vendor/outsystems-ui/`. Tokens are the theme's own `--<prefix>-*`; there is none to redefine.
+   A widget only an OutSystems UI pattern would supply (Accordion, Tabs, Tooltip…) is L5.
 
 ## When to use
 

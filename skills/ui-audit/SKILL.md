@@ -17,7 +17,7 @@ The report proposes; a person decides; the fixes are built later through the nor
 
 ## 1. Pre-flight — stop on any of these
 
-1. `project.config.json` → `environment` (ODC or O11) and `classPrefix`. Without a project, ask
+1. `project.config.json` → `environment` (ODC or O11), `framework` and `classPrefix`. Without a project, ask
    for the platform and run from a scratch folder; the pack checks below still apply.
 2. The frontend-skills pack at `vendor/outsystems-frontend-skills/`. Every "already exists" claim
    is a lookup in it (`outsystems-frontend-router`), never a recollection. **No pack, no audit** —
@@ -45,6 +45,10 @@ write `ui-audit/<app>/inventory.md` (gitignored scratch, or the scratchpad witho
 | The design system | its tokens, restyled classes and custom Blocks | the project's `tokens/`, `src/blocks/`, `specs/components/`, `specs/tokens/token-reference.md` |
 | The app and its libraries | its theme, its own Blocks, Blocks from referenced libraries | ODC: the themes and screens lookups with `owned_only: false`, and the app's references · O11: `getScreen`, the module's Blocks and references |
 | What the screens load | the classes and variables actually defined at runtime | `probe.json` → `sheets`, and the `:root` variables it resolved |
+
+**With `framework: "none"`**, or an app that references no OutSystems UI, the two OutSystems UI
+rows drop out: what already exists is the native platform widgets, the design system and the app.
+OutSystems UI is then never a fix.
 
 The ODC caveats from OutSystems' skill hold here: an app's references are not complete for kinds
 outside `indexedKinds`, so "the app does not use library X" is never a finding from their absence.

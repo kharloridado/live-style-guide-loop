@@ -50,6 +50,10 @@ Not every accessibility issue is a finding. The test is: **does resolving it cha
 | The theme restyles a framework class (`.btn`, `.card`) rather than adding a prefixed one | **NOT A FINDING** | This is the required approach, not a violation of "never edit OutSystems UI". Editing means changing the framework's files. |
 | A re-pointed framework token moves values nobody chose (`--space-m` 24px → 16px, 146 consumers) | **FLAG** as a *mapping question* | Which step of our scale is `--space-m`? A designer answers it. Severity reflects blast radius; the recommendation is never "add a prefix". |
 
+With `framework: "none"` (`project.config.json`) nothing loads OutSystems UI, so the collision and
+re-pointing rows do not arise: every token is the theme's own, prefixed and named from the source
+design system. Restyling a native platform class (`.btn`) is still not a finding.
+
 When in doubt: if the fix would make the built UI look different from the approved mockup, it's a **flag**, not a fix.
 
 **The inverse trap, which has cost this loop a whole card.** A finding must describe something

@@ -10,7 +10,7 @@
  *     "regions": [ { "n": 1, "name": "Header", "outcome": "reuse", "x": 0, "y": 0, "w": 1440,
  *                    "h": 64, "match": "pat-layout-side", "plan": "" } ] }
  * x / y / w / h are in frame units (the frame's own pixels, whatever the screenshot's scale).
- * outcome: reuse | variant | coming | osui | custom | screen
+ * outcome: reuse | variant | coming | osui | native | custom | screen  (native: framework "none")
  *
  * Usage: node <plugin>/skills/assess/scripts/annotate.mjs <assessment-dir>   exit 0 ok · 1 error */
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
@@ -38,6 +38,7 @@ const OUTCOMES = {
   variant: "Reuse + variant",
   coming: "Coming",
   osui: "New from OutSystems UI",
+  native: "New native widget",
   custom: "New custom",
   screen: "Screen-only",
 };
@@ -102,7 +103,7 @@ figure img { display: block; width: 100%; height: auto; }
 .box span { position: absolute; top: -1px; left: -1px; min-width: 22px; padding: 0 5px; font: 600 12px/20px system-ui, sans-serif; text-align: center; color: #fff; background: var(--c); border-radius: 2px 0 3px 0; }
 .box.on, .box:focus-visible { outline: 3px solid var(--text); outline-offset: 1px; z-index: 2; }
 .o-reuse { --c: var(--reuse); } .o-variant { --c: var(--variant); } .o-coming { --c: var(--coming); }
-.o-osui { --c: var(--osui); } .o-custom { --c: var(--custom); } .o-screen { --c: var(--screen); }
+.o-osui, .o-native { --c: var(--osui); } .o-custom { --c: var(--custom); } .o-screen { --c: var(--screen); }
 .tag { display: inline-block; padding: 0 8px; border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--c); border: 1px solid var(--c); white-space: nowrap; }
 .table-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 14px; }

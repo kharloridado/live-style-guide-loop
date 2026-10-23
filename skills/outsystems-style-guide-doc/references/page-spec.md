@@ -9,7 +9,7 @@ write it there first, then build the page from it.
 |---|---|---|
 | 1 | Header | Breadcrumbs (Patterns > Category > Name), the title from the menu record, "Back to Overview" |
 | 2 | Definition | One sentence, written for this design system, directly under the title |
-| 3 | Metadata | Type (OutSystems UI restyle / custom Block), base pattern, BEM block or tag, module, level L1–L5, status (Draft / Approved / Deprecated), and the one-line provenance. A deprecated pattern names its replacement |
+| 3 | Metadata | Type (OutSystems UI restyle / custom Block; native widget restyle with `framework: "none"`), base pattern, BEM block or tag, module, level L1–L5, status (Draft / Approved / Deprecated), and the one-line provenance. A deprecated pattern names its replacement |
 | 4 | Live preview | `Pattern_Preview` wrapping the real Block, its content in an If with `ShowTrueOrPreview` for design mode. Toggles in the options area (O11: ButtonGroups fed by `StyleGuide_<Pattern><Property>` entities; ODC: an `Advanced` placeholder with Switch / ButtonGroup / Dropdown), all bound to the real inputs. `-no-options` when there are none |
 | 5 | When to use | "When to Use", then "Use the <Name> to …" and "Add the <Block> to the <Placeholder> placeholder." |
 | 6 | Variants and states | One named instance per variant and state, or Tabs; every state the frozen ref draws |

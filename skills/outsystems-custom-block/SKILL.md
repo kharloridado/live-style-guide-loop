@@ -20,7 +20,7 @@ not an L5.
 ## Pre-flight
 
 Read `project.config.json`: `classPrefix` (BEM block and file names), `jsNamespace` (the script's
-global), `environment` (ODC or O11), `modules.patterns` (where the Block lives). Missing values:
+global), `environment` (ODC or O11), `framework`, `modules.patterns` (where the Block lives). Missing values:
 stop and run `/lsg:project-setup`.
 
 Read the vendored pack through `outsystems-frontend-router` for any OutSystems UI Block you nest
@@ -42,6 +42,8 @@ L5. Add the Script only for behaviour the widgets cannot express.
 
 - **Widgets first.** Build the tree from OutSystems UI Blocks, `AdvancedHtml` with a semantic tag,
   platform widgets, and `Container` last (upstream's order; `outsystems-mentor-build` has it).
+  With `framework: "none"` there are no OutSystems UI Blocks: start from `AdvancedHtml` and the
+  platform's native widgets.
   Never an HTML string in an Expression.
 - **Placeholders** for every slot whose content the consumer decides (title, body, actions,
   icon). Keep `placeholder-empty` on them so an empty one collapses.

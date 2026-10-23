@@ -1,7 +1,9 @@
 # Common patterns for restyling OutSystems UI
 
 Reference implementations for the most commonly customized OutSystems UI widgets and patterns.
-Replace `acme-` with the project's stored prefix.
+Replace `acme-` with the project's stored prefix. With `framework: "none"` only the Button
+example applies (a native widget, with the theme's own tokens); Card, Tabs and Tag are OutSystems
+UI patterns, so they are custom Blocks there.
 
 ## Read this before copying anything below
 

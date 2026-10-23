@@ -1,12 +1,12 @@
 ---
 name: outsystems-token-extractor
-description: Translate Figma design tokens into OutSystems UI CSS custom properties declared in :root. Use this skill whenever the user shares Figma token specs, design system values, brand colors, or asks how to set up :root CSS variables. Pull tokens directly from Figma via get_variable_defs MCP tool when a URL is provided.
+description: Translate Figma design tokens into OutSystems UI CSS custom properties declared in :root — or, for a migrated design system built without OutSystems UI (framework none), into the source system's own tokens with the project prefix. Use this skill whenever the user shares Figma token specs, design system values, brand colors, or asks how to set up :root CSS variables. Pull tokens directly from Figma via get_variable_defs MCP tool when a URL is provided.
 ---
 
 # OutSystems Token Extractor (Figma-aware)
 
 ## Pre-flight
-1. Read `project.config.json` for `classPrefix`, `jsNamespace` and `environment`. If the file is missing or still holds `<<PLACEHOLDER>>` values, stop and run `/lsg:project-setup` — never guess a value. Spacing scale, grid, breakpoints and default sizes are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` — never assumed or guessed; with nothing written, raise no finding about them.
+1. Read `project.config.json` for `classPrefix`, `jsNamespace`, `environment` and `framework`. If the file is missing or still holds `<<PLACEHOLDER>>` values, stop and run `/lsg:project-setup` — never guess a value. Spacing scale, grid, breakpoints and default sizes are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` — never assumed or guessed; with nothing written, raise no finding about them.
 
 ## Which variable system — check this first
 
@@ -20,6 +20,16 @@ silent no-op that looks like a working theme:
 
 This skill defaults to OutSystems UI. Confirm the stack before generating, and never mix the two in
 one `:root`.
+
+## `framework: "none"` — the source system's own tokens
+
+A migrated design system (USWDS, GOV.UK Frontend, Material, Carbon…) built without OutSystems UI
+maps onto nothing. There is no framework underneath, so no variable to redefine and nothing to fall
+back on: `tokens/*.css` declares every token. Take each name and value from the source system's
+published tokens (USWDS's on designsystem.digital.gov), keep its own type and token names, and put
+the project prefix in front — `--uswds-color-primary`, `--uswds-units-2`. Never round a value onto
+another system's scale. The sections below about OutSystems UI names, collisions and the mapping
+table do not apply; the output format, comment budget and a11y verification do.
 
 ## Every name in the right-hand column must be verified upstream
 
@@ -42,7 +52,8 @@ framework-shaped name the framework never declared.
 ## Figma MCP integration
 If user provides a Figma URL:
 1. Call `get_variable_defs(url)` → pull all Figma Variables
-2. Map each to OutSystems UI naming convention
+2. Map each to OutSystems UI naming convention (with `framework: "none"`, to the source system's
+   own names with the project prefix)
 3. Generate :root block
 4. List which tokens are new vs. modifications
 

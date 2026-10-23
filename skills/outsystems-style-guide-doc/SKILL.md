@@ -34,7 +34,7 @@ Run this for every item the loop builds, and write the answer into the PR body a
 | Token added, removed or re-valued | Foundation pages rendered from the theme (the `TokenReference` Block, installed by the project's `handover/lsg-foundations.md`): **none** — they update at the next theme publish. Say so in the PR. Not installed yet: name the Styles page and the rows to update, and recommend installing the Block. |
 | A token kind `TokenReference` does not cover (icons, grid, breakpoints, utility classes) | Update that Styles page by hand; name it in the handover. |
 | A colour family added (a new hue, not a new step) | Also check the Colors page narrative and its Core / Extended split. |
-| OutSystems UI pattern restyled (L1–L3) | Its **stock pattern page** shows the new look automatically once the theme is published. Update the page's text only where this design system's usage differs, and record the ExtendedClass recipe. |
+| OutSystems UI pattern restyled (L1–L3) | Its **stock pattern page** shows the new look automatically once the theme is published. Update the page's text only where this design system's usage differs, and record the ExtendedClass recipe. With `framework: "none"` there are no stock pages: a restyled native widget gets a new page, as below. |
 | New Block (L4–L5) | A **new page**: a menu record, the page, a live preview with every variant and state, the class inspector. `references/lsg-anatomy.md` has the routing for each platform. |
 | Variant, state or input added to a component | Its preview gains that variant or state, and its options area the matching control. |
 | Component deprecated | The page stays, marked deprecated, naming its replacement. |
@@ -55,8 +55,8 @@ Three rules carry most of the quality:
 2. **Show, don't describe.** The preview is the real Block, one instance per variant and state,
    each widget named so the class inspector can read it. Values are printed live from the theme,
    never typed.
-3. **State provenance in one line**: "OutSystems UI <Pattern>, restyled", "New component", or
-   "Wraps <library>" with a link. A discouraged component names its replacement.
+3. **State provenance in one line**: "OutSystems UI <Pattern>, restyled" (with `framework:
+   "none"`, "Native <Widget>, restyled"), "New component", or "Wraps <library>" with a link. A discouraged component names its replacement.
 
 ## Getting the page into the module
 

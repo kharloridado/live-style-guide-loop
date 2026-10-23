@@ -13,7 +13,7 @@ what the Live Style Guide does not have.
 
 ## Pre-flight
 
-1. Read `project.config.json` for `classPrefix`, `jsNamespace` and `environment`. If the file is missing or still holds `<<PLACEHOLDER>>` values, stop and run `/lsg:project-setup` — never guess a value. Spacing scale, grid, breakpoints and default sizes are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` — never assumed or guessed; with nothing written, raise no finding about them.
+1. Read `project.config.json` for `classPrefix`, `jsNamespace`, `environment` and `framework`. If the file is missing or still holds `<<PLACEHOLDER>>` values, stop and run `/lsg:project-setup` — never guess a value. Spacing scale, grid, breakpoints and default sizes are enforced only when written in the project's `specs/foundations/` or `specs/decisions.md` — never assumed or guessed; with nothing written, raise no finding about them.
 
 ## When to use
 
@@ -48,6 +48,13 @@ is worse than no audit: it produces a costed plan for work that did not need doi
 | **Doesn't exist** | Build it: a custom Block with a required Script (L5) — only after the L4.5 gate. |
 
 "Customize OutSystems UI" never means editing or forking the module — only layers on top of it.
+
+**With `framework: "none"`** (a migrated design system, no OutSystems UI underneath), the first
+class is **native platform widget**: Button, Input, Checkbox, Dropdown… render with the platform's
+own classes, and only the theme styles them. "Exists, not exact" restyles that widget through
+`ExtendedClass`. OutSystems UI patterns (Accordion, Tabs, Date Picker, Tooltip…) are unavailable,
+so anything that needs one is **Doesn't exist** → L5, and the L4.5 gate does not apply. Read the
+pack's `outsystems-ui/` pages only for native widget markup; tokens are the theme's own.
 Tier (build order) and level (L1–L5, effort) are independent: a pattern can be a pure L1 change.
 
 ## Inputs
